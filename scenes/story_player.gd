@@ -21,6 +21,7 @@ var options_box: VBoxContainer
 var next_btn: Button
 var replay_btn: Button
 var audio: AudioStreamPlayer
+var animal_stage: AnimalStage
 
 
 func _ready() -> void:
@@ -46,6 +47,10 @@ func _build_ui() -> void:
 	progress_lbl = UI.label("", 40, UI.C_GOLD_DARK)
 	progress_lbl.size_flags_horizontal = Control.SIZE_SHRINK_END
 	top.add_child(progress_lbl)
+
+	animal_stage = AnimalStage.new()
+	animal_stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_child(animal_stage)
 
 	var card := PanelContainer.new()
 	card.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -94,6 +99,7 @@ func _next_segment() -> void:
 		return
 	var seg: Dictionary = segments[idx]
 	progress_lbl.text = "%d / %d" % [idx + 1, segments.size()]
+	animal_stage.show_segment(story.id, idx)
 	text_lbl.text = seg.text
 	text_lbl.visible_ratio = 0.0
 	feedback_lbl.text = ""
