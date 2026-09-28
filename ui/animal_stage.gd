@@ -12,6 +12,7 @@ const STORY_ACTORS := {
 var viewport: SubViewport
 var world_root: Node3D
 var actor_root: Node3D
+var environment_root: Node3D
 var camera: Camera3D
 var time := 0.0
 
@@ -70,10 +71,15 @@ func _build_stage() -> void:
     camera.fov = 35.0
     world_root.add_child(camera)
 
+    environment_root = Node3D.new()
+    world_root.add_child(environment_root)
+
     actor_root = Node3D.new()
     world_root.add_child(actor_root)
 
 func show_segment(story_id: String, segment_index: int) -> void:
+    _clear_environment()
+    _build_story_environment(story_id, segment_index)
     _clear_actor()
     var actors: Array = STORY_ACTORS.get(story_id, [])
     var spacing := 1.9 if actors.size() > 1 else 0.0
@@ -83,6 +89,129 @@ func show_segment(story_id: String, segment_index: int) -> void:
         actor.scale = Vector3.ONE * (0.95 if actors.size() > 1 else 1.15)
         actor_root.add_child(actor)
     actor_root.rotation.y = deg_to_rad(-6.0 + float(segment_index) * 4.0)
+
+func _clear_environment() -> void:
+    if environment_root == null:
+        return
+    for child in environment_root.get_children():
+        child.queue_free()
+
+
+func _build_story_environment(story_id: String, segment_index: int) -> void:
+    if environment_root == null:
+        return
+
+    # Each story gets its own 3D visual language. These are real MeshInstance3D
+    # scene elements, not 2D decorations, and are kept behind the animal actors.
+    match story_id:
+        "lion_bull":
+            _make_meadow_environment(3, 2, true)
+        "crow_snake":
+            _make_forest_rocks_environment(4, 3)
+        "monkey_turtle":
+            _make_river_forest_environment()
+        "dove_ring":
+            _make_dove_garden_environment()
+        "lion_hare":
+            _make_meadow_environment(5, 3, false)
+        _:
+            _make_meadow_environment(2, 1, true)
+
+    environment_root.rotation.y = deg_to_rad(float(segment_index) * 1.5)
+
+
+func _make_meadow_environment(tree_count: int, rock_count: int, flowers: bool) -> void:
+    for i in tree_count:
+        var x := -4.5 + float(i) * (9.0 / maxf(1.0, float(tree_count - 1)))
+        _make_tree(environment_root, Vector3(x, 0, -1.8 - fmod(float(i), 2.0) * 0.8), 0.9 + fmod(float(i), 3.0) * 0.12)
+    for i in rock_count:
+        var x := -4.0 + float(i) * 2.5
+        _make_rock(environment_root, Vector3(x, 0.18, 0.9 + fmod(float(i), 2.0) * 0.4), 0.45 + fmod(float(i), 3.0) * 0.12)
+    if flowers:
+        for i in 8:
+            _make_flower(environment_root, Vector3(-4.5 + float(i) * 1.25, 0.08, 0.7 + fmod(float(i), 3.0) * 0.25))
+
+
+func _make_forest_rocks_environment(tree_count: int, rock_count: int) -> void:
+    for i in tree_count:
+        var x := -4.6 + float(i) * 3.05
+        _make_tree(environment_root, Vector3(x, 0, -2.0), 1.05 + fmod(float(i), 2.0) * 0.18)
+    for i in rock_count:
+        _make_rock(environment_root, Vector3(-3.5 + float(i) * 2.4, 0.18, 0.5 + fmod(float(i), 2.0)), 0.5 + fmod(float(i), 2.0) * 0.15)
+    for i in 5:
+        _make_bush(environment_root, Vector3(-4.2 + float(i) * 2.1, 0.3, -0.2), 0.65)
+
+
+func _make_river_forest_environment() -> void:
+    var water := MeshInstance3D.new()
+    var water_mesh := PlaneMesh.new()
+    water_mesh.size = Vector2(10, 2.4)
+    water.mesh = water_mesh
+    water.position = Vector3(0, 0.025, -1.0)
+    water.rotation_degrees.x = -90
+    water.material_override = _mat(Color("#6ea7ad"))
+    environment_root.add_child(water)
+    for x in [-4.2, 4.2]:
+        _make_tree(environment_root, Vector3(x, 0, -2.2), 1.1)
+        _make_reeds(environment_root, Vector3(x * 0.65, 0, 0.4))
+    for i in 6:
+        _make_rock(environment_root, Vector3(-3.8 + i * 1.5, 0.16, 0.65), 0.32 + fmod(float(i), 2.0) * 0.12)
+
+
+func _make_dove_garden_environment() -> void:
+    for i in 3:
+        _make_tree(environment_root, Vector3(-4.0 + i * 4.0, 0, -2.0), 0.95)
+    for i in 6:
+        _make_bush(environment_root, Vector3(-4.2 + i * 1.7, 0.28, 0.1), 0.55)
+    for i in 7:
+        _make_flower(environment_root, Vector3(-4.0 + i * 1.3, 0.08, 0.65))
+    var perch := MeshInstance3D.new()
+    var post := CylinderMesh.new()
+    post.top_radius = 0.09
+    post.bottom_radius = 0.13
+    post.height = 1.5
+    perch.mesh = post
+    perch.position = Vector3(3.0, 0.75, -0.6)
+    perch.material_override = _mat(Color("#8a633f"))
+    environment_root.add_child(perch)
+
+
+func _make_tree(parent: Node3D, pos: Vector3, scale_factor: float) -> void:
+    var root := Node3D.new()
+    root.position = pos
+    root.scale = Vector3.ONE * scale_factor
+    parent.add_child(root)
+    _cylinder(root, Vector3(0, 1.15, 0), Vector3(0.28, 2.3, 0.28), Color("#725033"))
+    _sphere(root, Vector3(0, 2.35, 0), Vector3(1.35, 1.0, 1.15), Color("#4d7544"))
+    _sphere(root, Vector3(-0.65, 2.15, 0.15), Vector3(0.8, 0.7, 0.75), Color("#5f874b"))
+    _sphere(root, Vector3(0.65, 2.15, 0.1), Vector3(0.8, 0.7, 0.75), Color("#5f874b"))
+
+
+func _make_bush(parent: Node3D, pos: Vector3, scale_factor: float) -> void:
+    var root := Node3D.new()
+    root.position = pos
+    root.scale = Vector3.ONE * scale_factor
+    parent.add_child(root)
+    _sphere(root, Vector3(-0.35, 0.35, 0), Vector3(0.7, 0.5, 0.65), Color("#5d8448"))
+    _sphere(root, Vector3(0.35, 0.4, 0.05), Vector3(0.75, 0.55, 0.7), Color("#4f743e"))
+
+
+func _make_rock(parent: Node3D, pos: Vector3, scale_factor: float) -> void:
+    var mesh := SphereMesh.new()
+    mesh.radius = 0.5
+    mesh.height = 0.8
+    _part(parent, mesh, pos, _mat(Color("#8d8270")), Vector3(scale_factor, scale_factor * 0.7, scale_factor * 0.85))
+
+
+func _make_flower(parent: Node3D, pos: Vector3) -> void:
+    _cylinder(parent, pos + Vector3(0, 0.18, 0), Vector3(0.035, 0.35, 0.035), Color("#5b7f3f"))
+    _sphere(parent, pos + Vector3(0, 0.38, 0), Vector3(0.16, 0.12, 0.16), Color("#d7a64a"))
+
+
+func _make_reeds(parent: Node3D, pos: Vector3) -> void:
+    for i in 4:
+        _cylinder(parent, pos + Vector3(-0.25 + i * 0.17, 0.35, fmod(float(i), 2.0) * 0.15), Vector3(0.035, 0.7, 0.035), Color("#557b4a"))
+
 
 func _process(delta: float) -> void:
     time += delta
