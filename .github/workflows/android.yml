@@ -38,7 +38,9 @@ jobs:
 
       - name: Validate story data
         run: godot --headless --path . -s tests/validate_stories.gd
-      godot --headless --path . -s tests/validate_animals.gd
+
+      - name: Validate animal mappings
+        run: godot --headless --path . -s tests/validate_animals.gd
 
   android-debug:
     name: Android Debug APK
