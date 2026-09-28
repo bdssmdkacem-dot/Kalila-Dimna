@@ -125,8 +125,9 @@ func _apply_story_segment_pose(story_id: String, segment_index: int) -> void:
     if bull:
         bull.visible = true
 
-    # The first encounter is staged as a reveal: hear the mysterious sound,
-    # follow the lion, then reveal the bull before the first dialogue exchange.
+    # Story 1 cinematic blocking: reveal, first dialogue, friendship,
+    # then tension and reconciliation. The same two real animal actors are
+    # reused throughout so transitions stay smooth and voice-ready.
     match segment_index:
         8, 9, 10:
             if bull:
@@ -140,53 +141,141 @@ func _apply_story_segment_pose(story_id: String, segment_index: int) -> void:
             camera.position = Vector3(0.2, 2.0, 6.5)
             camera.look_at(Vector3(0, 1.0, 0))
         12:
-            if bull:
-                bull.visible = true
             camera.position = Vector3(0.0, 2.0, 6.1)
             camera.look_at(Vector3(0, 1.05, 0))
+        13, 14:
+            camera.position = Vector3(0.0, 2.0, 5.8)
+            camera.look_at(Vector3(0, 1.0, 0))
+        15, 16:
+            camera.position = Vector3(0.0, 2.05, 5.9)
+            camera.look_at(Vector3(0, 1.0, 0))
+        17, 18, 19:
+            camera.position = Vector3(0.0, 2.1, 6.1)
+            camera.look_at(Vector3(0, 1.0, 0))
+        20, 21, 22:
+            camera.position = Vector3(0.0, 2.2, 6.8)
+            camera.look_at(Vector3(0, 0.95, 0))
+        23, 24, 25:
+            camera.position = Vector3(0.15, 2.25, 6.4)
+            camera.look_at(Vector3(0, 1.0, 0))
+        26:
+            camera.position = Vector3(0.0, 2.0, 6.0)
+            camera.look_at(Vector3(0, 1.0, 0))
+        27, 28:
+            camera.position = Vector3(0.0, 2.05, 5.8)
+            camera.look_at(Vector3(0, 1.0, 0))
+        29:
+            camera.position = Vector3(0.0, 2.4, 7.8)
+            camera.look_at(Vector3(0, 0.85, 0))
         _:
             camera.position = Vector3(0, 2.1, 7.2)
             camera.look_at(Vector3(0, 1.0, 0))
 
 func _animate_story_segment(delta: float) -> void:
-    if active_story_id != "lion_bull" or active_segment_index < 8 or active_segment_index > 12:
+    if active_story_id != "lion_bull" or active_segment_index < 8 or active_segment_index > 29:
         return
     segment_time += delta
     var p := clampf(segment_time / segment_duration, 0.0, 1.0)
     var lion := actor_root.get_node_or_null("lion") as Node3D
     var bull := actor_root.get_node_or_null("bull") as Node3D
-    if lion == null or camera == null:
+    if lion == null or bull == null or camera == null:
         return
 
+    # 09-13: mysterious sound -> reveal -> first confrontation.
     if active_segment_index == 8:
-        # Surprise: a small head/body reaction, followed by stillness.
         lion.rotation.y = lerpf(lion.rotation.y, deg_to_rad(-18.0 + sin(segment_time * 3.0) * 2.0), minf(delta * 5.0, 1.0))
         camera.position = camera.position.lerp(Vector3(0.15, 2.25, 6.65), minf(delta * 1.8, 1.0))
     elif active_segment_index == 9:
-        # Narrator holds on the forest while the lion listens.
         camera.position = camera.position.lerp(Vector3(0.0, 2.35, 7.6), minf(delta * 1.4, 1.0))
         lion.rotation.y = lerpf(lion.rotation.y, deg_to_rad(8.0), minf(delta * 2.0, 1.0))
     elif active_segment_index == 10:
-        # The lion begins moving toward the sound.
         lion.position.x = lerpf(lion.position.x, 0.65, minf(delta * 0.65, 1.0))
         lion.rotation.y = lerpf(lion.rotation.y, deg_to_rad(-8.0), minf(delta * 2.0, 1.0))
         camera.position = camera.position.lerp(Vector3(0.25, 2.1, 6.9), minf(delta * 1.5, 1.0))
     elif active_segment_index == 11:
-        # Reveal the bull gradually and move the camera toward both characters.
-        if bull:
-            bull.visible = true
-            var reveal := clampf(p * 1.6, 0.0, 1.0)
-            bull.scale = Vector3.ONE * lerpf(0.9, 1.0, reveal)
+        var reveal := clampf(p * 1.6, 0.0, 1.0)
+        bull.visible = true
+        bull.scale = Vector3.ONE * lerpf(0.9, 1.0, reveal)
         camera.position = camera.position.lerp(Vector3(0.0, 1.95, 5.7), minf(delta * 1.7, 1.0))
     elif active_segment_index == 12:
-        # First direct confrontation: both animals settle into a calm two-shot.
-        if bull:
-            bull.visible = true
-            bull.scale = Vector3.ONE
+        bull.visible = true
+        bull.scale = Vector3.ONE
         lion.position.x = lerpf(lion.position.x, -0.9, minf(delta * 1.2, 1.0))
         camera.position = camera.position.lerp(Vector3(0.0, 2.0, 5.2), minf(delta * 1.6, 1.0))
-    camera.look_at(Vector3(0, 1.0, 0))
 
+    # 14-19: both characters relax as the misunderstanding turns into friendship.
+    elif active_segment_index == 13:
+        lion.position.x = lerpf(lion.position.x, -0.95, minf(delta * 1.0, 1.0))
+        bull.position.x = lerpf(bull.position.x, 0.95, minf(delta * 1.0, 1.0))
+        lion.rotation.y = lerpf(lion.rotation.y, deg_to_rad(10.0), minf(delta * 2.0, 1.0))
+        bull.rotation.y = lerpf(bull.rotation.y, deg_to_rad(-10.0), minf(delta * 2.0, 1.0))
+        camera.position = camera.position.lerp(Vector3(0.0, 2.0, 5.7), minf(delta * 1.5, 1.0))
+    elif active_segment_index == 14:
+        lion.rotation.y = lerpf(lion.rotation.y, deg_to_rad(18.0), minf(delta * 2.0, 1.0))
+        camera.position = camera.position.lerp(Vector3(-0.55, 2.05, 5.45), minf(delta * 1.4, 1.0))
+    elif active_segment_index == 15:
+        bull.rotation.y = lerpf(bull.rotation.y, deg_to_rad(-16.0), minf(delta * 2.0, 1.0))
+        camera.position = camera.position.lerp(Vector3(0.45, 2.05, 5.45), minf(delta * 1.4, 1.0))
+    elif active_segment_index == 16:
+        lion.rotation.y = lerpf(lion.rotation.y, deg_to_rad(12.0), minf(delta * 1.5, 1.0))
+        bull.rotation.y = lerpf(bull.rotation.y, deg_to_rad(-12.0), minf(delta * 1.5, 1.0))
+    elif active_segment_index == 17:
+        lion.position.x = lerpf(lion.position.x, -0.9, minf(delta * 0.8, 1.0))
+        bull.position.x = lerpf(bull.position.x, 0.9, minf(delta * 0.8, 1.0))
+    elif active_segment_index == 18:
+        lion.position.x = lerpf(lion.position.x, -0.7, minf(delta * 0.9, 1.0))
+        camera.position = camera.position.lerp(Vector3(-0.25, 2.0, 5.35), minf(delta * 1.3, 1.0))
+    elif active_segment_index == 19:
+        bull.position.x = lerpf(bull.position.x, 0.7, minf(delta * 0.9, 1.0))
+        camera.position = camera.position.lerp(Vector3(0.0, 2.0, 5.6), minf(delta * 1.2, 1.0))
+
+    # 20-22: a brighter friendship montage with gentle camera movement.
+    elif active_segment_index == 20:
+        var orbit := sin(p * PI) * 0.45
+        camera.position = camera.position.lerp(Vector3(orbit, 2.25, 6.5), minf(delta * 1.0, 1.0))
+        lion.rotation.y = lerpf(lion.rotation.y, deg_to_rad(12.0), minf(delta, 1.0))
+        bull.rotation.y = lerpf(bull.rotation.y, deg_to_rad(-12.0), minf(delta, 1.0))
+    elif active_segment_index == 21:
+        camera.position = camera.position.lerp(Vector3(-0.45, 2.15, 6.0), minf(delta * 1.1, 1.0))
+        lion.position.x = lerpf(lion.position.x, -0.85, minf(delta * 0.8, 1.0))
+    elif active_segment_index == 22:
+        camera.position = camera.position.lerp(Vector3(0.45, 2.15, 6.0), minf(delta * 1.1, 1.0))
+        bull.position.x = lerpf(bull.position.x, 0.85, minf(delta * 0.8, 1.0))
+
+    # 23-27: rumors create distance; the camera becomes more restrained.
+    elif active_segment_index == 23:
+        camera.position = camera.position.lerp(Vector3(0.0, 2.35, 6.8), minf(delta * 1.0, 1.0))
+        lion.position.x = lerpf(lion.position.x, -1.2, minf(delta * 0.7, 1.0))
+        bull.position.x = lerpf(bull.position.x, 1.2, minf(delta * 0.7, 1.0))
+    elif active_segment_index == 24:
+        lion.rotation.y = lerpf(lion.rotation.y, deg_to_rad(28.0), minf(delta * 1.6, 1.0))
+        camera.position = camera.position.lerp(Vector3(-0.35, 2.25, 6.35), minf(delta * 1.0, 1.0))
+    elif active_segment_index == 25:
+        lion.position.x = lerpf(lion.position.x, -1.35, minf(delta * 0.6, 1.0))
+        bull.position.x = lerpf(bull.position.x, 1.35, minf(delta * 0.6, 1.0))
+        camera.position = camera.position.lerp(Vector3(0.0, 2.4, 7.1), minf(delta * 0.9, 1.0))
+    elif active_segment_index == 26:
+        bull.rotation.y = lerpf(bull.rotation.y, deg_to_rad(-28.0), minf(delta * 1.5, 1.0))
+        camera.position = camera.position.lerp(Vector3(0.35, 2.2, 6.35), minf(delta * 1.0, 1.0))
+    elif active_segment_index == 27:
+        # The choice to talk brings both characters back into the same frame.
+        lion.position.x = lerpf(lion.position.x, -0.95, minf(delta * 0.7, 1.0))
+        bull.position.x = lerpf(bull.position.x, 0.95, minf(delta * 0.7, 1.0))
+        lion.rotation.y = lerpf(lion.rotation.y, deg_to_rad(12.0), minf(delta * 1.4, 1.0))
+        bull.rotation.y = lerpf(bull.rotation.y, deg_to_rad(-12.0), minf(delta * 1.4, 1.0))
+        camera.position = camera.position.lerp(Vector3(0.0, 2.05, 5.8), minf(delta * 1.3, 1.0))
+
+    # 28-30: apology, acceptance, then a wide moral-ending tableau.
+    elif active_segment_index == 28:
+        lion.position.x = lerpf(lion.position.x, -0.65, minf(delta * 0.7, 1.0))
+        bull.position.x = lerpf(bull.position.x, 0.65, minf(delta * 0.7, 1.0))
+        camera.position = camera.position.lerp(Vector3(-0.2, 2.0, 5.55), minf(delta * 1.1, 1.0))
+    elif active_segment_index == 29:
+        lion.position.x = lerpf(lion.position.x, -0.75, minf(delta * 0.5, 1.0))
+        bull.position.x = lerpf(bull.position.x, 0.75, minf(delta * 0.5, 1.0))
+        camera.position = camera.position.lerp(Vector3(0.0, 2.55, 7.9), minf(delta * 0.8, 1.0))
+
+    camera.look_at(Vector3(0, 1.0, 0))
 func _clear_environment() -> void:
     if environment_root == null:
         return
