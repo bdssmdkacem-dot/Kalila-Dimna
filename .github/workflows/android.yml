@@ -56,7 +56,7 @@ jobs:
 
       - name: Prepare Godot Android environment
         run: |
-          set -euxo pipefail
+          set -eux
           echo "HOME=$HOME"
           godot --version
           mkdir -p "$HOME/.local/share/godot/export_templates"
