@@ -68,7 +68,7 @@ jobs:
           TEMPLATE_DIR="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
           mkdir -p "$TEMPLATE_DIR"
 
-          if [ ! -f "$TEMPLATE_DIR/android_debug.apk" ]; then
+          if [ ! -f "$TEMPLATE_DIR/android_debug.apk" ] || [ ! -f "$TEMPLATE_DIR/android_source.zip" ]; then
             rm -rf /tmp/godot-templates /tmp/godot-templates.tpz
             mkdir -p /tmp/godot-templates
             wget -q --show-progress --tries=3 -O /tmp/godot-templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
@@ -81,7 +81,7 @@ jobs:
           # Godot requires the version marker and all Android templates used by
           # Gradle exports. The preset uses Gradle, so android_source.zip is
           # required in addition to android_debug.apk.
-          printf '%s\\n' "${GODOT_VERSION}.stable" > "$TEMPLATE_DIR/version.txt"
+          printf '%s\n' "${GODOT_VERSION}.stable" > "$TEMPLATE_DIR/version.txt"
 
           if [ ! -f "$TEMPLATE_DIR/android_debug.apk" ] || [ ! -f "$TEMPLATE_DIR/android_source.zip" ]; then
             echo "ERROR: Required Godot Android export templates are missing"
