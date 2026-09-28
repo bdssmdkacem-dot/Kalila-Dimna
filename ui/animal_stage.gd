@@ -136,7 +136,7 @@ func _apply_story_segment_pose(story_id: String, segment_index: int) -> void:
         11:
             if bull:
                 bull.visible = true
-                bull.modulate = Color(0.82, 0.82, 0.82, 1.0)
+                bull.scale = Vector3.ONE * 0.9
             camera.position = Vector3(0.2, 2.0, 6.5)
             camera.look_at(Vector3(0, 1.0, 0))
         12:
@@ -175,13 +175,14 @@ func _animate_story_segment(delta: float) -> void:
         # Reveal the bull gradually and move the camera toward both characters.
         if bull:
             bull.visible = true
-            bull.modulate = Color(1, 1, 1, clampf(p * 1.6, 0.0, 1.0))
+            var reveal := clampf(p * 1.6, 0.0, 1.0)
+            bull.scale = Vector3.ONE * lerpf(0.9, 1.0, reveal)
         camera.position = camera.position.lerp(Vector3(0.0, 1.95, 5.7), minf(delta * 1.7, 1.0))
     elif active_segment_index == 12:
         # First direct confrontation: both animals settle into a calm two-shot.
         if bull:
             bull.visible = true
-            bull.modulate = Color.WHITE
+            bull.scale = Vector3.ONE
         lion.position.x = lerpf(lion.position.x, -0.9, minf(delta * 1.2, 1.0))
         camera.position = camera.position.lerp(Vector3(0.0, 2.0, 5.2), minf(delta * 1.6, 1.0))
     camera.look_at(Vector3(0, 1.0, 0))
