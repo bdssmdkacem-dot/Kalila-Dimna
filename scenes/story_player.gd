@@ -116,6 +116,7 @@ func _next_segment() -> void:
 		audio.play()
 		duration = maxf(1.0, stream.get_length())
 	replay_btn.visible = stream != null
+	animal_stage.start_cinematic(idx, duration)
 
 	if tween:
 		tween.kill()
