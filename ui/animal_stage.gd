@@ -134,6 +134,11 @@ func _cone(parent: Node3D, pos: Vector3, scale: Vector3, color: Color) -> MeshIn
     return _part(parent, mesh, pos, _mat(color), scale)
 
 func _make_animal(id: String) -> Node3D:
+    var imported := _load_real_animal(id)
+    if imported != null:
+        imported.name = id
+        return imported
+
     var root := Node3D.new()
     root.name = id
     match id:
@@ -147,6 +152,34 @@ func _make_animal(id: String) -> Node3D:
         "hare": _make_hare(root)
         _: _make_hare(root)
     return root
+
+func _load_real_animal(id: String) -> Node3D:
+    var candidates := [
+        "res://assets/3d/animals/%s.glb" % id,
+        "res://assets/3d/animals/%s.gltf" % id,
+    ]
+    for path in candidates:
+        if not ResourceLoader.exists(path):
+            continue
+        var packed := load(path) as PackedScene
+        if packed == null:
+            push_warning("Animal asset exists but could not be loaded: %s" % path)
+            continue
+        var instance := packed.instantiate()
+        if instance is Node3D:
+            _start_first_animation(instance)
+            return instance
+    return null
+
+func _start_first_animation(root: Node) -> void:
+    for child in root.get_children():
+        if child is AnimationPlayer:
+            var names := child.get_animation_list()
+            for animation_name in names:
+                if animation_name != "RESET":
+                    child.play(animation_name)
+                    return
+        _start_first_animation(child)
 
 func _make_lion(r: Node3D) -> void:
     var fur := Color("#c98b3c")
