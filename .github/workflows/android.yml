@@ -42,6 +42,9 @@ jobs:
       - name: Validate animal mappings
         run: godot --headless --path . -s tests/validate_animals.gd
 
+      - name: Validate required real animal assets
+        run: godot --headless --path . -s tests/validate_animal_assets.gd
+
   android-debug:
     name: Android Debug APK
     runs-on: ubuntu-24.04
@@ -100,6 +103,19 @@ jobs:
         run: |
           mkdir -p build/android
           godot --headless --verbose --path . --export-debug "Android Debug" "build/android/${EXPORT_NAME}-debug.apk"
+
+      - name: Verify animal asset paths are embedded in APK
+        run: |
+          set -eux
+          APK="build/android/${EXPORT_NAME}-debug.apk"
+          test -s "$APK"
+          for id in lion bull crow snake monkey turtle dove hare; do
+            if ! strings "$APK" | grep -Eq "assets/3d/animals/${id}\\.(glb|gltf)"; then
+              echo "ERROR: ${id} model path was not found in the exported APK"
+              exit 1
+            fi
+          done
+          echo "All required animal asset paths are present in the APK"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
