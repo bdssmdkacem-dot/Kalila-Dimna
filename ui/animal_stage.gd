@@ -139,6 +139,13 @@ func _make_animal(id: String) -> Node3D:
         imported.name = id
         return imported
 
+    if OS.has_feature("release"):
+        push_error("Required real animal asset is missing or failed to load: %s" % id)
+        var release_root := Node3D.new()
+        release_root.name = "%s_missing_asset" % id
+        return release_root
+
+    push_warning("Using procedural animal fallback in a non-release build: %s" % id)
     var root := Node3D.new()
     root.name = id
     match id:
