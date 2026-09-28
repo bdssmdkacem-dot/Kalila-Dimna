@@ -1,6 +1,6 @@
 # 3D animal asset manifest
 
-The story stage supports real Godot-imported `.glb` or `.gltf` files in this directory. If a model is missing, the game intentionally falls back to its built-in low-poly procedural animal so story playback and tests remain functional.
+The story stage requires real Godot-imported `.glb` or `.gltf` files for all eight shipped story animals. Procedural geometry remains only as an explicit non-release development fallback; a Release build never silently substitutes it.
 
 ## Preferred licensing
 
