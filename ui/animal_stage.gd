@@ -15,6 +15,11 @@ var actor_root: Node3D
 var environment_root: Node3D
 var camera: Camera3D
 var time := 0.0
+var segment_time := 0.0
+var segment_duration := 3.0
+var active_story_id := ""
+var active_segment_index := -1
+var transition_fade: ColorRect
 
 func _ready() -> void:
     custom_minimum_size = Vector2(0, 430)
@@ -26,6 +31,12 @@ func _build_stage() -> void:
     container.stretch = true
     container.mouse_filter = Control.MOUSE_FILTER_IGNORE
     add_child(container)
+
+    transition_fade = ColorRect.new()
+    transition_fade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+    transition_fade.color = Color(0, 0, 0, 0)
+    transition_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    add_child(transition_fade)
 
     viewport = SubViewport.new()
     viewport.size = Vector2i(900, 430)
@@ -78,6 +89,11 @@ func _build_stage() -> void:
     world_root.add_child(actor_root)
 
 func show_segment(story_id: String, segment_index: int) -> void:
+    active_story_id = story_id
+    active_segment_index = segment_index
+    segment_time = 0.0
+    if transition_fade:
+        transition_fade.color.a = 1.0
     _clear_environment()
     _build_story_environment(story_id, segment_index)
     _clear_actor()
@@ -89,6 +105,86 @@ func show_segment(story_id: String, segment_index: int) -> void:
         actor.scale = Vector3.ONE * (0.95 if actors.size() > 1 else 1.15)
         actor_root.add_child(actor)
     actor_root.rotation.y = deg_to_rad(-6.0 + float(segment_index) * 4.0)
+    _apply_story_segment_pose(story_id, segment_index)
+    if transition_fade:
+        var fade_tween := create_tween()
+        fade_tween.tween_property(transition_fade, "color:a", 0.0, 0.38)
+
+func start_cinematic(segment_index: int, duration: float) -> void:
+    active_segment_index = segment_index
+    segment_time = 0.0
+    segment_duration = maxf(1.0, duration)
+
+func _apply_story_segment_pose(story_id: String, segment_index: int) -> void:
+    if story_id != "lion_bull" or actor_root == null or camera == null:
+        return
+    var lion := actor_root.get_node_or_null("lion") as Node3D
+    var bull := actor_root.get_node_or_null("bull") as Node3D
+    if lion:
+        lion.visible = true
+    if bull:
+        bull.visible = true
+
+    # The first encounter is staged as a reveal: hear the mysterious sound,
+    # follow the lion, then reveal the bull before the first dialogue exchange.
+    match segment_index:
+        8, 9, 10:
+            if bull:
+                bull.visible = false
+            camera.position = Vector3(0.0, 2.15, 6.8)
+            camera.look_at(Vector3(0, 1.05, 0))
+        11:
+            if bull:
+                bull.visible = true
+                bull.modulate = Color(0.82, 0.82, 0.82, 1.0)
+            camera.position = Vector3(0.2, 2.0, 6.5)
+            camera.look_at(Vector3(0, 1.0, 0))
+        12:
+            if bull:
+                bull.visible = true
+            camera.position = Vector3(0.0, 2.0, 6.1)
+            camera.look_at(Vector3(0, 1.05, 0))
+        _:
+            camera.position = Vector3(0, 2.1, 7.2)
+            camera.look_at(Vector3(0, 1.0, 0))
+
+func _animate_story_segment(delta: float) -> void:
+    if active_story_id != "lion_bull" or active_segment_index < 8 or active_segment_index > 12:
+        return
+    segment_time += delta
+    var p := clampf(segment_time / segment_duration, 0.0, 1.0)
+    var lion := actor_root.get_node_or_null("lion") as Node3D
+    var bull := actor_root.get_node_or_null("bull") as Node3D
+    if lion == null or camera == null:
+        return
+
+    if active_segment_index == 8:
+        # Surprise: a small head/body reaction, followed by stillness.
+        lion.rotation.y = lerpf(lion.rotation.y, deg_to_rad(-18.0 + sin(segment_time * 3.0) * 2.0), minf(delta * 5.0, 1.0))
+        camera.position = camera.position.lerp(Vector3(0.15, 2.25, 6.65), minf(delta * 1.8, 1.0))
+    elif active_segment_index == 9:
+        # Narrator holds on the forest while the lion listens.
+        camera.position = camera.position.lerp(Vector3(0.0, 2.35, 7.6), minf(delta * 1.4, 1.0))
+        lion.rotation.y = lerpf(lion.rotation.y, deg_to_rad(8.0), minf(delta * 2.0, 1.0))
+    elif active_segment_index == 10:
+        # The lion begins moving toward the sound.
+        lion.position.x = lerpf(lion.position.x, 0.65, minf(delta * 0.65, 1.0))
+        lion.rotation.y = lerpf(lion.rotation.y, deg_to_rad(-8.0), minf(delta * 2.0, 1.0))
+        camera.position = camera.position.lerp(Vector3(0.25, 2.1, 6.9), minf(delta * 1.5, 1.0))
+    elif active_segment_index == 11:
+        # Reveal the bull gradually and move the camera toward both characters.
+        if bull:
+            bull.visible = true
+            bull.modulate = Color(1, 1, 1, clampf(p * 1.6, 0.0, 1.0))
+        camera.position = camera.position.lerp(Vector3(0.0, 1.95, 5.7), minf(delta * 1.7, 1.0))
+    elif active_segment_index == 12:
+        # First direct confrontation: both animals settle into a calm two-shot.
+        if bull:
+            bull.visible = true
+            bull.modulate = Color.WHITE
+        lion.position.x = lerpf(lion.position.x, -0.9, minf(delta * 1.2, 1.0))
+        camera.position = camera.position.lerp(Vector3(0.0, 2.0, 5.2), minf(delta * 1.6, 1.0))
+    camera.look_at(Vector3(0, 1.0, 0))
 
 func _clear_environment() -> void:
     if environment_root == null:
@@ -215,6 +311,7 @@ func _make_reeds(parent: Node3D, pos: Vector3) -> void:
 
 func _process(delta: float) -> void:
     time += delta
+    _animate_story_segment(delta)
     if actor_root:
         actor_root.position.y = sin(time * 1.8) * 0.035
         for child in actor_root.get_children():
