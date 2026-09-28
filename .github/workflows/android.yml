@@ -78,8 +78,13 @@ jobs:
             cp -a /tmp/godot-templates/templates/. "$TEMPLATE_DIR/"
           fi
 
-          if [ ! -f "$TEMPLATE_DIR/android_debug.apk" ]; then
-            echo "ERROR: Godot Android debug export template was not installed at $TEMPLATE_DIR"
+          # Godot requires the version marker and all Android templates used by
+          # Gradle exports. The preset uses Gradle, so android_source.zip is
+          # required in addition to android_debug.apk.
+          printf '%s\\n' "${GODOT_VERSION}.stable" > "$TEMPLATE_DIR/version.txt"
+
+          if [ ! -f "$TEMPLATE_DIR/android_debug.apk" ] || [ ! -f "$TEMPLATE_DIR/android_source.zip" ]; then
+            echo "ERROR: Required Godot Android export templates are missing"
             find "$HOME/.local/share/godot/export_templates" -maxdepth 3 -type f -print || true
             exit 1
           fi
