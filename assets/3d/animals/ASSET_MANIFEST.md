@@ -11,11 +11,11 @@ The shipped story stage now contains eight real Godot-imported animal assets. An
 | `crow.glb` | Crow / raven | Teh_Bucket, OpenGameArt | CC0 1.0 |
 | `snake.glb` | Snake | Quaternius Easy Enemies | CC0 1.0 |
 | `monkey.glb` | Monkey / Monkroose | Kenney Cube Pets | CC0 1.0 |
-| `turtle.glb` | Turtle | Poly by Google, via Poly Pizza | CC-BY 3.0 — attribution required |
+| `turtle.glb` | Turtle | Serenity Blocks self-generated asset pipeline | MIT-project-local — attribution retained |
 | `dove.gltf` | Dove / pigeon | Quaternius | CC0 1.0 |
 | `hare.glb` | Hare / bunny | Quaternius Ultimate Monsters | CC0 1.0 |
 
-The turtle is the only non-CC0 asset in this set; its attribution is preserved here because the model is distributed under CC-BY 3.0.
+The turtle is the only non-CC0 asset in this set; its provenance is retained because it comes from a third-party project-local asset pipeline distributed under that project's MIT terms.
 
 ## Runtime contract
 
