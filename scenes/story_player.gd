@@ -50,16 +50,23 @@ func _build_ui() -> void:
 
 	animal_stage = AnimalStage.new()
 	animal_stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	animal_stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	box.add_child(animal_stage)
 
 	var card := PanelContainer.new()
-	card.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	card.custom_minimum_size = Vector2(0, 180)
+	card.size_flags_vertical = Control.SIZE_SHRINK_END
 	card.gui_input.connect(_on_card_input)
 	box.add_child(card)
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	card.add_child(scroll)
-	text_lbl = UI.label("", 56)
+	text_lbl = UI.label("", 44)
+	text_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	text_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	text_lbl.custom_minimum_size = Vector2(0, 150)
 	scroll.add_child(text_lbl)
 
 	feedback_lbl = UI.label("", 44, UI.C_BAD)
