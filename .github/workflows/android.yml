@@ -45,6 +45,9 @@ jobs:
       - name: Validate required real animal assets
         run: godot --headless --path . -s tests/validate_animal_assets.gd
 
+      - name: Validate story 3D environments
+        run: godot --headless --path . -s tests/validate_story_environments.gd
+
   android-debug:
     name: Android Debug APK
     runs-on: ubuntu-24.04
@@ -104,24 +107,22 @@ jobs:
           mkdir -p build/android
           godot --headless --verbose --path . --export-debug "Android Debug" "build/android/${EXPORT_NAME}-debug.apk"
 
-      - name: Verify animal assets are embedded in APK
+      - name: Verify required resources are embedded in APK
         run: |
           set -eux
           APK="build/android/${EXPORT_NAME}-debug.apk"
           test -s "$APK"
-          python3 - "$APK" <<'PY'
-          import sys, zipfile
-          apk = sys.argv[1]
-          required = [b"lion.glb", b"bull.glb", b"crow.glb", b"snake.glb",
-                      b"monkey.glb", b"turtle.glb", b"dove.gltf", b"hare.glb"]
-          with zipfile.ZipFile(apk) as z:
-              blobs = [z.read(name) for name in z.namelist() if name.endswith(".pck")]
-          data = b"".join(blobs)
-          missing = [x.decode() for x in required if x not in data]
-          if missing:
-              raise SystemExit("ERROR: missing animal resources in exported APK/PCK: " + ", ".join(missing))
-          print("All required animal resources are embedded in the APK/PCK")
-          PY
+          # The Godot PCK stores resource paths as plain bytes. Avoid relying on
+          # python3/strings inside the minimal Godot CI container.
+          for resource in \
+            "lion.glb" "bull.glb" "crow.glb" "snake.glb" \
+            "monkey.glb" "turtle.glb" "dove.gltf" "hare.glb"; do
+            if ! grep -a -q "$resource" "$APK"; then
+              echo "ERROR: required animal resource is not embedded in exported APK/PCK: $resource"
+              exit 1
+            fi
+          done
+          echo "All required animal resource paths are embedded in the APK/PCK"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
