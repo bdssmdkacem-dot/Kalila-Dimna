@@ -110,7 +110,7 @@ jobs:
           APK="build/android/${EXPORT_NAME}-debug.apk"
           test -s "$APK"
           for id in lion bull crow snake monkey turtle dove hare; do
-            if ! strings "$APK" | grep -Eq "assets/3d/animals/${id}\\.(glb|gltf)"; then
+            if ! grep -aEq "assets/3d/animals/${id}\\.(glb|gltf)" "$APK"; then
               echo "ERROR: ${id} model path was not found in the exported APK"
               exit 1
             fi
