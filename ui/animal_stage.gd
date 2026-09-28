@@ -22,7 +22,8 @@ var active_segment_index := -1
 var transition_fade: ColorRect
 
 func _ready() -> void:
-    custom_minimum_size = Vector2(0, 430)
+    custom_minimum_size = Vector2(0, 0)
+	size_flags_vertical = Control.SIZE_EXPAND_FILL
     _build_stage()
 
 func _build_stage() -> void:
@@ -79,7 +80,7 @@ func _build_stage() -> void:
     camera = Camera3D.new()
     camera.position = Vector3(0, 2.1, 7.2)
     camera.look_at_from_position(camera.position, Vector3(0, 1.0, 0))
-    camera.fov = 35.0
+    camera.fov = 42.0
     world_root.add_child(camera)
 
     environment_root = Node3D.new()
@@ -101,6 +102,7 @@ func show_segment(story_id: String, segment_index: int) -> void:
     var spacing := 1.9 if actors.size() > 1 else 0.0
     for i in actors.size():
         var actor := _make_animal(actors[i])
+        _fit_animal_to_frame(actor, actors.size() > 1)
         actor.position = Vector3((i - float(actors.size() - 1) / 2.0) * spacing, 0, 0)
         actor.scale = Vector3.ONE * (0.95 if actors.size() > 1 else 1.15)
         actor_root.add_child(actor)
@@ -475,6 +477,50 @@ func _make_animal(id: String) -> Node3D:
         "hare": _make_hare(root)
         _: _make_hare(root)
     return root
+
+func _fit_animal_to_frame(root: Node3D, is_pair: bool) -> void:
+    # Imported GLB/GLTF files can have very different origins and sizes.
+    # Normalize every actor so the full body is visible and centered on Android.
+    var bounds := AABB()
+    var found := false
+    var stack: Array[Node] = [root]
+    while not stack.is_empty():
+        var node: Node = stack.pop_back()
+        if node is MeshInstance3D and node.mesh != null:
+            var local_box := (node as MeshInstance3D).get_aabb()
+            var t: Transform3D = root.global_transform.affine_inverse() * (node as MeshInstance3D).global_transform
+            for corner in _aabb_corners(local_box):
+                var p := t * corner
+                if not found:
+                    bounds = AABB(p, Vector3.ZERO)
+                    found = true
+                else:
+                    bounds = bounds.expand(p)
+        for child in node.get_children():
+            stack.append(child)
+    if not found or bounds.size.y <= 0.01:
+        return
+    var target_height := 1.65 if is_pair else 1.9
+    var uniform := target_height / bounds.size.y
+    root.scale *= Vector3.ONE * uniform
+    # Re-center after scaling so feet sit on the stage and no model is clipped.
+    var center_x := bounds.position.x + bounds.size.x * 0.5
+    var center_z := bounds.position.z + bounds.size.z * 0.5
+    root.position = Vector3(-center_x * uniform, -bounds.position.y * uniform, -center_z * uniform)
+
+func _aabb_corners(box: AABB) -> Array[Vector3]:
+    var p := box.position
+    var s := box.size
+    return [
+        p,
+        p + Vector3(s.x, 0, 0),
+        p + Vector3(0, s.y, 0),
+        p + Vector3(0, 0, s.z),
+        p + Vector3(s.x, s.y, 0),
+        p + Vector3(s.x, 0, s.z),
+        p + Vector3(0, s.y, s.z),
+        p + s,
+    ]
 
 func _load_real_animal(id: String) -> Node3D:
     var candidates := [
