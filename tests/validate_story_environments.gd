@@ -21,7 +21,7 @@ func _init() -> void:
     var runtime_ids := ["lion_bull", "crow_snake", "monkey_turtle", "dove_ring", "lion_hare"]
 
     for story_id in runtime_ids:
-        if not source.contains(""%s":" % story_id):
+        if not source.contains("\"%s\":" % story_id):
             missing.append(story_id)
 
     if not missing.is_empty():
