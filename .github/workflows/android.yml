@@ -104,18 +104,24 @@ jobs:
           mkdir -p build/android
           godot --headless --verbose --path . --export-debug "Android Debug" "build/android/${EXPORT_NAME}-debug.apk"
 
-      - name: Verify animal asset paths are embedded in APK
+      - name: Verify animal assets are embedded in APK
         run: |
           set -eux
           APK="build/android/${EXPORT_NAME}-debug.apk"
           test -s "$APK"
-          for id in lion bull crow snake monkey turtle dove hare; do
-            if ! grep -aEq "assets/3d/animals/${id}\\.(glb|gltf)" "$APK"; then
-              echo "ERROR: ${id} model path was not found in the exported APK"
-              exit 1
-            fi
-          done
-          echo "All required animal asset paths are present in the APK"
+          python3 - "$APK" <<'PY'
+          import sys, zipfile
+          apk = sys.argv[1]
+          required = [b"lion.glb", b"bull.glb", b"crow.glb", b"snake.glb",
+                      b"monkey.glb", b"turtle.glb", b"dove.gltf", b"hare.glb"]
+          with zipfile.ZipFile(apk) as z:
+              blobs = [z.read(name) for name in z.namelist() if name.endswith(".pck")]
+          data = b"".join(blobs)
+          missing = [x.decode() for x in required if x not in data]
+          if missing:
+              raise SystemExit("ERROR: missing animal resources in exported APK/PCK: " + ", ".join(missing))
+          print("All required animal resources are embedded in the APK/PCK")
+          PY
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
