@@ -174,7 +174,7 @@ func _load_real_animal(id: String) -> Node3D:
 func _start_first_animation(root: Node) -> void:
     for child in root.get_children():
         if child is AnimationPlayer:
-            var names := child.get_animation_list()
+            var names: PackedStringArray = child.get_animation_list()
             for animation_name in names:
                 if animation_name != "RESET":
                     child.play(animation_name)
