@@ -64,6 +64,14 @@ jobs:
           if [ -d "/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable" ]; then
             mv "/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable" ~/.local/share/godot/export_templates/
           fi
+          if [ ! -f "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/android_debug.apk" ]; then
+            mkdir -p /tmp/godot-templates
+            curl -L --fail --retry 3 -o /tmp/godot-templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+            rm -rf "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+            mkdir -p "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+            unzip -q /tmp/godot-templates.tpz -d /tmp/godot-templates
+            cp -a /tmp/godot-templates/templates/. "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/"
+          fi
           if [ -f ~/.config/godot/editor_settings-4.3.tres ]; then
             printf '\nexport/android/java_sdk_path = "/usr/lib/jvm/java-17-openjdk-amd64"\n' >> ~/.config/godot/editor_settings-4.3.tres
           fi
