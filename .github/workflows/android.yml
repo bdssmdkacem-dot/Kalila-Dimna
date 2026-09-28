@@ -56,24 +56,39 @@ jobs:
 
       - name: Prepare Godot Android environment
         run: |
-          mkdir -p ~/.local/share/godot/export_templates
-          mkdir -p ~/.config
-          if [ -d /root/.config/godot ]; then
-            mv /root/.config/godot ~/.config/godot
+          set -euxo pipefail
+          echo "HOME=$HOME"
+          godot --version
+          mkdir -p "$HOME/.local/share/godot/export_templates"
+          mkdir -p "$HOME/.config"
+          if [ -d /root/.config/godot ] && [ "/root/.config/godot" != "$HOME/.config/godot" ]; then
+            cp -a /root/.config/godot/. "$HOME/.config/godot/"
           fi
-          if [ -d "/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable" ]; then
-            mv "/root/.local/share/godot/export_templates/${GODOT_VERSION}.stable" ~/.local/share/godot/export_templates/
-          fi
-          if [ ! -f "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/android_debug.apk" ]; then
+
+          TEMPLATE_DIR="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$TEMPLATE_DIR"
+
+          if [ ! -f "$TEMPLATE_DIR/android_debug.apk" ]; then
+            rm -rf /tmp/godot-templates /tmp/godot-templates.tpz
             mkdir -p /tmp/godot-templates
             curl -L --fail --retry 3 -o /tmp/godot-templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
-            rm -rf "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
-            mkdir -p "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
             unzip -q /tmp/godot-templates.tpz -d /tmp/godot-templates
-            cp -a /tmp/godot-templates/templates/. "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/"
+            rm -rf "$TEMPLATE_DIR"
+            mkdir -p "$TEMPLATE_DIR"
+            cp -a /tmp/godot-templates/templates/. "$TEMPLATE_DIR/"
           fi
-          if [ -f ~/.config/godot/editor_settings-4.3.tres ]; then
-            printf '\nexport/android/java_sdk_path = "/usr/lib/jvm/java-17-openjdk-amd64"\n' >> ~/.config/godot/editor_settings-4.3.tres
+
+          if [ ! -f "$TEMPLATE_DIR/android_debug.apk" ]; then
+            echo "ERROR: Godot Android debug export template was not installed at $TEMPLATE_DIR"
+            find "$HOME/.local/share/godot/export_templates" -maxdepth 3 -type f -print || true
+            exit 1
+          fi
+
+          echo "Installed Android export templates:"
+          ls -lah "$TEMPLATE_DIR"
+
+          if [ -f "$HOME/.config/godot/editor_settings-4.3.tres" ]; then
+            printf '\nexport/android/java_sdk_path = "/usr/lib/jvm/java-17-openjdk-amd64"\n' >> "$HOME/.config/godot/editor_settings-4.3.tres"
           fi
 
       - name: Export Android Debug APK
