@@ -28,6 +28,8 @@ var target_world_position := Vector2.ZERO
 var actor_targets := {}
 var actor_base_scales := {}
 var transition_fade: ColorRect
+var scene_glow: ColorRect
+var vignette: ColorRect
 
 const LION_TEX := preload("res://assets/images/characters/lion_2d.svg")
 const BULL_TEX := preload("res://assets/images/characters/bull_2d.svg")
@@ -71,6 +73,29 @@ func _build_stage() -> void:
 	transition_fade.color = Color(0, 0, 0, 0)
 	transition_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(transition_fade)
+	_build_visual_overlays()
+
+func _build_visual_overlays() -> void:
+	# Subtle cinematic overlays keep the stage feeling like a composed illustration,
+	# while the actual story assets remain untouched.
+	scene_glow = ColorRect.new()
+	scene_glow.name = "SceneGlow"
+	scene_glow.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	scene_glow.color = Color(1.0, 0.90, 0.62, 0.055)
+	scene_glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(scene_glow)
+
+	vignette = ColorRect.new()
+	vignette.name = "Vignette"
+	vignette.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	vignette.color = Color(0.05, 0.10, 0.08, 0.075)
+	vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(vignette)
+
+	# Keep overlays behind the transition layer but above the illustrated world.
+	move_child(scene_glow, get_child_count() - 2)
+	move_child(vignette, get_child_count() - 2)
+
 
 func _rescale_to_control() -> void:
 	if world == null:
@@ -125,11 +150,12 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 		return
 
 	var place := String(scene_data.get("place", _place_for_segment(segment_index)))
+	_update_scene_mood(place)
 	forest_background.visible = place == "forest"
 	background.visible = place != "forest"
 
-	lion = _add_actor("lion", Vector2(380, 495), 300.0)
-	bull = _add_actor("bull", Vector2(820, 500), 285.0)
+	lion = _add_actor("lion", Vector2(380, 495), 335.0)
+	bull = _add_actor("bull", Vector2(820, 500), 320.0)
 
 	_apply_visibility_and_blocking(segment_index)
 	_configure_shot(shot)
@@ -137,6 +163,17 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	if transition_fade:
 		var fade_tween := create_tween()
 		fade_tween.tween_property(transition_fade, "color:a", 0.0, 0.28)
+
+func _update_scene_mood(place: String) -> void:
+	if scene_glow == null or vignette == null:
+		return
+	if place == "forest":
+		scene_glow.color = Color(0.88, 0.95, 0.72, 0.045)
+		vignette.color = Color(0.04, 0.12, 0.08, 0.085)
+	else:
+		scene_glow.color = Color(0.75, 0.92, 1.0, 0.055)
+		vignette.color = Color(0.04, 0.10, 0.12, 0.065)
+
 
 func set_speaker(actor_id: String) -> void:
 	speaking_actor = actor_id
