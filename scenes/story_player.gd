@@ -108,10 +108,28 @@ func _build_ui() -> void:
 
 
 func _speaker_for_segment(story_id: String, i: int) -> String:
-	if story_id == "lion_bull":
-		var speakers := {2:"🦁 بينغالاكا",4:"🐂 سانجيفاكا",6:"🐂 سانجيفاكا",8:"🦁 بينغالاكا",10:"🦁 بينغالاكا",12:"🦁 بينغالاكا",13:"🐂 سانجيفاكا",14:"🦁 بينغالاكا",15:"🐂 سانجيفاكا",17:"🦁 بينغالاكا",18:"🐂 سانجيفاكا",20:"🦁 بينغالاكا",21:"🐂 سانجيفاكا",24:"🦁 بينغالاكا",27:"🦁 بينغالاكا"}
-		return speakers.get(i, "📖 الراوي")
-	return "📖 الراوي"
+	if i < 0 or i >= segments.size():
+		return "📖 الراوي"
+	var speaker := String(segments[i].get("speaker", ""))
+	match speaker:
+		"lion":
+			return "🦁 بينغالاكا"
+		"bull":
+			return "🐂 سانجيفاكا"
+		"crow":
+			return "🐦 الغراب"
+		"snake":
+			return "🐍 الأفعى"
+		"monkey":
+			return "🐒 القرد"
+		"turtle":
+			return "🐢 السلحفاة"
+		"dove":
+			return "🕊️ الحمامة"
+		"hare":
+			return "🐇 الأرنب"
+		_:
+			return "📖 الراوي"
 
 func _story_bubble_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
@@ -151,6 +169,8 @@ func _next_segment() -> void:
 	var seg: Dictionary = segments[idx]
 	progress_lbl.text = "%d / %d" % [idx + 1, segments.size()]
 	animal_stage.show_segment(story.id, idx)
+	var segment_speaker := String(seg.get("speaker", ""))
+	animal_stage.set_speaker(segment_speaker)
 	speaker_lbl.text = _speaker_for_segment(story.id, idx)
 	text_lbl.text = seg.text
 	text_lbl.visible_ratio = 0.0
