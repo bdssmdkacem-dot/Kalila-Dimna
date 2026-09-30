@@ -21,6 +21,7 @@ var active_story_id := ""
 var active_segment_index := -1
 var transition_fade: ColorRect
 var stage_environment: Environment
+var speaking_actor := ""
 
 func _ready() -> void:
     custom_minimum_size = Vector2(0, 0)
@@ -284,6 +285,12 @@ func _animate_story_segment(delta: float) -> void:
         bull.position.x = lerpf(bull.position.x, 0.75, minf(delta * 0.5, 1.0))
         camera.position = camera.position.lerp(Vector3(0.0, 2.55, 7.9), minf(delta * 0.8, 1.0))
 
+    if speaking_actor != "":
+        var speaker := actor_root.get_node_or_null(speaking_actor) as Node3D
+        if speaker:
+            var pulse := 1.0 + sin(segment_time * 7.0) * 0.018
+            var base_scale: Vector3 = speaker.get_meta("frame_scale", speaker.scale)
+            speaker.scale = base_scale * pulse
     camera.look_at(Vector3(0, 1.0, 0))
 func _clear_environment() -> void:
     if environment_root == null:
