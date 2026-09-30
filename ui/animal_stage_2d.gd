@@ -142,6 +142,7 @@ func set_speaker(actor_id: String) -> void:
 	speaking_actor = actor_id
 	if speaking_actor != "lion" and speaking_actor != "bull":
 		speaking_actor = ""
+	_configure_shot(shot)
 
 func start_cinematic(segment_index: int, duration: float) -> void:
 	active_segment_index = segment_index
