@@ -23,6 +23,7 @@ var next_btn: Button
 var replay_btn: Button
 var audio: AudioStreamPlayer
 var animal_stage: AnimalStage
+var pending_next_index := -1
 
 
 func _ready() -> void:
@@ -98,7 +99,7 @@ func _build_ui() -> void:
 	row.add_child(replay_btn)
 	next_btn = UI.button("التالي", 50, 120)
 	next_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	next_btn.pressed.connect(_next_segment)
+	next_btn.pressed.connect(_on_next_pressed)
 	row.add_child(next_btn)
 
 	audio = AudioStreamPlayer.new()
@@ -108,13 +109,8 @@ func _build_ui() -> void:
 
 func _speaker_for_segment(story_id: String, i: int) -> String:
 	if story_id == "lion_bull":
-		match i:
-			2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28:
-				return "🦁 بينغالاكا"
-			3, 5, 7, 11, 13, 15, 17, 19, 21, 27:
-				return "🐂 سانجيفاكا"
-			_:
-				return "📖 الراوي"
+		var speakers := {2:"🦁 بينغالاكا",4:"🐂 سانجيفاكا",6:"🐂 سانجيفاكا",8:"🦁 بينغالاكا",10:"🦁 بينغالاكا",12:"🦁 بينغالاكا",13:"🐂 سانجيفاكا",14:"🦁 بينغالاكا",15:"🐂 سانجيفاكا",17:"🦁 بينغالاكا",18:"🐂 سانجيفاكا",20:"🦁 بينغالاكا",21:"🐂 سانجيفاكا",24:"🦁 بينغالاكا",27:"🦁 بينغالاكا"}
+		return speakers.get(i, "📖 الراوي")
 	return "📖 الراوي"
 
 func _story_bubble_style() -> StyleBoxFlat:
@@ -145,6 +141,9 @@ func _load_voice(i: int) -> AudioStream:
 
 
 func _next_segment() -> void:
+	if pending_next_index >= 0:
+		_advance_after_choice()
+		return
 	idx += 1
 	if idx >= segments.size():
 		_finish()
@@ -157,6 +156,7 @@ func _next_segment() -> void:
 	text_lbl.visible_ratio = 0.0
 	feedback_lbl.text = ""
 	text_done = false
+	pending_next_index = -1
 	_clear_options()
 	next_btn.disabled = true
 	next_btn.text = "النهاية" if idx == segments.size() - 1 else "التالي"
@@ -192,11 +192,52 @@ func _on_text_done() -> void:
 		return
 	text_done = true
 	var seg: Dictionary = segments[idx]
-	if seg.has("challenge"):
+	if seg.has("interaction"):
+		_show_story_interaction(seg.interaction)
+	elif seg.has("challenge"):
 		_show_challenge(seg.challenge)
 	else:
 		next_btn.disabled = false
 
+func _show_story_interaction(interaction: Dictionary) -> void:
+	options_box.add_child(UI.label("ساعد الشخصية في اتخاذ القرار", 42, UI.C_GOLD_DARK))
+	options_box.add_child(UI.label(String(interaction.question), 48, UI.C_GREEN))
+	var answer := int(interaction.answer)
+	var opts: Array = interaction.options
+	var order := range(opts.size())
+	order.shuffle()
+	for i in order:
+		var b := UI.button(String(opts[i]), 42, 115)
+		b.pressed.connect(_on_story_choice.bind(b, i, interaction))
+		options_box.add_child(b)
+
+func _on_story_choice(btn: Button, choice_index: int, interaction: Dictionary) -> void:
+	var correct := choice_index == int(interaction.answer)
+	pending_next_index = int(interaction.next_correct if correct else interaction.next_wrong)
+	for c in options_box.get_children():
+		if c is Button:
+			c.disabled = true
+	if correct:
+		feedback_lbl.add_theme_color_override("font_color", UI.C_GOOD)
+		feedback_lbl.text = "أحسنت! قرارك يغيّر ما سيحدث الآن."
+	else:
+		mistakes += 1
+		feedback_lbl.add_theme_color_override("font_color", UI.C_BAD)
+		feedback_lbl.text = "هذا القرار يقود إلى نتيجة مختلفة في الحكاية."
+	next_btn.disabled = false
+	next_btn.text = "متابعة الحكاية"
+
+func _advance_after_choice() -> void:
+	var target := pending_next_index
+	pending_next_index = -1
+	idx = target - 1
+	_next_segment()
+
+func _on_next_pressed() -> void:
+	if pending_next_index >= 0:
+		_advance_after_choice()
+	else:
+		_next_segment()
 
 func _clear_options() -> void:
 	for c in options_box.get_children():
