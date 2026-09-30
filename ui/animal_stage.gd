@@ -523,16 +523,63 @@ func _make_animal(id: String) -> Node3D:
     return root
 
 func _fit_animal_to_frame(root: Node3D, is_pair: bool) -> void:
-    # Imported GLB/GLTF files can have very different origins and sizes.
-    # Normalize every actor so the full body is visible and centered on Android.
+    # Normalize by height AND footprint. Different GLB models can otherwise
+    # have very different proportions even when their heights match.
+    var bounds := _get_animal_bounds(root)
+    if bounds.size.y <= 0.01:
+        return
+
+    var target := _animal_frame_target(root.name, is_pair)
+    var uniform := target.y / bounds.size.y
+    if bounds.size.x > 0.01:
+        uniform = minf(uniform, target.x / bounds.size.x)
+    if bounds.size.z > 0.01:
+        uniform = minf(uniform, target.z / bounds.size.z)
+
+    root.scale *= Vector3.ONE * uniform
+
+    # Re-center the imported model after scaling. This keeps the animal
+    # grounded and prevents wide/deep models from escaping the cinematic frame.
+    var center_x := bounds.position.x + bounds.size.x * 0.5
+    var center_z := bounds.position.z + bounds.size.z * 0.5
+    root.position += Vector3(
+        -center_x * uniform,
+        -bounds.position.y * uniform,
+        -center_z * uniform
+    )
+
+func _animal_frame_target(id: String, is_pair: bool) -> Vector3:
+    # x = max width, y = target height, z = max depth.
+    if is_pair:
+        match id:
+            "lion": return Vector3(1.45, 1.55, 1.30)
+            "bull": return Vector3(1.55, 1.45, 1.30)
+            "crow": return Vector3(1.25, 1.25, 1.05)
+            "snake": return Vector3(1.55, 1.00, 1.00)
+            "monkey": return Vector3(1.40, 1.45, 1.20)
+            "turtle": return Vector3(1.55, 1.15, 1.35)
+            "hare": return Vector3(1.25, 1.50, 1.10)
+    else:
+        match id:
+            "lion": return Vector3(2.25, 1.90, 1.55)
+            "dove": return Vector3(1.80, 1.55, 1.30)
+            "bull": return Vector3(2.25, 1.80, 1.55)
+            "crow": return Vector3(1.80, 1.55, 1.30)
+            "monkey": return Vector3(2.00, 1.80, 1.45)
+            "turtle": return Vector3(2.20, 1.35, 1.70)
+            "hare": return Vector3(1.80, 1.85, 1.35)
+    return Vector3(1.50, 1.60, 1.25)
+
+func _get_animal_bounds(root: Node3D) -> AABB:
     var bounds := AABB()
     var found := false
     var stack: Array[Node] = [root]
     while not stack.is_empty():
         var node: Node = stack.pop_back()
         if node is MeshInstance3D and node.mesh != null:
-            var local_box := (node as MeshInstance3D).get_aabb()
-            var t: Transform3D = root.global_transform.affine_inverse() * (node as MeshInstance3D).global_transform
+            var mesh_node := node as MeshInstance3D
+            var local_box := mesh_node.get_aabb()
+            var t: Transform3D = root.global_transform.affine_inverse() * mesh_node.global_transform
             for corner in _aabb_corners(local_box):
                 var p := t * corner
                 if not found:
@@ -542,16 +589,36 @@ func _fit_animal_to_frame(root: Node3D, is_pair: bool) -> void:
                     bounds = bounds.expand(p)
         for child in node.get_children():
             stack.append(child)
-    if not found or bounds.size.y <= 0.01:
+    return bounds
+
+func _normalize_animal_materials(root: Node3D, id: String) -> void:
+    # The lion GLB currently renders without its intended warm fur material on
+    # Android. Tint its existing BaseMaterial3D surfaces instead of replacing
+    # the imported model or its animations.
+    if id != "lion":
         return
-    var target_height := 1.65 if is_pair else 1.9
-    var uniform := target_height / bounds.size.y
-    root.scale *= Vector3.ONE * uniform
-    # Re-center relative to the actor's existing story position so pair spacing
-    # is preserved while the full imported model is grounded and visible.
-    var center_x := bounds.position.x + bounds.size.x * 0.5
-    var center_z := bounds.position.z + bounds.size.z * 0.5
-    root.position += Vector3(-center_x * uniform, -bounds.position.y * uniform, -center_z * uniform)
+
+    var stack: Array[Node] = [root]
+    while not stack.is_empty():
+        var node: Node = stack.pop_back()
+        if node is MeshInstance3D:
+            var mesh_node := node as MeshInstance3D
+            var mesh := mesh_node.mesh
+            if mesh != null:
+                for surface in mesh.get_surface_count():
+                    var material := mesh_node.get_active_material(surface) as BaseMaterial3D
+                    if material == null:
+                        material = StandardMaterial3D.new()
+                    else:
+                        material = material.duplicate() as BaseMaterial3D
+
+                    var label := node.name.to_lower()
+                    var dark_mane := label.contains("mane") or label.contains("hair")
+                    material.albedo_color = Color("#6f401f") if dark_mane else Color("#c98b3c")
+                    material.roughness = 0.82
+                    mesh_node.set_surface_override_material(surface, material)
+        for child in node.get_children():
+            stack.append(child)
 
 func _aabb_corners(box: AABB) -> Array[Vector3]:
     var p := box.position
@@ -582,6 +649,7 @@ func _load_real_animal(id: String) -> Node3D:
         var instance := packed.instantiate()
         if instance is Node3D:
             _start_first_animation(instance)
+            _normalize_animal_materials(instance, id)
             return instance
     return null
 
