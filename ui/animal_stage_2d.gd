@@ -11,6 +11,7 @@ const SAFE_BOTTOM := 670.0
 
 var world: Node2D
 var background: Sprite2D
+var forest_background: Sprite2D
 var actors: Node2D
 var lion: Sprite2D
 var bull: Sprite2D
@@ -30,6 +31,7 @@ var transition_fade: ColorRect
 const LION_TEX := preload("res://assets/images/characters/lion_2d.svg")
 const BULL_TEX := preload("res://assets/images/characters/bull_2d.svg")
 const BACKGROUND_TEX := preload("res://assets/images/backgrounds/lion_bull_2d.svg")
+const FOREST_TEX := preload("res://assets/images/backgrounds/lion_bull_forest_2d.svg")
 
 func _ready() -> void:
 	clip_contents = true
@@ -51,6 +53,13 @@ func _build_stage() -> void:
 	background.position = DESIGN_SIZE * 0.5
 	background.centered = true
 	world.add_child(background)
+
+	forest_background = Sprite2D.new()
+	forest_background.name = "ForestBackground"
+	forest_background.texture = FOREST_TEX
+	forest_background.position = DESIGN_SIZE * 0.5
+	forest_background.centered = true
+	world.add_child(forest_background)
 
 	actors = Node2D.new()
 	actors.name = "Actors"
@@ -113,6 +122,10 @@ func show_segment(story_id: String, segment_index: int) -> void:
 	if story_id != "lion_bull":
 		return
 
+	var place := _place_for_segment(segment_index)
+	forest_background.visible = place == "forest"
+	background.visible = place != "forest"
+
 	lion = _add_actor("lion", Vector2(380, 495), 300.0)
 	bull = _add_actor("bull", Vector2(820, 500), 285.0)
 
@@ -145,57 +158,63 @@ func _shot_for_segment(story_id: String, segment_index: int) -> String:
 			return "two_shot"
 		_: return "wide"
 
+func _place_for_segment(segment_index: int) -> String:
+	match segment_index:
+		0, 1, 2, 7, 8, 9, 10, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29:
+			return "forest"
+		3, 4, 5, 6, 11, 12, 13, 14, 15, 16:
+			return "river_meadow"
+		_: return "forest"
+
 func _apply_visibility_and_blocking(segment_index: int) -> void:
 	if lion == null or bull == null:
 		return
 
-	# The actors are always placed inside a generous safe rectangle.
-	# This is intentionally conservative for the bull, whose silhouette is wider.
-	lion.position = Vector2(380, 500)
+	lion.visible = true
+	bull.visible = false
+	lion.position = Vector2(390, 505)
 	bull.position = Vector2(820, 505)
 	lion.rotation = 0.0
 	bull.rotation = 0.0
 
 	match segment_index:
-		8:
-			lion.position = Vector2(545, 505)
+		0, 1, 2, 7, 8, 9, 10:
 			bull.visible = false
-		9:
-			lion.position = Vector2(520, 505)
-			bull.visible = false
-		10:
-			lion.position = Vector2(470, 500)
-			bull.visible = false
-		11:
+			lion.position = Vector2(470, 505) if segment_index >= 7 else Vector2(390, 505)
+		3, 4, 5, 6:
+			lion.visible = false
+			bull.visible = true
+			bull.position = Vector2(805, 515)
+		11, 12, 13, 14, 15, 16:
+			lion.visible = true
+			bull.visible = true
 			lion.position = Vector2(360, 505)
-			bull.position = Vector2(840, 510)
-		12:
-			lion.position = Vector2(390, 500)
-			bull.position = Vector2(805, 510)
-		13, 14, 15, 16:
-			lion.position = Vector2(390, 505)
-			bull.position = Vector2(810, 510)
+			bull.position = Vector2(840, 515)
 		17, 18, 19:
-			lion.position = Vector2(355, 505)
-			bull.position = Vector2(845, 510)
+			lion.visible = true
+			bull.visible = true
+			lion.position = Vector2(350, 505)
+			bull.position = Vector2(850, 515)
 		20, 21, 22:
-			lion.position = Vector2(405, 500)
-			bull.position = Vector2(795, 505)
+			lion.visible = true
+			bull.visible = true
+			lion.position = Vector2(405, 505)
+			bull.position = Vector2(795, 515)
 		23, 24, 25:
-			lion.position = Vector2(315, 510)
-			bull.position = Vector2(885, 515)
+			lion.visible = true
+			bull.visible = true
+			lion.position = Vector2(320, 510)
+			bull.position = Vector2(880, 515)
 		26:
-			lion.position = Vector2(335, 505)
-			bull.position = Vector2(865, 510)
-		27:
-			lion.position = Vector2(395, 505)
-			bull.position = Vector2(805, 510)
-		28:
-			lion.position = Vector2(440, 505)
-			bull.position = Vector2(760, 510)
-		29:
-			lion.position = Vector2(450, 510)
-			bull.position = Vector2(750, 515)
+			lion.visible = true
+			bull.visible = true
+			lion.position = Vector2(340, 505)
+			bull.position = Vector2(860, 515)
+		27, 28, 29:
+			lion.visible = true
+			bull.visible = true
+			lion.position = Vector2(400, 505)
+			bull.position = Vector2(800, 515)
 
 	actor_targets["lion"] = lion.position
 	actor_targets["bull"] = bull.position
@@ -226,7 +245,7 @@ func _configure_shot(shot_type: String) -> void:
 
 func _speaker_position() -> Vector2:
 	var node := actors.get_node_or_null(speaking_actor) as Sprite2D
-	if node:
+	if node and node.visible:
 		return node.position + Vector2(0, -55)
 	return DESIGN_SIZE * 0.5
 
