@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+<defs><linearGradient id="s" x2="0" y2="1"><stop stop-color="#79b7d1"/><stop offset=".6" stop-color="#cfe8bb"/><stop offset="1" stop-color="#b5cf87"/></linearGradient></defs>
+<rect width="1600" height="900" fill="url(#s)"/><circle cx="1320" cy="145" r="75" fill="#ffeaa5"/>
+<path fill="#315d3e" d="M0 500L90 210l90 290 90-330 95 330 110-285 90 285 110-350 105 350 110-310 100 310 95-345 110 345 100-300 95 300 90-350 95 350V900H0z"/>
+<path fill="#47764a" d="M0 555q250-120 500 5t520-5 580-5v345H0z"/>
+<path fill="#6f984f" d="M0 650q300-80 620 5t500-10 480-5v260H0z"/>
+<g fill="#e9cf67"><circle cx="160" cy="690" r="10"/><circle cx="230" cy="750" r="8"/><circle cx="410" cy="680" r="9"/><circle cx="760" cy="735" r="8"/><circle cx="980" cy="670" r="9"/></g>
+<!-- small distant animals/birds for the forest establishing shot -->
+<g fill="#594536"><ellipse cx="1120" cy="610" rx="25" ry="12"/><circle cx="1142" cy="603" r="9"/><path d="M1100 615l-10 30h12l10-28zM1130 615l8 30h12l-8-32z"/></g>
+<g fill="none" stroke="#354b3b" stroke-width="7"><path d="M600 180q25-22 50 0M670 205q25-22 50 0M735 175q25-22 50 0"/></g>
+</svg>
