@@ -22,7 +22,7 @@ var options_box: VBoxContainer
 var next_btn: Button
 var replay_btn: Button
 var audio: AudioStreamPlayer
-var animal_stage: AnimalStage
+var animal_stage: AnimalStage2D
 var pending_next_index := -1
 
 
@@ -50,7 +50,7 @@ func _build_ui() -> void:
 	progress_lbl.size_flags_horizontal = Control.SIZE_SHRINK_END
 	top.add_child(progress_lbl)
 
-	animal_stage = AnimalStage.new()
+	animal_stage = AnimalStage2D.new()
 	animal_stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	animal_stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	box.add_child(animal_stage)
