@@ -108,6 +108,7 @@ func show_segment(story_id: String, segment_index: int) -> void:
         actor.position = Vector3((i - float(actors.size() - 1) / 2.0) * spacing, 0, 0)
         actor.scale = Vector3.ONE * (0.95 if actors.size() > 1 else 1.15)
         _fit_animal_to_frame(actor, actors.size() > 1)
+        actor.set_meta("frame_scale", actor.scale)
         actor_root.add_child(actor)
     actor_root.rotation.y = deg_to_rad(-6.0 + float(segment_index) * 4.0)
     _apply_story_segment_pose(story_id, segment_index)
@@ -142,7 +143,8 @@ func _apply_story_segment_pose(story_id: String, segment_index: int) -> void:
         11:
             if bull:
                 bull.visible = true
-                bull.scale = Vector3.ONE * 0.9
+                var base_scale: Vector3 = bull.get_meta("frame_scale", bull.scale)
+                bull.scale = base_scale * 0.9
             camera.position = Vector3(0.2, 2.0, 6.5)
             camera.look_at(Vector3(0, 1.0, 0))
         12:
@@ -200,11 +202,13 @@ func _animate_story_segment(delta: float) -> void:
     elif active_segment_index == 11:
         var reveal := clampf(p * 1.6, 0.0, 1.0)
         bull.visible = true
-        bull.scale = Vector3.ONE * lerpf(0.9, 1.0, reveal)
+        var base_scale: Vector3 = bull.get_meta("frame_scale", bull.scale)
+        bull.scale = base_scale * lerpf(0.9, 1.0, reveal)
         camera.position = camera.position.lerp(Vector3(0.0, 1.95, 5.7), minf(delta * 1.7, 1.0))
     elif active_segment_index == 12:
         bull.visible = true
-        bull.scale = Vector3.ONE
+        var base_scale: Vector3 = bull.get_meta("frame_scale", bull.scale)
+        bull.scale = base_scale
         lion.position.x = lerpf(lion.position.x, -0.9, minf(delta * 1.2, 1.0))
         camera.position = camera.position.lerp(Vector3(0.0, 2.0, 5.2), minf(delta * 1.6, 1.0))
 
