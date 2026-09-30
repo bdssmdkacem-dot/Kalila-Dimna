@@ -38,7 +38,7 @@
     {
       "text": "وفي يومٍ من الأيام، وصل ثورٌ اسمه سانجيفاكا إلى الغابة، بعد رحلةٍ طويلة.",
       "scene": {
-        "place": "river_meadow",
+        "place": "forest",
         "actors": [
           "bull"
         ],
@@ -49,7 +49,7 @@
       "text": "لقد تعبت كثيرًا من السفر. أحتاج إلى مكانٍ هادئ أستريح فيه.",
       "speaker": "bull",
       "scene": {
-        "place": "river_meadow",
+        "place": "forest",
         "actors": [
           "bull"
         ],
