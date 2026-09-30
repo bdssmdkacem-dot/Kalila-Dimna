@@ -15,6 +15,7 @@ var text_done := false
 var tween: Tween
 
 var progress_lbl: Label
+var speaker_lbl: Label
 var text_lbl: Label
 var feedback_lbl: Label
 var options_box: VBoxContainer
@@ -54,13 +55,25 @@ func _build_ui() -> void:
 	box.add_child(animal_stage)
 
 	var card := PanelContainer.new()
-	card.custom_minimum_size = Vector2(0, 180)
+	card.custom_minimum_size = Vector2(0, 205)
 	card.size_flags_vertical = Control.SIZE_SHRINK_END
 	card.gui_input.connect(_on_card_input)
+	card.add_theme_stylebox_override("panel", _story_bubble_style())
 	box.add_child(card)
+
+	var speech := VBoxContainer.new()
+	speech.add_theme_constant_override("separation", 6)
+	card.add_child(speech)
+
+	speaker_lbl = UI.label("", 34, UI.C_GREEN)
+	speaker_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	speech.add_child(speaker_lbl)
+
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	card.add_child(scroll)
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	speech.add_child(scroll)
+
 	text_lbl = UI.label("", 44)
 	text_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	text_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -92,6 +105,33 @@ func _build_ui() -> void:
 	add_child(audio)
 
 
+
+func _speaker_for_segment(story_id: String, i: int) -> String:
+	if story_id == "lion_bull":
+		match i:
+			2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28:
+				return "🦁 بينغالاكا"
+			3, 5, 7, 11, 13, 15, 17, 19, 21, 27:
+				return "🐂 سانجيفاكا"
+			_:
+				return "📖 الراوي"
+	return "📖 الراوي"
+
+func _story_bubble_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color("#fffaf0")
+	style.border_color = Color("#d7b15a")
+	style.set_border_width_all(3)
+	style.corner_radius_top_left = 28
+	style.corner_radius_top_right = 28
+	style.corner_radius_bottom_left = 28
+	style.corner_radius_bottom_right = 28
+	style.content_margin_left = 24
+	style.content_margin_right = 24
+	style.content_margin_top = 12
+	style.content_margin_bottom = 12
+	return style
+
 func _load_voice(i: int) -> AudioStream:
 	# Prefer OGG for packaged voice assets, but accept MP3 recordings directly.
 	var ogg_path := "%s%s_%02d.ogg" % [VOICE_DIR, story.id, i + 1]
@@ -112,6 +152,7 @@ func _next_segment() -> void:
 	var seg: Dictionary = segments[idx]
 	progress_lbl.text = "%d / %d" % [idx + 1, segments.size()]
 	animal_stage.show_segment(story.id, idx)
+	speaker_lbl.text = _speaker_for_segment(story.id, idx)
 	text_lbl.text = seg.text
 	text_lbl.visible_ratio = 0.0
 	feedback_lbl.text = ""
