@@ -102,9 +102,9 @@ func show_segment(story_id: String, segment_index: int) -> void:
     var spacing := 1.9 if actors.size() > 1 else 0.0
     for i in actors.size():
         var actor := _make_animal(actors[i])
-        _fit_animal_to_frame(actor, actors.size() > 1)
         actor.position = Vector3((i - float(actors.size() - 1) / 2.0) * spacing, 0, 0)
         actor.scale = Vector3.ONE * (0.95 if actors.size() > 1 else 1.15)
+        _fit_animal_to_frame(actor, actors.size() > 1)
         actor_root.add_child(actor)
     actor_root.rotation.y = deg_to_rad(-6.0 + float(segment_index) * 4.0)
     _apply_story_segment_pose(story_id, segment_index)
@@ -503,10 +503,11 @@ func _fit_animal_to_frame(root: Node3D, is_pair: bool) -> void:
     var target_height := 1.65 if is_pair else 1.9
     var uniform := target_height / bounds.size.y
     root.scale *= Vector3.ONE * uniform
-    # Re-center after scaling so feet sit on the stage and no model is clipped.
+    # Re-center relative to the actor's existing story position so pair spacing
+    # is preserved while the full imported model is grounded and visible.
     var center_x := bounds.position.x + bounds.size.x * 0.5
     var center_z := bounds.position.z + bounds.size.z * 0.5
-    root.position = Vector3(-center_x * uniform, -bounds.position.y * uniform, -center_z * uniform)
+    root.position += Vector3(-center_x * uniform, -bounds.position.y * uniform, -center_z * uniform)
 
 func _aabb_corners(box: AABB) -> Array[Vector3]:
     var p := box.position
