@@ -21,6 +21,7 @@ var speaking_actor := ""
 var segment_time := 0.0
 var segment_duration := 3.0
 var shot := "wide"
+var scene_data: Dictionary = {}
 var base_world_scale := 1.0
 var target_world_scale := 1.0
 var target_world_position := Vector2.ZERO
@@ -109,11 +110,12 @@ func _add_actor(id: String, position: Vector2, height: float) -> Sprite2D:
 	actor_targets[id] = position
 	return sprite
 
-func show_segment(story_id: String, segment_index: int) -> void:
+func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -> void:
 	active_story_id = story_id
 	active_segment_index = segment_index
+	scene_data = data
 	segment_time = 0.0
-	shot = _shot_for_segment(story_id, segment_index)
+	shot = String(data.get("shot", _shot_for_segment(story_id, segment_index)))
 
 	if transition_fade:
 		transition_fade.color.a = 1.0
@@ -122,7 +124,7 @@ func show_segment(story_id: String, segment_index: int) -> void:
 	if story_id != "lion_bull":
 		return
 
-	var place := _place_for_segment(segment_index)
+	var place := String(scene_data.get("place", _place_for_segment(segment_index)))
 	forest_background.visible = place == "forest"
 	background.visible = place != "forest"
 
@@ -170,51 +172,61 @@ func _apply_visibility_and_blocking(segment_index: int) -> void:
 	if lion == null or bull == null:
 		return
 
-	lion.visible = true
+	lion.visible = false
 	bull.visible = false
-	lion.position = Vector2(390, 505)
-	bull.position = Vector2(820, 505)
+	lion.position = Vector2(420, 505)
+	bull.position = Vector2(930, 515)
 	lion.rotation = 0.0
 	bull.rotation = 0.0
 
+	var actors_data: Array = scene_data.get("actors", [])
+	for actor_id in actors_data:
+		if actor_id == "lion":
+			lion.visible = true
+		if actor_id == "bull":
+			bull.visible = true
+
+	# Bull's meadow/water scenes are deliberately positioned toward the river.
+	# Later conversation scenes use a wide two-shot, never a cropped bull.
+	if bull.visible:
+		bull.position = Vector2(930, 515)
+	if lion.visible:
+		lion.position = Vector2(420, 505)
+
 	match segment_index:
-		0, 1, 2, 7, 8, 9, 10:
-			bull.visible = false
-			lion.position = Vector2(470, 505) if segment_index >= 7 else Vector2(390, 505)
-		3, 4, 5, 6:
-			lion.visible = false
-			bull.visible = true
-			bull.position = Vector2(805, 515)
+		7, 8, 9, 10:
+			if lion.visible:
+				lion.position = Vector2(470, 505)
 		11, 12, 13, 14, 15, 16:
-			lion.visible = true
-			bull.visible = true
-			lion.position = Vector2(360, 505)
-			bull.position = Vector2(840, 515)
+			if lion.visible:
+				lion.position = Vector2(365, 505)
+			if bull.visible:
+				bull.position = Vector2(930, 515)
 		17, 18, 19:
-			lion.visible = true
-			bull.visible = true
-			lion.position = Vector2(350, 505)
-			bull.position = Vector2(850, 515)
+			if lion.visible:
+				lion.position = Vector2(350, 505)
+			if bull.visible:
+				bull.position = Vector2(850, 515)
 		20, 21, 22:
-			lion.visible = true
-			bull.visible = true
-			lion.position = Vector2(405, 505)
-			bull.position = Vector2(795, 515)
+			if lion.visible:
+				lion.position = Vector2(405, 505)
+			if bull.visible:
+				bull.position = Vector2(795, 515)
 		23, 24, 25:
-			lion.visible = true
-			bull.visible = true
-			lion.position = Vector2(320, 510)
-			bull.position = Vector2(880, 515)
+			if lion.visible:
+				lion.position = Vector2(320, 510)
+			if bull.visible:
+				bull.position = Vector2(880, 515)
 		26:
-			lion.visible = true
-			bull.visible = true
-			lion.position = Vector2(340, 505)
-			bull.position = Vector2(860, 515)
+			if lion.visible:
+				lion.position = Vector2(340, 505)
+			if bull.visible:
+				bull.position = Vector2(860, 515)
 		27, 28, 29:
-			lion.visible = true
-			bull.visible = true
-			lion.position = Vector2(400, 505)
-			bull.position = Vector2(800, 515)
+			if lion.visible:
+				lion.position = Vector2(400, 505)
+			if bull.visible:
+				bull.position = Vector2(800, 515)
 
 	actor_targets["lion"] = lion.position
 	actor_targets["bull"] = bull.position
