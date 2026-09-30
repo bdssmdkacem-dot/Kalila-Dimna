@@ -291,7 +291,14 @@ func _animate_story_segment(delta: float) -> void:
             var pulse := 1.0 + sin(segment_time * 7.0) * 0.018
             var base_scale: Vector3 = speaker.get_meta("frame_scale", speaker.scale)
             speaker.scale = base_scale * pulse
-    camera.look_at(Vector3(0, 1.0, 0))
+    if speaking_actor != "":
+        var focus_actor := actor_root.get_node_or_null(speaking_actor) as Node3D
+        if focus_actor:
+            camera.look_at(focus_actor.global_position + Vector3(0, 0.95, 0))
+        else:
+            camera.look_at(Vector3(0, 1.0, 0))
+    else:
+        camera.look_at(Vector3(0, 1.0, 0))
 func _clear_environment() -> void:
     if environment_root == null:
         return
