@@ -168,7 +168,7 @@ func _next_segment() -> void:
 		return
 	var seg: Dictionary = segments[idx]
 	progress_lbl.text = "%d / %d" % [idx + 1, segments.size()]
-	animal_stage.show_segment(story.id, idx)
+	animal_stage.show_segment(story.id, idx, seg.get("scene", {}))
 	var segment_speaker := String(seg.get("speaker", ""))
 	animal_stage.set_speaker(segment_speaker)
 	speaker_lbl.text = _speaker_for_segment(story.id, idx)
