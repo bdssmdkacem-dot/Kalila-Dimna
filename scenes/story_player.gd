@@ -93,9 +93,14 @@ func _build_ui() -> void:
 
 
 func _load_voice(i: int) -> AudioStream:
-	var path := "%s%s_%02d.ogg" % [VOICE_DIR, story.id, i + 1]
-	if ResourceLoader.exists(path):
-		return load(path) as AudioStream
+	# Prefer OGG for packaged voice assets, but accept MP3 recordings directly.
+	var ogg_path := "%s%s_%02d.ogg" % [VOICE_DIR, story.id, i + 1]
+	var mp3_path := "%s%s_%02d.mp3" % [VOICE_DIR, story.id, i + 1]
+	for path in [ogg_path, mp3_path]:
+		if ResourceLoader.exists(path):
+			var stream := load(path) as AudioStream
+			if stream:
+				return stream
 	return null
 
 
