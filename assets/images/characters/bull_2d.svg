@@ -1,15 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 500">
-<g stroke="#3e2a1d" stroke-width="10" stroke-linejoin="round">
-<path fill="#865a3a" d="M92 265c-36 70-25 139 28 176 48 34 192 34 240 0 53-37 64-106 28-176l-44-38H136z"/>
-<ellipse fill="#9d704d" cx="240" cy="215" rx="130" ry="106"/>
-<ellipse fill="#d1a27b" cx="240" cy="250" rx="76" ry="48"/>
-<circle fill="#2b2018" cx="192" cy="205" r="11"/>
-<circle fill="#2b2018" cx="288" cy="205" r="11"/>
-<path fill="none" d="M220 250q20 13 40 0"/>
-<path fill="#e6d3a6" d="M137 142Q72 86 47 116q-23 29 23 69l75 14z"/>
-<path fill="#e6d3a6" d="M343 142q65-56 90-26 23 29-23 69l-75 14z"/>
-<path fill="#73482f" d="M126 316q-37 64-8 119 15 28 49 18l7-102z"/>
-<path fill="#73482f" d="M354 316q37 64 8 119-15 28-49 18l-7-102z"/>
-<path fill="#73482f" d="M175 330q-30 69-2 116 18 28 48 12l6-104z"/>
-<path fill="#73482f" d="M305 330q30 69 2 116-18 28-48 12l-6-104z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 560">
+<defs><linearGradient id="coat" x2="0" y2="1"><stop stop-color="#b27a50"/><stop offset="1" stop-color="#70462e"/></linearGradient></defs>
+<g stroke="#38271e" stroke-width="10" stroke-linejoin="round">
+<path fill="url(#coat)" d="M85 285q-20 110 55 180 75 70 300 35 120-22 92-215l-60-70H145z"/>
+<ellipse fill="#a8754f" cx="300" cy="225" rx="165" ry="120"/>
+<ellipse fill="#d4a77c" cx="300" cy="270" rx="95" ry="57"/>
+<ellipse fill="#38271e" cx="235" cy="215" rx="14" ry="19"/><ellipse fill="#38271e" cx="365" cy="215" rx="14" ry="19"/>
+<circle fill="#fff3d5" cx="232" cy="209" r="4"/><circle fill="#fff3d5" cx="362" cy="209" r="4"/>
+<path fill="none" d="M270 275q30 18 60 0"/>
+<path fill="#f1ddb1" d="M175 155Q80 75 50 115q-25 35 35 90l100 18z"/><path fill="#f1ddb1" d="M425 155q95-80 125-40 25 35-35 90l-100 18z"/>
+<path fill="#62402c" d="M125 330q-45 85-5 170 18 35 63 18l8-135z"/><path fill="#62402c" d="M475 330q45 85 5 170-18 35-63 18l-8-135z"/>
+<path fill="#62402c" d="M220 355q-35 90 5 155 18 28 55 3l8-130z"/><path fill="#62402c" d="M380 355q35 90-5 155-18 28-55 3l-8-130z"/>
 </g></svg>
