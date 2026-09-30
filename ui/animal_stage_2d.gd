@@ -93,8 +93,9 @@ func _build_visual_overlays() -> void:
 	add_child(vignette)
 
 	# Keep overlays behind the transition layer but above the illustrated world.
-	move_child(scene_glow, get_child_count() - 2)
+	move_child(scene_glow, get_child_count() - 3)
 	move_child(vignette, get_child_count() - 2)
+	move_child(transition_fade, get_child_count() - 1)
 
 
 func _rescale_to_control() -> void:
