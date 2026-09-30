@@ -20,6 +20,7 @@ var segment_duration := 3.0
 var active_story_id := ""
 var active_segment_index := -1
 var transition_fade: ColorRect
+var stage_environment: Environment
 
 func _ready() -> void:
     custom_minimum_size = Vector2(0, 0)
@@ -55,6 +56,7 @@ func _build_stage() -> void:
     environment.ambient_light_color = Color("#fff8e8")
     environment.ambient_light_energy = 0.8
     env.environment = environment
+    stage_environment = environment
     world_root.add_child(env)
 
     var key := DirectionalLight3D.new()
@@ -72,6 +74,7 @@ func _build_stage() -> void:
     var ground := MeshInstance3D.new()
     var ground_mesh := PlaneMesh.new()
     ground_mesh.size = Vector2(12, 6)
+    ground.name = "story_ground"
     ground.mesh = ground_mesh
     ground.material_override = _mat(Color("#d6c29b"))
     ground.rotation_degrees.x = -90
@@ -305,7 +308,48 @@ func _build_story_environment(story_id: String, segment_index: int) -> void:
         _:
             _make_meadow_environment(2, 1, true)
 
+    _apply_story_visual_style(story_id)
     environment_root.rotation.y = deg_to_rad(float(segment_index) * 1.5)
+
+func _apply_story_visual_style(story_id: String) -> void:
+    if stage_environment == null:
+        return
+    var bg := Color("#f3ead8")
+    var ambient := Color("#fff8e8")
+    var ground_color := Color("#d6c29b")
+    var ambient_energy := 0.8
+    match story_id:
+        "lion_bull":
+            bg = Color("#b9d9c0")
+            ambient = Color("#fff2d5")
+            ground_color = Color("#7fa35f")
+            ambient_energy = 0.9
+        "crow_snake":
+            bg = Color("#31483f")
+            ambient = Color("#d8e3d6")
+            ground_color = Color("#53604d")
+            ambient_energy = 0.65
+        "monkey_turtle":
+            bg = Color("#a9d5d3")
+            ambient = Color("#e7f5e8")
+            ground_color = Color("#789b67")
+            ambient_energy = 0.95
+        "dove_ring":
+            bg = Color("#c9d9c0")
+            ambient = Color("#fff6df")
+            ground_color = Color("#91aa68")
+            ambient_energy = 1.0
+        "lion_hare":
+            bg = Color("#c5d8b0")
+            ambient = Color("#fff0d0")
+            ground_color = Color("#8ca566")
+            ambient_energy = 0.9
+    stage_environment.background_color = bg
+    stage_environment.ambient_light_color = ambient
+    stage_environment.ambient_light_energy = ambient_energy
+    var ground := world_root.get_node_or_null("story_ground") as MeshInstance3D
+    if ground:
+        ground.material_override = _mat(ground_color)
 
 
 func _make_meadow_environment(tree_count: int, rock_count: int, flowers: bool) -> void:
