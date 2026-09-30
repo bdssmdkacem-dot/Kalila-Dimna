@@ -117,6 +117,13 @@ func show_segment(story_id: String, segment_index: int) -> void:
         var fade_tween := create_tween()
         fade_tween.tween_property(transition_fade, "color:a", 0.0, 0.38)
 
+func set_speaker(actor_id: String) -> void:
+    speaking_actor = actor_id
+    if actor_root == null:
+        return
+    if speaking_actor != "" and actor_root.get_node_or_null(speaking_actor) == null:
+        speaking_actor = ""
+
 func start_cinematic(segment_index: int, duration: float) -> void:
     active_segment_index = segment_index
     segment_time = 0.0
@@ -294,6 +301,15 @@ func _animate_story_segment(delta: float) -> void:
     if speaking_actor != "":
         var focus_actor := actor_root.get_node_or_null(speaking_actor) as Node3D
         if focus_actor:
+            # Pull the camera slightly toward the speaker while keeping both
+            # characters readable in the shared story frame.
+            var focus_x := clampf(focus_actor.global_position.x * 0.34, -0.9, 0.9)
+            var focus_y := 2.05
+            var focus_z := 5.35
+            camera.position = camera.position.lerp(
+                Vector3(focus_x, focus_y, focus_z),
+                minf(delta * 1.8, 1.0)
+            )
             camera.look_at(focus_actor.global_position + Vector3(0, 0.95, 0))
         else:
             camera.look_at(Vector3(0, 1.0, 0))
