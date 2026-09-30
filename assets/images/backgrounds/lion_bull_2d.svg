@@ -1,27 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
 <defs>
-<linearGradient id="sky" x2="0" y2="1"><stop stop-color="#78b8d5"/><stop offset=".55" stop-color="#d8edc0"/><stop offset="1" stop-color="#f3d49a"/></linearGradient>
-<linearGradient id="grass" x2="0" y2="1"><stop stop-color="#83b965"/><stop offset="1" stop-color="#477341"/></linearGradient>
-<linearGradient id="water" x2="0" y2="1"><stop stop-color="#4fabc2"/><stop offset="1" stop-color="#257b98"/></linearGradient>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#7BC5D0"/><stop offset=".55" stop-color="#D9E9B2"/><stop offset="1" stop-color="#B3D27B"/></linearGradient>
+ <linearGradient id="meadow" x2="0" y2="1"><stop stop-color="#72A951"/><stop offset="1" stop-color="#24573B"/></linearGradient>
+ <linearGradient id="water" x2="0" y2="1"><stop stop-color="#75C8D3"/><stop offset="1" stop-color="#287E92"/></linearGradient>
+ <radialGradient id="sun"><stop stop-color="#FFF4A6" stop-opacity=".9"/><stop offset="1" stop-color="#FFF4A6" stop-opacity="0"/></radialGradient>
+ <filter id="soft"><feGaussianBlur stdDeviation="14"/></filter>
 </defs>
-<rect width="1600" height="900" fill="url(#sky)"/>
-<circle cx="1320" cy="145" r="78" fill="#fff0ae" opacity=".85"/>
-<!-- distant forest -->
-<path fill="#4c794c" d="M0 410Q80 320 150 410T300 395T450 415T600 380T760 410T920 390T1080 420T1240 385T1400 410T1600 370V650H0z"/>
-<g fill="#315f42" opacity=".92">
-<path d="M70 480L150 210l80 270z"/><circle cx="150" cy="220" r="105"/>
-<path d="M320 500L390 245l72 255z"/><circle cx="390" cy="250" r="92"/>
-<path d="M1280 500l70-270 80 270z"/><circle cx="1350" cy="240" r="105"/>
-<path d="M1480 500l55-240 65 240z"/><circle cx="1535" cy="250" r="92"/>
-</g>
+<rect width="1200" height="760" fill="url(#sky)"/>
+<circle cx="910" cy="115" r="220" fill="url(#sun)"/>
+<!-- distant hills -->
+<path d="M0 365 Q170 245 330 340 Q490 230 650 345 Q810 230 970 340 Q1080 270 1200 345 L1200 470 L0 470Z" fill="#6F9E6C" opacity=".7"/>
+<!-- distant tree line -->
+<path d="M0 340 Q80 260 145 340 Q220 245 295 340 Q370 260 450 340 Q530 245 610 340 Q700 255 785 340 Q870 250 950 340 Q1040 260 1120 340 Q1160 290 1200 340 L1200 465 L0 465Z" fill="#376B49"/>
 <!-- meadow -->
-<path fill="url(#grass)" d="M0 500Q300 440 580 525T1100 505T1600 480V900H0z"/>
+<path d="M0 390 Q250 350 460 420 Q700 340 910 420 Q1080 350 1200 410 L1200 760 L0 760Z" fill="url(#meadow)"/>
 <!-- river -->
-<path fill="url(#water)" d="M1080 900C960 780 990 690 1120 625C1240 565 1260 500 1160 420C1290 490 1380 565 1320 660C1260 760 1390 820 1460 900z"/>
-<path fill="none" stroke="#a8e5e7" stroke-width="12" opacity=".7" d="M1120 665q80-35 155 0M1080 735q100-38 205 2M1180 815q90-30 170 2"/>
-<!-- meadow flowers -->
-<g fill="#f6d76a"><circle cx="210" cy="700" r="10"/><circle cx="270" cy="760" r="8"/><circle cx="420" cy="680" r="9"/><circle cx="620" cy="760" r="10"/><circle cx="800" cy="690" r="8"/></g>
-<g fill="#e9a8b9"><circle cx="350" cy="730" r="7"/><circle cx="690" cy="650" r="8"/><circle cx="900" cy="750" r="7"/></g>
-<!-- reeds near river -->
-<g stroke="#3e7045" stroke-width="8"><path d="M1030 650l-15-90M1050 660l20-100M1080 650l5-120M1320 670l-10-100M1350 680l25-110"/></g>
+<path d="M770 760 Q680 680 720 600 Q760 520 700 460 Q650 420 730 385 Q820 350 905 410 Q830 475 850 535 Q875 610 835 760Z" fill="url(#water)"/>
+<path d="M770 730 Q735 665 770 612 M798 570 Q770 505 790 462 M748 425 Q785 402 822 410" fill="none" stroke="#B6EFF0" stroke-width="12" opacity=".6"/>
+<path d="M725 640 q55-20 110 0 M742 690 q48-18 96 0" fill="none" stroke="#D9FFFF" stroke-width="7" opacity=".5"/>
+<!-- bank stones -->
+<g fill="#9C8B68"><ellipse cx="695" cy="530" rx="28" ry="12"/><ellipse cx="850" cy="485" rx="32" ry="14"/><ellipse cx="690" cy="620" rx="30" ry="13"/></g>
+<!-- foreground grasses -->
+<g stroke="#A4D36A" stroke-width="7" stroke-linecap="round" opacity=".8">
+<path d="M90 760 q-5-95 25-150 M120 760 q30-110 70-150 M190 760 q-5-120 25-185 M1030 760 q-5-110-35-165 M1080 760 q20-105 55-150 M1140 760 q0-90 35-135"/>
+</g>
+<!-- reeds -->
+<g stroke="#4C7B43" stroke-width="8"><path d="M665 560 l-30-80 M675 560 l10-95 M685 560 l38-78 M875 515 l-20-75 M880 515 l18-90"/></g>
+<!-- flowers -->
+<g fill="#F5D77A"><circle cx="270" cy="620" r="8"/><circle cx="320" cy="680" r="7"/><circle cx="1000" cy="600" r="7"/><circle cx="1080" cy="650" r="8"/></g>
+<g fill="#E79BA4"><circle cx="360" cy="590" r="6"/><circle cx="950" cy="690" r="6"/></g>
+<!-- birds -->
+<path d="M550 180 q18-16 36 0 q18-16 36 0" fill="none" stroke="#29534A" stroke-width="6" stroke-linecap="round"/>
+<path d="M680 240 q13-11 26 0 q13-11 26 0" fill="none" stroke="#29534A" stroke-width="5" stroke-linecap="round"/>
+<!-- cinematic haze -->
+<rect y="300" width="1200" height="190" fill="#F1F4D2" opacity=".14" filter="url(#soft)"/>
 </svg>
