@@ -1,11 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
-<defs><linearGradient id="s" x2="0" y2="1"><stop stop-color="#79b7d1"/><stop offset=".6" stop-color="#cfe8bb"/><stop offset="1" stop-color="#b5cf87"/></linearGradient></defs>
-<rect width="1600" height="900" fill="url(#s)"/><circle cx="1320" cy="145" r="75" fill="#ffeaa5"/>
-<path fill="#315d3e" d="M0 500L90 210l90 290 90-330 95 330 110-285 90 285 110-350 105 350 110-310 100 310 95-345 110 345 100-300 95 300 90-350 95 350V900H0z"/>
-<path fill="#47764a" d="M0 555q250-120 500 5t520-5 580-5v345H0z"/>
-<path fill="#6f984f" d="M0 650q300-80 620 5t500-10 480-5v260H0z"/>
-<g fill="#e9cf67"><circle cx="160" cy="690" r="10"/><circle cx="230" cy="750" r="8"/><circle cx="410" cy="680" r="9"/><circle cx="760" cy="735" r="8"/><circle cx="980" cy="670" r="9"/></g>
-<!-- small distant animals/birds for the forest establishing shot -->
-<g fill="#594536"><ellipse cx="1120" cy="610" rx="25" ry="12"/><circle cx="1142" cy="603" r="9"/><path d="M1100 615l-10 30h12l10-28zM1130 615l8 30h12l-8-32z"/></g>
-<g fill="none" stroke="#354b3b" stroke-width="7"><path d="M600 180q25-22 50 0M670 205q25-22 50 0M735 175q25-22 50 0"/></g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#8BC9D0"/><stop offset=".55" stop-color="#DDE8B0"/><stop offset="1" stop-color="#A5C879"/></linearGradient>
+ <linearGradient id="ground" x2="0" y2="1"><stop stop-color="#5D984F"/><stop offset="1" stop-color="#1E5137"/></linearGradient>
+ <linearGradient id="trunk" x2="1" y2="0"><stop stop-color="#4A2D20"/><stop offset=".5" stop-color="#70452A"/><stop offset="1" stop-color="#352118"/></linearGradient>
+ <radialGradient id="sun"><stop stop-color="#FFF5B0" stop-opacity=".85"/><stop offset="1" stop-color="#FFF5B0" stop-opacity="0"/></radialGradient>
+ <filter id="blur"><feGaussianBlur stdDeviation="18"/></filter>
+</defs>
+<rect width="1200" height="760" fill="url(#sky)"/>
+<circle cx="850" cy="120" r="210" fill="url(#sun)"/>
+<!-- distant mountains -->
+<path d="M0 300 L160 165 L280 280 L420 130 L570 285 L735 155 L910 295 L1040 180 L1200 310 L1200 420 L0 420Z" fill="#6E9C79" opacity=".48"/>
+<!-- distant forest -->
+<path d="M0 250 Q70 190 130 250 Q190 165 260 250 Q335 170 410 255 Q490 160 565 250 Q650 180 730 255 Q810 165 890 250 Q980 170 1050 250 Q1120 185 1200 255 L1200 470 L0 470Z" fill="#315E46"/>
+<!-- mid trees -->
+<g opacity=".95">
+ <path d="M0 470 L0 165 Q55 90 105 165 L125 470Z" fill="url(#trunk)"/><path d="M35 225 Q70 130 125 185 Q93 100 151 145 Q123 245 35 270Z" fill="#2B6B43"/>
+ <path d="M1040 470 L1060 145 Q1115 60 1170 145 L1200 470Z" fill="url(#trunk)"/><path d="M1010 220 Q1065 120 1120 170 Q1095 85 1165 125 Q1185 240 1010 275Z" fill="#2E7445"/>
+</g>
+<!-- ground -->
+<path d="M0 405 Q210 360 390 425 Q590 365 800 420 Q1010 360 1200 420 L1200 760 L0 760Z" fill="url(#ground)"/>
+<!-- winding path -->
+<path d="M530 760 Q590 650 545 565 Q515 510 610 455 Q680 420 730 400 L845 400 Q760 450 688 492 Q616 536 650 602 Q705 685 675 760Z" fill="#B99B65" opacity=".68"/>
+<!-- foreground trunks -->
+<path d="M80 760 Q95 565 125 405 Q140 340 185 315 Q215 350 194 405 Q155 540 168 760Z" fill="#4A2C1E"/>
+<path d="M1085 760 Q1100 570 1065 430 Q1050 365 1090 325 Q1140 365 1134 430 Q1105 575 1160 760Z" fill="#3B251B"/>
+<!-- foliage clusters -->
+<g fill="#347A48"><circle cx="110" cy="250" r="78"/><circle cx="180" cy="210" r="92"/><circle cx="270" cy="250" r="72"/><circle cx="1010" cy="250" r="82"/><circle cx="1090" cy="205" r="100"/></g>
+<g fill="#5B9B52" opacity=".7"><circle cx="210" cy="330" r="45"/><circle cx="300" cy="315" r="60"/><circle cx="940" cy="330" r="55"/><circle cx="1000" cy="310" r="45"/></g>
+<!-- flowers -->
+<g fill="#F4D77D"><circle cx="310" cy="610" r="7"/><circle cx="340" cy="585" r="6"/><circle cx="875" cy="600" r="7"/><circle cx="910" cy="575" r="6"/></g>
+<g fill="#E89AA0"><circle cx="380" cy="655" r="6"/><circle cx="830" cy="650" r="6"/><circle cx="970" cy="690" r="6"/></g>
+<!-- birds -->
+<path d="M780 190 q18-15 36 0 q18-15 36 0" fill="none" stroke="#244B43" stroke-width="6" stroke-linecap="round"/>
+<path d="M650 245 q13-11 26 0 q13-11 26 0" fill="none" stroke="#244B43" stroke-width="5" stroke-linecap="round"/>
+<!-- atmospheric haze -->
+<rect y="320" width="1200" height="160" fill="#E8F1D0" opacity=".13" filter="url(#blur)"/>
 </svg>
