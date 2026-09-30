@@ -1,9 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760">
-<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#9ed6e8"/><stop offset="1" stop-color="#e9f3c8"/></linearGradient><linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8fbd68"/><stop offset="1" stop-color="#547a43"/></linearGradient></defs>
-<rect width="1200" height="760" fill="url(#sky)"/>
-<circle cx="1020" cy="120" r="70" fill="#ffe9a6" opacity=".9"/>
-<path fill="#6e9b5b" d="M0 430Q180 330 350 430T700 420T1200 400V760H0z"/>
-<path fill="url(#ground)" d="M0 500Q260 430 500 510T1200 480V760H0z"/>
-<g fill="#4c7d4a"><path d="M80 480l35-190 35 190z"/><circle cx="115" cy="285" r="58"/><path d="M1080 470l30-210 34 210z"/><circle cx="1110" cy="265" r="62"/><path d="M900 475l26-170 30 170z"/><circle cx="926" cy="300" r="52"/></g>
-<g fill="#e7c95b"><circle cx="180" cy="610" r="9"/><circle cx="230" cy="650" r="8"/><circle cx="1020" cy="610" r="9"/><circle cx="970" cy="650" r="8"/></g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+<defs>
+<linearGradient id="sky" x2="0" y2="1"><stop stop-color="#78b8d5"/><stop offset=".55" stop-color="#d8edc0"/><stop offset="1" stop-color="#f3d49a"/></linearGradient>
+<linearGradient id="grass" x2="0" y2="1"><stop stop-color="#83b965"/><stop offset="1" stop-color="#477341"/></linearGradient>
+<linearGradient id="water" x2="0" y2="1"><stop stop-color="#4fabc2"/><stop offset="1" stop-color="#257b98"/></linearGradient>
+</defs>
+<rect width="1600" height="900" fill="url(#sky)"/>
+<circle cx="1320" cy="145" r="78" fill="#fff0ae" opacity=".85"/>
+<!-- distant forest -->
+<path fill="#4c794c" d="M0 410Q80 320 150 410T300 395T450 415T600 380T760 410T920 390T1080 420T1240 385T1400 410T1600 370V650H0z"/>
+<g fill="#315f42" opacity=".92">
+<path d="M70 480L150 210l80 270z"/><circle cx="150" cy="220" r="105"/>
+<path d="M320 500L390 245l72 255z"/><circle cx="390" cy="250" r="92"/>
+<path d="M1280 500l70-270 80 270z"/><circle cx="1350" cy="240" r="105"/>
+<path d="M1480 500l55-240 65 240z"/><circle cx="1535" cy="250" r="92"/>
+</g>
+<!-- meadow -->
+<path fill="url(#grass)" d="M0 500Q300 440 580 525T1100 505T1600 480V900H0z"/>
+<!-- river -->
+<path fill="url(#water)" d="M1080 900C960 780 990 690 1120 625C1240 565 1260 500 1160 420C1290 490 1380 565 1320 660C1260 760 1390 820 1460 900z"/>
+<path fill="none" stroke="#a8e5e7" stroke-width="12" opacity=".7" d="M1120 665q80-35 155 0M1080 735q100-38 205 2M1180 815q90-30 170 2"/>
+<!-- meadow flowers -->
+<g fill="#f6d76a"><circle cx="210" cy="700" r="10"/><circle cx="270" cy="760" r="8"/><circle cx="420" cy="680" r="9"/><circle cx="620" cy="760" r="10"/><circle cx="800" cy="690" r="8"/></g>
+<g fill="#e9a8b9"><circle cx="350" cy="730" r="7"/><circle cx="690" cy="650" r="8"/><circle cx="900" cy="750" r="7"/></g>
+<!-- reeds near river -->
+<g stroke="#3e7045" stroke-width="8"><path d="M1030 650l-15-90M1050 660l20-100M1080 650l5-120M1320 670l-10-100M1350 680l25-110"/></g>
 </svg>
