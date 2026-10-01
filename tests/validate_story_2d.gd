@@ -28,3 +28,29 @@ func _init() -> void:
 
     print("2D lion/bull story validation passed")
     quit(0)
+
+
+func _validate_all_story_scene_metadata() -> void:
+	var story_paths := [
+		"res://data/stories/01_lion_bull.json",
+		"res://data/stories/02_crow_snake.json",
+		"res://data/stories/03_monkey_turtle.json",
+		"res://data/stories/04_dove_ring.json",
+		"res://data/stories/05_lion_hare.json"
+	]
+	for path in story_paths:
+		var f := FileAccess.open(path, FileAccess.READ)
+		if f == null:
+			push_error("Missing story: " + path)
+			continue
+		var data = JSON.parse_string(f.get_as_text())
+		if typeof(data) != TYPE_DICTIONARY:
+			push_error("Invalid story JSON: " + path)
+			continue
+		for i in range(data.get("segments", []).size()):
+			var seg: Dictionary = data.segments[i]
+			var scene: Dictionary = seg.get("scene", {})
+			if scene.is_empty():
+				push_error("Missing 2D scene metadata: %s segment %d" % [path, i])
+			elif scene.get("actors", []).is_empty():
+				push_error("Missing 2D actors: %s segment %d" % [path, i])
