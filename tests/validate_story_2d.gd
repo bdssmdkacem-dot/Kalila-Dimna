@@ -2,9 +2,8 @@ extends SceneTree
 
 const REQUIRED := [
 	"res://ui/animal_stage_2d.gd",
-	"res://assets/images/characters/lion_2d_realistic.webp",
-	"res://assets/images/characters/bull_2d_realistic.webp",
 	"res://assets/images/backgrounds/lion_bull_2d.svg",
+	"res://assets/images/backgrounds/lion_bull_forest_2d.svg",
 ]
 
 const STORY_PATHS := [
