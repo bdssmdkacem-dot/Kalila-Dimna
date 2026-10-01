@@ -181,18 +181,35 @@ func _height_for(id: String) -> float:
 		"hare": return 260.0
 		_: return 260.0
 
-func _add_actor(id: String, pos: Vector2) -> Sprite2D:
+func _add_actor(id: String, pos: Vector2, entrance_index: int = 0) -> Sprite2D:
 	var s := Sprite2D.new()
 	s.name = id
 	s.texture = _texture_for(id)
 	s.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	s.modulate = Color(1, 1, 1, 0)
 	actors.add_child(s)
 	if s.texture:
 		s.scale = Vector2.ONE * (_height_for(id) / maxf(1.0, s.texture.get_size().y))
-	s.position = pos
-	actor_base_scales[id] = s.scale
+	var final_scale := s.scale
+	var entrance_offset := Vector2.ZERO
+	if entrance_index % 2 == 0:
+		entrance_offset = Vector2(-24.0, 18.0)
+	else:
+		entrance_offset = Vector2(24.0, 18.0)
+	if id == "crow" or id == "dove":
+		entrance_offset = Vector2(0.0, -20.0)
+	elif id == "snake" or id == "turtle" or id == "mouse":
+		entrance_offset = Vector2(18.0, 12.0)
+	s.position = pos + entrance_offset
+	s.scale = final_scale * 0.965
+	actor_base_scales[id] = final_scale
 	actor_targets[id] = pos
 	active_actor_nodes[id] = s
+	var entrance := create_tween()
+	entrance.set_parallel(true)
+	entrance.tween_property(s, "position", pos, 0.34).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	entrance.tween_property(s, "modulate:a", 1.0, 0.24).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	entrance.tween_property(s, "scale", final_scale, 0.34).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	return s
 
 func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -> void:
@@ -230,7 +247,7 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	var count := list.size()
 	for i in range(count):
 		var id := String(list[i])
-		_add_actor(id, _actor_position(story_id, place, id, i, count))
+		_add_actor(id, _actor_position(story_id, place, id, i, count), i)
 	_keep_actors_inside_safe_frame()
 	_configure_shot(shot)
 	transition_fade.color.a = 1.0
