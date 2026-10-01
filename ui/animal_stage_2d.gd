@@ -31,8 +31,8 @@ var transition_fade: ColorRect
 var scene_glow: ColorRect
 var vignette: ColorRect
 
-const LION_TEX := preload("res://assets/images/characters/lion_2d.svg")
-const BULL_TEX := preload("res://assets/images/characters/bull_2d.svg")
+const LION_TEX := preload("res://assets/images/characters/lion_2d_realistic.webp")
+const BULL_TEX := preload("res://assets/images/characters/bull_2d_realistic.webp")
 const BACKGROUND_TEX := preload("res://assets/images/backgrounds/lion_bull_2d.svg")
 const FOREST_TEX := preload("res://assets/images/backgrounds/lion_bull_forest_2d.svg")
 
