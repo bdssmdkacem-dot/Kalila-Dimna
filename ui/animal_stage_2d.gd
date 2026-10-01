@@ -96,6 +96,17 @@ func _rescale_to_control() -> void:
 	base_world_scale = minf(size.x / DESIGN_SIZE.x, size.y / DESIGN_SIZE.y)
 	world.scale = Vector2.ONE * base_world_scale
 	world.position = (size - DESIGN_SIZE * base_world_scale) * 0.5
+	_fit_background(background)
+	_fit_background(forest_background)
+
+func _fit_background(sprite: Sprite2D) -> void:
+	if sprite == null or sprite.texture == null:
+		return
+	var tex_size := sprite.texture.get_size()
+	if tex_size.x <= 0.0 or tex_size.y <= 0.0:
+		return
+	var cover_scale := maxf(DESIGN_SIZE.x / tex_size.x, DESIGN_SIZE.y / tex_size.y)
+	sprite.scale = Vector2.ONE * cover_scale
 
 func _clear_actors() -> void:
 	for child in actors.get_children(): child.queue_free()
@@ -153,6 +164,7 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	active_segment_index = segment_index
 	scene_data = data
 	segment_time = 0.0
+	speaking_actor = ""
 	shot = String(data.get("shot", "wide"))
 	_clear_actors()
 	var place := String(data.get("place", "forest"))
@@ -161,11 +173,15 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	if realistic_background:
 		background.texture = realistic_background
 		forest_background.texture = realistic_background
+		_fit_background(background)
+		_fit_background(forest_background)
 		background.visible = true
 		forest_background.visible = false
 	else:
 		background.texture = BACKGROUND_TEX
 		forest_background.texture = FOREST_TEX
+		_fit_background(background)
+		_fit_background(forest_background)
 		forest_background.visible = place == "forest"
 		background.visible = place != "forest"
 	scene_glow.color = Color(0.82,0.94,0.78,0.045) if place == "forest" else Color(0.72,0.90,1.0,0.055)
