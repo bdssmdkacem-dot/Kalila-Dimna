@@ -313,12 +313,22 @@ func _configure_shot(kind: String) -> void:
 		if n:
 			target_world_scale = 1.12
 			target_world_position = DESIGN_SIZE*0.5 - n.position*target_world_scale
+			# Let the environment breathe with the close-up instead of remaining static.
+			var focus_delta := (n.position - DESIGN_SIZE * 0.5)
+			background_target_offset = Vector2(
+				clampf(-focus_delta.x * 0.035, -18.0, 18.0),
+				clampf(-focus_delta.y * 0.025, -12.0, 12.0)
+			)
 	elif kind == "two_shot" and active_actor_nodes.size() >= 2:
 		var a := active_actor_nodes.values()[0] as Sprite2D
 		var b := active_actor_nodes.values()[1] as Sprite2D
 		var mid := (a.position+b.position)*0.5
 		target_world_scale = 1.03
 		target_world_position = DESIGN_SIZE*0.5-mid*target_world_scale
+		background_target_offset = Vector2(
+			clampf((DESIGN_SIZE.x * 0.5 - mid.x) * 0.025, -12.0, 12.0),
+			clampf((DESIGN_SIZE.y * 0.5 - mid.y) * 0.018, -8.0, 8.0)
+		)
 	elif kind == "reaction" and speaking_actor != "":
 		var ids := active_actor_nodes.keys()
 		for id in ids:
@@ -326,6 +336,11 @@ func _configure_shot(kind: String) -> void:
 				var n := active_actor_nodes[id] as Sprite2D
 				target_world_scale = 1.10
 				target_world_position = DESIGN_SIZE*0.5-n.position*target_world_scale
+				var reaction_delta := (n.position - DESIGN_SIZE * 0.5)
+				background_target_offset = Vector2(
+					clampf(-reaction_delta.x * 0.03, -14.0, 14.0),
+					clampf(-reaction_delta.y * 0.02, -10.0, 10.0)
+				)
 				break
 
 func _keep_actors_inside_safe_frame() -> void:
