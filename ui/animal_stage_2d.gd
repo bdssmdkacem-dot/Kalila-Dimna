@@ -105,7 +105,12 @@ func _fit_background(sprite: Sprite2D) -> void:
 	var tex_size := sprite.texture.get_size()
 	if tex_size.x <= 0.0 or tex_size.y <= 0.0:
 		return
-	var cover_scale := maxf(DESIGN_SIZE.x / tex_size.x, DESIGN_SIZE.y / tex_size.y)
+	var design_cover := maxf(DESIGN_SIZE.x / tex_size.x, DESIGN_SIZE.y / tex_size.y)
+	var viewport_cover := maxf(
+		size.x / maxf(1.0, tex_size.x * base_world_scale),
+		size.y / maxf(1.0, tex_size.y * base_world_scale)
+	)
+	var cover_scale := maxf(design_cover, viewport_cover)
 	sprite.scale = Vector2.ONE * cover_scale
 
 func _clear_actors() -> void:
