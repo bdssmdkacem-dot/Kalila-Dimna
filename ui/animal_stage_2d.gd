@@ -11,13 +11,13 @@ const SAFE_BOTTOM := 675.0
 const REALISTIC_ASSETS := {
 	"lion": "res://assets/images/characters/lion_2d_realistic.webp",
 	"bull": "res://assets/images/characters/bull_2d_realistic.webp",
-	"crow": "res://assets/images/characters/crow_2d_realistic.webp",
-	"snake": "res://assets/images/characters/snake_2d_realistic.webp",
-	"monkey": "res://assets/images/characters/monkey_2d_realistic.webp",
-	"turtle": "res://assets/images/characters/turtle_2d_realistic.webp",
-	"dove": "res://assets/images/characters/dove_2d_realistic.webp",
-	"mouse": "res://assets/images/characters/mouse_2d_realistic.webp",
-	"hare": "res://assets/images/characters/hare_2d_realistic.webp"
+	"crow": "res://assets/images/characters/crow_realistic.webp",
+	"snake": "res://assets/images/characters/snake_realistic.webp",
+	"monkey": "res://assets/images/characters/monkey_realistic.webp",
+	"turtle": "res://assets/images/characters/turtle_realistic.webp",
+	"dove": "res://assets/images/characters/dove_realistic.webp",
+	"mouse": "res://assets/images/characters/mouse_realistic.webp",
+	"hare": "res://assets/images/characters/hare_realistic.webp"
 }
 const FALLBACK_ASSETS := {
 	"lion": "res://assets/images/characters/lion_2d.svg",
