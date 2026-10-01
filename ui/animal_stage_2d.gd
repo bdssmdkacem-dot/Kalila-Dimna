@@ -55,6 +55,8 @@ var transition_fade: ColorRect
 var scene_glow: ColorRect
 var vignette: ColorRect
 var background_material: ShaderMaterial
+var background_target_offset := Vector2.ZERO
+var background_offset := Vector2.ZERO
 
 func _ready() -> void:
 	clip_contents = true
@@ -202,6 +204,8 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	shot = String(data.get("shot", "wide"))
 	_clear_actors()
 	var place := String(data.get("place", "forest"))
+	background_target_offset = _background_focus(story_id, place, String(data.get("shot", "wide")))
+	background_offset = background_target_offset
 	var explicit_background := String(data.get("background", ""))
 	var realistic_background := _background_for(story_id, place, explicit_background)
 	if realistic_background:
@@ -232,6 +236,24 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	transition_fade.color.a = 1.0
 	var tw := create_tween()
 	tw.tween_property(transition_fade, "color:a", 0.0, 0.28)
+
+func _background_focus(story_id: String, place: String, shot_kind: String) -> Vector2:
+	# Small camera offsets reveal different parts of the same environment without
+	# moving the animals or changing story logic. Values stay deliberately subtle.
+	match story_id:
+		"lion_bull":
+			if place == "river_meadow": return Vector2(0.0, -18.0 if shot_kind == "speaker_close" else 0.0)
+			return Vector2(0.0, 10.0 if shot_kind == "wide" else 0.0)
+		"crow_snake":
+			return Vector2(0.0, -12.0 if shot_kind == "speaker_close" else 4.0)
+		"monkey_turtle":
+			return Vector2(0.0, -16.0 if shot_kind != "wide" else 0.0)
+		"dove_ring":
+			return Vector2(0.0, -12.0 if shot_kind == "speaker_close" else 0.0)
+		"lion_hare":
+			if place == "forest": return Vector2(0.0, 8.0 if shot_kind == "wide" else -4.0)
+			return Vector2(0.0, -10.0)
+	return Vector2.ZERO
 
 func _actor_position(story_id: String, place: String, actor_id: String, index: int, count: int) -> Vector2:
 	# Story-specific composition keeps animals grounded in the environment
@@ -307,6 +329,9 @@ func _process(delta: float) -> void:
 	world.scale = world.scale.lerp(Vector2.ONE*desired_scale,minf(delta*3.2,1.0))
 	var desired_pos := (size-DESIGN_SIZE*desired_scale)*0.5 + target_world_position*base_world_scale
 	world.position = world.position.lerp(desired_pos,minf(delta*3.2,1.0))
+	background_offset = background_offset.lerp(background_target_offset, minf(delta * 2.0, 1.0))
+	background.position = DESIGN_SIZE * 0.5 + background_offset
+	forest_background.position = DESIGN_SIZE * 0.5 + background_offset
 	if speaking_actor != "" and active_actor_nodes.has(speaking_actor):
 		var n := active_actor_nodes[speaking_actor] as Sprite2D
 		var base: Vector2 = actor_base_scales.get(speaking_actor,n.scale)
