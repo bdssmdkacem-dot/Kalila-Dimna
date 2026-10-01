@@ -2,11 +2,11 @@ class_name AnimalStage2D
 extends Control
 ## Shared realistic 2D story stage for all Kalila-Dimna tales.
 
-const DESIGN_SIZE := Vector2(1200.0, 760.0)
-const SAFE_LEFT := 90.0
-const SAFE_RIGHT := 1110.0
-const SAFE_TOP := 105.0
-const SAFE_BOTTOM := 675.0
+const DESIGN_SIZE := Vector2(1280.0, 720.0)
+const SAFE_LEFT := 70.0
+const SAFE_RIGHT := 1210.0
+const SAFE_TOP := 80.0
+const SAFE_BOTTOM := 640.0
 
 const REALISTIC_ASSETS := {
 	"lion": "res://assets/images/characters/lion_2d_realistic.webp",
@@ -208,24 +208,24 @@ func _actor_position(story_id: String, place: String, actor_id: String, index: i
 	match story_id:
 		"lion_bull":
 			if place == "river_meadow":
-				if actor_id == "lion": return Vector2(380.0, 505.0)
-				if actor_id == "bull": return Vector2(815.0, 535.0)
-			if actor_id == "lion": return Vector2(455.0, 500.0)
-			if actor_id == "bull": return Vector2(745.0, 515.0)
+				if actor_id == "lion": return Vector2(390.0, 485.0)
+				if actor_id == "bull": return Vector2(875.0, 515.0)
+			if actor_id == "lion": return Vector2(465.0, 485.0)
+			if actor_id == "bull": return Vector2(765.0, 500.0)
 		"crow_snake":
-			if actor_id == "crow": return Vector2(735.0, 330.0)
-			if actor_id == "snake": return Vector2(705.0, 555.0)
+			if actor_id == "crow": return Vector2(800.0, 290.0)
+			if actor_id == "snake": return Vector2(735.0, 535.0)
 		"monkey_turtle":
-			if actor_id == "monkey": return Vector2(395.0, 355.0)
-			if actor_id == "turtle": return Vector2(825.0, 555.0)
+			if actor_id == "monkey": return Vector2(420.0, 320.0)
+			if actor_id == "turtle": return Vector2(865.0, 525.0)
 		"dove_ring":
-			if actor_id == "dove": return Vector2(610.0, 335.0)
-			if actor_id == "mouse": return Vector2(820.0, 570.0)
+			if actor_id == "dove": return Vector2(640.0, 300.0)
+			if actor_id == "mouse": return Vector2(875.0, 535.0)
 		"lion_hare":
-			if actor_id == "lion": return Vector2(390.0, 505.0)
-			if actor_id == "hare": return Vector2(800.0, 535.0)
-	var x := 600.0 if count == 1 else (330.0 + float(index) * 540.0)
-	return Vector2(x, 505.0)
+			if actor_id == "lion": return Vector2(415.0, 485.0)
+			if actor_id == "hare": return Vector2(855.0, 515.0)
+	var x := 640.0 if count == 1 else (350.0 + float(index) * 580.0)
+	return Vector2(x, 500.0)
 
 func set_speaker(actor_id: String) -> void:
 	speaking_actor = actor_id if active_actor_nodes.has(actor_id) else ""
