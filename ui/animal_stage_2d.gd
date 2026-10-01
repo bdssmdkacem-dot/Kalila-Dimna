@@ -141,13 +141,13 @@ func _height_for(id: String) -> float:
 	match id:
 		"lion": return 335.0
 		"bull": return 320.0
-		"crow": return 235.0
-		"snake": return 230.0
-		"monkey": return 285.0
-		"turtle": return 210.0
-		"dove": return 175.0
-		"mouse": return 145.0
-		"hare": return 245.0
+		"crow": return 260.0
+		"snake": return 245.0
+		"monkey": return 300.0
+		"turtle": return 225.0
+		"dove": return 205.0
+		"mouse": return 165.0
+		"hare": return 260.0
 		_: return 260.0
 
 func _add_actor(id: String, pos: Vector2) -> Sprite2D:
@@ -241,20 +241,20 @@ func _configure_shot(kind: String) -> void:
 	if kind == "speaker_close" and speaking_actor != "":
 		var n := active_actor_nodes.get(speaking_actor) as Sprite2D
 		if n:
-			target_world_scale = 1.24
+			target_world_scale = 1.12
 			target_world_position = DESIGN_SIZE*0.5 - n.position*target_world_scale
 	elif kind == "two_shot" and active_actor_nodes.size() >= 2:
 		var a := active_actor_nodes.values()[0] as Sprite2D
 		var b := active_actor_nodes.values()[1] as Sprite2D
 		var mid := (a.position+b.position)*0.5
-		target_world_scale = 1.06
+		target_world_scale = 1.03
 		target_world_position = DESIGN_SIZE*0.5-mid*target_world_scale
 	elif kind == "reaction" and speaking_actor != "":
 		var ids := active_actor_nodes.keys()
 		for id in ids:
 			if id != speaking_actor:
 				var n := active_actor_nodes[id] as Sprite2D
-				target_world_scale = 1.16
+				target_world_scale = 1.10
 				target_world_position = DESIGN_SIZE*0.5-n.position*target_world_scale
 				break
 
