@@ -144,10 +144,10 @@ jobs:
           echo "All required animal and realistic 2D character resources are embedded in the APK/PCK"
 
           # Realistic 2D story backgrounds are also release requirements.
-          for resource in \\
-            "lion_bull_forest_realistic.webp" "lion_bull_river_meadow_realistic.webp" \\
-            "crow_snake_forest_realistic.webp" "monkey_turtle_river_realistic.webp" \\
-            "dove_ring_forest_realistic.webp" "lion_hare_forest_realistic.webp" \\
+          for resource in \
+            "lion_bull_forest_realistic.webp" "lion_bull_river_meadow_realistic.webp" \
+            "crow_snake_forest_realistic.webp" "monkey_turtle_river_realistic.webp" \
+            "dove_ring_forest_realistic.webp" "lion_hare_forest_realistic.webp" \
             "lion_hare_well_realistic.webp"; do
             test -s "assets/images/backgrounds/$resource"
             if ! grep -a -q "$resource" "$APK"; then
