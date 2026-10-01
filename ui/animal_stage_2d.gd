@@ -54,6 +54,7 @@ var target_world_position := Vector2.ZERO
 var transition_fade: ColorRect
 var scene_glow: ColorRect
 var vignette: ColorRect
+var background_material: ShaderMaterial
 
 func _ready() -> void:
 	clip_contents = true
@@ -65,14 +66,42 @@ func _notification(what: int) -> void:
 		_rescale_to_control()
 
 func _build_stage() -> void:
+	var background_shader := Shader.new()
+	background_shader.code = """shader_type canvas_item;
+
+uniform float brightness = 1.0;
+uniform float saturation = 1.04;
+uniform float contrast = 1.03;
+uniform float edge_darkness = 0.16;
+
+void fragment() {
+	vec4 tex = texture(TEXTURE, UV);
+	vec3 color = tex.rgb * brightness;
+	float luminance = dot(color, vec3(0.2126, 0.7152, 0.0722));
+	color = mix(vec3(luminance), color, saturation);
+	color = (color - 0.5) * contrast + 0.5;
+	float edge = smoothstep(0.28, 0.92, distance(UV, vec2(0.5)));
+	color *= 1.0 - edge * edge_darkness;
+	COLOR = vec4(clamp(color, 0.0, 1.0), tex.a);
+}"""
+	background_material = ShaderMaterial.new()
+	background_material.shader = background_shader
+	background_material.set_shader_parameter("brightness", 1.02)
+	background_material.set_shader_parameter("saturation", 1.06)
+	background_material.set_shader_parameter("contrast", 1.04)
+	background_material.set_shader_parameter("edge_darkness", 0.14)
 	world = Node2D.new()
 	add_child(world)
 	background = Sprite2D.new()
 	background.texture = BACKGROUND_TEX
+	background.material = background_material
+	background.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	background.position = DESIGN_SIZE * 0.5
 	world.add_child(background)
 	forest_background = Sprite2D.new()
 	forest_background.texture = FOREST_TEX
+	forest_background.material = background_material
+	forest_background.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	forest_background.position = DESIGN_SIZE * 0.5
 	world.add_child(forest_background)
 	actors = Node2D.new()
@@ -178,6 +207,8 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	if realistic_background:
 		background.texture = realistic_background
 		forest_background.texture = realistic_background
+		background.material = background_material
+		forest_background.material = background_material
 		_fit_background(background)
 		_fit_background(forest_background)
 		background.visible = true
