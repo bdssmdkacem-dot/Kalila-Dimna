@@ -25,7 +25,7 @@ var speaking_actor := ""
 
 func _ready() -> void:
     custom_minimum_size = Vector2(0, 0)
-	size_flags_vertical = Control.SIZE_EXPAND_FILL
+    size_flags_vertical = Control.SIZE_EXPAND_FILL
     _build_stage()
 
 func _build_stage() -> void:
