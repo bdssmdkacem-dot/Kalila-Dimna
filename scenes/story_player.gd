@@ -38,15 +38,20 @@ func _ready() -> void:
 
 func _build_ui() -> void:
 	var box := UI.page(self)
+	box.add_theme_constant_override("separation", 14)
 
 	var top := HBoxContainer.new()
-	top.add_theme_constant_override("separation", 20)
+	top.custom_minimum_size = Vector2(0, 58)
+	top.add_theme_constant_override("separation", 14)
 	box.add_child(top)
-	var back := UI.button("رجوع", 40, 100)
+	var back := UI.button("رجوع", 32, 58)
 	back.pressed.connect(_go_map)
 	top.add_child(back)
-	top.add_child(UI.label(story.title, 60, UI.C_GREEN))
-	progress_lbl = UI.label("", 40, UI.C_GOLD_DARK)
+	var title_lbl := UI.label(story.title, 42, UI.C_GREEN)
+	title_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	top.add_child(title_lbl)
+	progress_lbl = UI.label("", 30, UI.C_GOLD_DARK)
+	progress_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	progress_lbl.size_flags_horizontal = Control.SIZE_SHRINK_END
 	top.add_child(progress_lbl)
 
@@ -56,14 +61,14 @@ func _build_ui() -> void:
 	box.add_child(animal_stage)
 
 	var card := PanelContainer.new()
-	card.custom_minimum_size = Vector2(0, 205)
+	card.custom_minimum_size = Vector2(0, 156)
 	card.size_flags_vertical = Control.SIZE_SHRINK_END
 	card.gui_input.connect(_on_card_input)
 	card.add_theme_stylebox_override("panel", _story_bubble_style())
 	box.add_child(card)
 
 	var speech := VBoxContainer.new()
-	speech.add_theme_constant_override("separation", 6)
+	speech.add_theme_constant_override("separation", 2)
 	card.add_child(speech)
 
 	speaker_lbl = UI.label("", 34, Color.WHITE)
@@ -78,29 +83,37 @@ func _build_ui() -> void:
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	speech.add_child(scroll)
 
-	text_lbl = UI.label("", 44)
+	text_lbl = UI.label("", 40, Color.WHITE)
+	text_lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.95))
+	text_lbl.add_theme_constant_override("shadow_offset_x", 2)
+	text_lbl.add_theme_constant_override("shadow_offset_y", 2)
 	text_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	text_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_lbl.custom_minimum_size = Vector2(0, 150)
+	text_lbl.custom_minimum_size = Vector2(0, 104)
 	scroll.add_child(text_lbl)
 
-	feedback_lbl = UI.label("", 44, UI.C_BAD)
+	feedback_lbl = UI.label("", 32, UI.C_BAD)
+	feedback_lbl.custom_minimum_size = Vector2(0, 38)
+	feedback_lbl.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	box.add_child(feedback_lbl)
 
-	options_box = VBoxContainer.new()
-	options_box.add_theme_constant_override("separation", 18)
+	options_box = HBoxContainer.new()
+	options_box.alignment = BoxContainer.ALIGNMENT_CENTER
+	options_box.add_theme_constant_override("separation", 12)
+	options_box.custom_minimum_size = Vector2(0, 92)
 	box.add_child(options_box)
 
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 20)
+	row.custom_minimum_size = Vector2(0, 64)
+	row.add_theme_constant_override("separation", 14)
 	box.add_child(row)
-	replay_btn = UI.button("أعد الاستماع", 40, 120)
+	replay_btn = UI.button("أعد الاستماع", 30, 64)
 	replay_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	replay_btn.pressed.connect(func(): audio.play())
 	row.add_child(replay_btn)
-	next_btn = UI.button("التالي", 50, 120)
+	next_btn = UI.button("التالي", 34, 64)
 	next_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	next_btn.pressed.connect(_on_next_pressed)
 	row.add_child(next_btn)
@@ -223,14 +236,15 @@ func _on_text_done() -> void:
 		next_btn.disabled = false
 
 func _show_story_interaction(interaction: Dictionary) -> void:
-	options_box.add_child(UI.label("ساعد الشخصية في اتخاذ القرار", 42, UI.C_GOLD_DARK))
-	options_box.add_child(UI.label(String(interaction.question), 48, UI.C_GREEN))
+	options_box.add_child(UI.label("ساعد الشخصية في اتخاذ القرار", 28, UI.C_GOLD_DARK))
+	options_box.add_child(UI.label(String(interaction.question), 30, UI.C_GREEN))
 	var answer := int(interaction.answer)
 	var opts: Array = interaction.options
 	var order := range(opts.size())
 	order.shuffle()
 	for i in order:
-		var b := UI.button(String(opts[i]), 42, 115)
+		var b := UI.button(String(opts[i]), 30, 72)
+		b.custom_minimum_size.x = 190
 		b.pressed.connect(_on_story_choice.bind(b, i, interaction))
 		options_box.add_child(b)
 
@@ -268,13 +282,14 @@ func _clear_options() -> void:
 
 
 func _show_challenge(ch: Dictionary) -> void:
-	options_box.add_child(UI.label(ch.question, 50, UI.C_GREEN))
+	options_box.add_child(UI.label(ch.question, 30, UI.C_GREEN))
 	var answer := int(ch.answer)
 	var opts: Array = ch.options
 	var order := range(opts.size())
 	order.shuffle()
 	for i in order:
-		var b := UI.button(opts[i], 44, 115)
+		var b := UI.button(opts[i], 30, 72)
+		b.custom_minimum_size.x = 190
 		b.pressed.connect(_on_option.bind(b, i == answer))
 		options_box.add_child(b)
 
