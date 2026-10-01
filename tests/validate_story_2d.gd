@@ -4,6 +4,13 @@ const REQUIRED := [
 	"res://ui/animal_stage_2d.gd",
 	"res://assets/images/backgrounds/lion_bull_2d.svg",
 	"res://assets/images/backgrounds/lion_bull_forest_2d.svg",
+	"res://assets/images/backgrounds/lion_bull_forest_realistic.webp",
+	"res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp",
+	"res://assets/images/backgrounds/crow_snake_forest_realistic.webp",
+	"res://assets/images/backgrounds/monkey_turtle_river_realistic.webp",
+	"res://assets/images/backgrounds/dove_ring_forest_realistic.webp",
+	"res://assets/images/backgrounds/lion_hare_forest_realistic.webp",
+	"res://assets/images/backgrounds/lion_hare_well_realistic.webp",
 	"res://assets/images/characters/lion_2d_realistic.webp",
 	"res://assets/images/characters/bull_2d_realistic.webp",
 	"res://assets/images/characters/crow_realistic.webp",
@@ -70,3 +77,6 @@ func _validate_all_story_scene_metadata() -> void:
 				push_error("Missing 2D scene metadata: %s segment %d" % [path, i])
 			elif scene.get("actors", []).is_empty():
 				push_error("Missing 2D actors: %s segment %d" % [path, i])
+			var background := String(scene.get("background", ""))
+			if background == "" or not FileAccess.file_exists(background):
+				push_error("Missing realistic 2D background: %s segment %d -> %s" % [path, i, background])
