@@ -125,7 +125,23 @@ jobs:
               exit 1
             fi
           done
-          echo "All required animal resource paths are embedded in the APK/PCK"
+
+          # Realistic 2D characters are a release requirement. Check both the
+          # source tree and the exported PCK path so a missing/import-failed
+          # WebP cannot silently ship.
+          for resource in \
+            "lion_2d_realistic.webp" "bull_2d_realistic.webp" \
+            "crow_realistic.webp" "snake_realistic.webp" \
+            "monkey_realistic.webp" "turtle_realistic.webp" \
+            "dove_realistic.webp" "mouse_realistic.webp" \
+            "hare_realistic.webp"; do
+            test -s "assets/images/characters/$resource"
+            if ! grep -a -q "$resource" "$APK"; then
+              echo "ERROR: realistic 2D character is not embedded in exported APK/PCK: $resource"
+              exit 1
+            fi
+          done
+          echo "All required animal and realistic 2D character resources are embedded in the APK/PCK"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
