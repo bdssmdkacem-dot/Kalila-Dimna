@@ -174,13 +174,37 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	var count := list.size()
 	for i in range(count):
 		var id := String(list[i])
-		var x := 600.0 if count == 1 else (330.0 + float(i) * 540.0)
-		_add_actor(id, Vector2(x, 505.0))
+		_add_actor(id, _actor_position(story_id, place, id, i, count))
 	_keep_actors_inside_safe_frame()
 	_configure_shot(shot)
 	transition_fade.color.a = 1.0
 	var tw := create_tween()
 	tw.tween_property(transition_fade, "color:a", 0.0, 0.28)
+
+func _actor_position(story_id: String, place: String, actor_id: String, index: int, count: int) -> Vector2:
+	# Story-specific composition keeps animals grounded in the environment
+	# instead of using one generic center position for every tale.
+	match story_id:
+		"lion_bull":
+			if place == "river_meadow":
+				if actor_id == "lion": return Vector2(380.0, 505.0)
+				if actor_id == "bull": return Vector2(815.0, 535.0)
+			if actor_id == "lion": return Vector2(455.0, 500.0)
+			if actor_id == "bull": return Vector2(745.0, 515.0)
+		"crow_snake":
+			if actor_id == "crow": return Vector2(735.0, 330.0)
+			if actor_id == "snake": return Vector2(705.0, 555.0)
+		"monkey_turtle":
+			if actor_id == "monkey": return Vector2(395.0, 355.0)
+			if actor_id == "turtle": return Vector2(825.0, 555.0)
+		"dove_ring":
+			if actor_id == "dove": return Vector2(610.0, 335.0)
+			if actor_id == "mouse": return Vector2(820.0, 570.0)
+		"lion_hare":
+			if actor_id == "lion": return Vector2(390.0, 505.0)
+			if actor_id == "hare": return Vector2(800.0, 535.0)
+	var x := 600.0 if count == 1 else (330.0 + float(index) * 540.0)
+	return Vector2(x, 505.0)
 
 func set_speaker(actor_id: String) -> void:
 	speaking_actor = actor_id if active_actor_nodes.has(actor_id) else ""
