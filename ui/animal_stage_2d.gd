@@ -23,6 +23,15 @@ const FALLBACK_ASSETS := {
 	"lion": "res://assets/images/characters/lion_2d.svg",
 	"bull": "res://assets/images/characters/bull_2d.svg"
 }
+const BACKGROUND_ASSETS := {
+	"01_lion_bull:forest": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp",
+	"01_lion_bull:river_meadow": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp",
+	"02_crow_snake:forest": "res://assets/images/backgrounds/crow_snake_forest_realistic.webp",
+	"03_monkey_turtle:river_meadow": "res://assets/images/backgrounds/monkey_turtle_river_realistic.webp",
+	"04_dove_ring:forest": "res://assets/images/backgrounds/dove_ring_forest_realistic.webp",
+	"05_lion_hare:forest": "res://assets/images/backgrounds/lion_hare_forest_realistic.webp",
+	"05_lion_hare:river_meadow": "res://assets/images/backgrounds/lion_hare_well_realistic.webp"
+}
 const BACKGROUND_TEX := preload("res://assets/images/backgrounds/lion_bull_2d.svg")
 const FOREST_TEX := preload("res://assets/images/backgrounds/lion_bull_forest_2d.svg")
 
@@ -103,6 +112,15 @@ func _texture_for(id: String) -> Texture2D:
 		return load(fallback) as Texture2D
 	return null
 
+func _background_for(story_id: String, place: String, explicit_path: String) -> Texture2D:
+	if explicit_path != "" and ResourceLoader.exists(explicit_path):
+		return load(explicit_path) as Texture2D
+	var key := "%s:%s" % [story_id, place]
+	var path := String(BACKGROUND_ASSETS.get(key, ""))
+	if path != "" and ResourceLoader.exists(path):
+		return load(path) as Texture2D
+	return null
+
 func _height_for(id: String) -> float:
 	match id:
 		"lion": return 335.0
@@ -138,8 +156,18 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	shot = String(data.get("shot", "wide"))
 	_clear_actors()
 	var place := String(data.get("place", "forest"))
-	forest_background.visible = place == "forest"
-	background.visible = place != "forest"
+	var explicit_background := String(data.get("background", ""))
+	var realistic_background := _background_for(story_id, place, explicit_background)
+	if realistic_background:
+		background.texture = realistic_background
+		forest_background.texture = realistic_background
+		background.visible = true
+		forest_background.visible = false
+	else:
+		background.texture = BACKGROUND_TEX
+		forest_background.texture = FOREST_TEX
+		forest_background.visible = place == "forest"
+		background.visible = place != "forest"
 	scene_glow.color = Color(0.82,0.94,0.78,0.045) if place == "forest" else Color(0.72,0.90,1.0,0.055)
 	vignette.color = Color(0.04,0.10,0.08,0.07)
 	var list: Array = data.get("actors", [])
