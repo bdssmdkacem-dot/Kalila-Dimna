@@ -39,9 +39,12 @@ var world: Node2D
 var background: Sprite2D
 var forest_background: Sprite2D
 var actors: Node2D
+var shadows: Node2D
 var active_actor_nodes: Dictionary = {}
+var actor_shadows: Dictionary = {}
 var actor_targets: Dictionary = {}
 var actor_base_scales: Dictionary = {}
+var actor_phase: Dictionary = {}
 var active_story_id := ""
 var active_segment_index := -1
 var speaking_actor := ""
@@ -106,7 +109,11 @@ void fragment() {
 	forest_background.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	forest_background.position = DESIGN_SIZE * 0.5
 	world.add_child(forest_background)
+	shadows = Node2D.new()
+	shadows.z_index = 2
+	world.add_child(shadows)
 	actors = Node2D.new()
+	actors.z_index = 3
 	world.add_child(actors)
 	scene_glow = ColorRect.new()
 	scene_glow.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -146,9 +153,12 @@ func _fit_background(sprite: Sprite2D) -> void:
 
 func _clear_actors() -> void:
 	for child in actors.get_children(): child.queue_free()
+	for child in shadows.get_children(): child.queue_free()
 	active_actor_nodes.clear()
+	actor_shadows.clear()
 	actor_targets.clear()
 	actor_base_scales.clear()
+	actor_phase.clear()
 
 func _texture_for(id: String) -> Texture2D:
 	var realistic := String(REALISTIC_ASSETS.get(id, ""))
@@ -181,6 +191,32 @@ func _height_for(id: String) -> float:
 		"hare": return 260.0
 		_: return 260.0
 
+func _shadow_size_for(id: String) -> Vector2:
+	match id:
+		"lion": return Vector2(118.0, 28.0)
+		"bull": return Vector2(122.0, 30.0)
+		"monkey": return Vector2(78.0, 22.0)
+		"hare": return Vector2(72.0, 19.0)
+		"turtle": return Vector2(70.0, 17.0)
+		"snake": return Vector2(76.0, 14.0)
+		"mouse": return Vector2(48.0, 12.0)
+		_: return Vector2(58.0, 15.0)
+
+func _create_shadow(id: String, pos: Vector2) -> Polygon2D:
+	var shadow := Polygon2D.new()
+	shadow.name = "%s_shadow" % id
+	var points := PackedVector2Array()
+	var shadow_size := _shadow_size_for(id)
+	for i in range(24):
+		var angle := TAU * float(i) / 24.0
+		points.append(Vector2(cos(angle) * shadow_size.x * 0.5, sin(angle) * shadow_size.y * 0.5))
+	shadow.polygon = points
+	shadow.color = Color(0.02, 0.03, 0.02, 0.20)
+	shadow.position = Vector2(pos.x, pos.y + 8.0)
+	shadow.scale = Vector2(0.94, 0.94)
+	shadows.add_child(shadow)
+	return shadow
+
 func _add_actor(id: String, pos: Vector2, entrance_index: int = 0) -> Sprite2D:
 	var s := Sprite2D.new()
 	s.name = id
@@ -204,7 +240,10 @@ func _add_actor(id: String, pos: Vector2, entrance_index: int = 0) -> Sprite2D:
 	s.scale = final_scale * 0.965
 	actor_base_scales[id] = final_scale
 	actor_targets[id] = pos
+	actor_phase[id] = float(abs(id.hash()) % 1000) * 0.013
 	active_actor_nodes[id] = s
+	var shadow := _create_shadow(id, pos)
+	actor_shadows[id] = shadow
 	var entrance := create_tween()
 	entrance.set_parallel(true)
 	entrance.tween_property(s, "position", pos, 0.34).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
@@ -255,8 +294,6 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	tw.tween_property(transition_fade, "color:a", 0.0, 0.28)
 
 func _background_focus(story_id: String, place: String, shot_kind: String) -> Vector2:
-	# Small camera offsets reveal different parts of the same environment without
-	# moving the animals or changing story logic. Values stay deliberately subtle.
 	match story_id:
 		"lion_bull":
 			if place == "river_meadow": return Vector2(0.0, -18.0 if shot_kind == "speaker_close" else 0.0)
@@ -273,8 +310,6 @@ func _background_focus(story_id: String, place: String, shot_kind: String) -> Ve
 	return Vector2.ZERO
 
 func _actor_position(story_id: String, place: String, actor_id: String, index: int, count: int) -> Vector2:
-	# Story-specific composition keeps animals grounded in the environment
-	# instead of using one generic center position for every tale.
 	match story_id:
 		"lion_bull":
 			if place == "river_meadow":
@@ -313,7 +348,6 @@ func _configure_shot(kind: String) -> void:
 		if n:
 			target_world_scale = 1.12
 			target_world_position = DESIGN_SIZE*0.5 - n.position*target_world_scale
-			# Let the environment breathe with the close-up instead of remaining static.
 			var focus_delta := (n.position - DESIGN_SIZE * 0.5)
 			background_target_offset = Vector2(
 				clampf(-focus_delta.x * 0.035, -18.0, 18.0),
@@ -350,6 +384,15 @@ func _keep_actors_inside_safe_frame() -> void:
 		n.position.y = clampf(n.position.y, SAFE_TOP+100.0, SAFE_BOTTOM-20.0)
 		actor_targets[id] = n.position
 
+func _idle_amount(id: String) -> Vector2:
+	if id == "crow" or id == "dove":
+		return Vector2(0.0, sin(segment_time * 1.8 + float(actor_phase.get(id, 0.0))) * 2.5)
+	if id == "snake":
+		return Vector2(sin(segment_time * 1.2 + float(actor_phase.get(id, 0.0))) * 1.4, 0.0)
+	if id == "turtle" or id == "mouse":
+		return Vector2(0.0, sin(segment_time * 1.5 + float(actor_phase.get(id, 0.0))) * 0.7)
+	return Vector2(0.0, sin(segment_time * 1.15 + float(actor_phase.get(id, 0.0))) * 1.1)
+
 func _process(delta: float) -> void:
 	if world == null: return
 	segment_time += delta
@@ -357,6 +400,12 @@ func _process(delta: float) -> void:
 		var n := active_actor_nodes[id] as Sprite2D
 		var target: Vector2 = actor_targets.get(id,n.position)
 		n.position = n.position.lerp(target,minf(delta*2.4,1.0))
+		var idle := _idle_amount(id)
+		n.position += idle * minf(delta * 4.0, 1.0)
+		if actor_shadows.has(id):
+			var shadow := actor_shadows[id] as Polygon2D
+			shadow.position = Vector2(target.x + idle.x * 0.35, target.y + 8.0)
+			shadow.scale = Vector2.ONE * (1.0 + sin(segment_time * 1.1 + float(actor_phase.get(id, 0.0))) * 0.025)
 	var desired_scale := base_world_scale*target_world_scale
 	world.scale = world.scale.lerp(Vector2.ONE*desired_scale,minf(delta*3.2,1.0))
 	var desired_pos := (size-DESIGN_SIZE*desired_scale)*0.5 + target_world_position*base_world_scale
