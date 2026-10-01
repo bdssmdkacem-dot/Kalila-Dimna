@@ -4,6 +4,15 @@ const REQUIRED := [
 	"res://ui/animal_stage_2d.gd",
 	"res://assets/images/backgrounds/lion_bull_2d.svg",
 	"res://assets/images/backgrounds/lion_bull_forest_2d.svg",
+	"res://assets/images/characters/lion_2d_realistic.webp",
+	"res://assets/images/characters/bull_2d_realistic.webp",
+	"res://assets/images/characters/crow_realistic.webp",
+	"res://assets/images/characters/snake_realistic.webp",
+	"res://assets/images/characters/monkey_realistic.webp",
+	"res://assets/images/characters/turtle_realistic.webp",
+	"res://assets/images/characters/dove_realistic.webp",
+	"res://assets/images/characters/mouse_realistic.webp",
+	"res://assets/images/characters/hare_realistic.webp",
 ]
 
 const STORY_PATHS := [
@@ -21,6 +30,9 @@ func _init() -> void:
 			missing.append(path)
 
 	var stage := load("res://ui/animal_stage_2d.gd")
+	for path in REQUIRED:
+		if path.ends_with(".webp") and not FileAccess.file_exists(path):
+			missing.append("Missing realistic character asset: " + path)
 	if stage == null:
 		missing.append("res://ui/animal_stage_2d.gd (load failed)")
 
