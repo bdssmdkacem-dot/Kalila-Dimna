@@ -66,7 +66,10 @@ func _build_ui() -> void:
 	speech.add_theme_constant_override("separation", 6)
 	card.add_child(speech)
 
-	speaker_lbl = UI.label("", 34, UI.C_GREEN)
+	speaker_lbl = UI.label("", 34, Color.WHITE)
+	speaker_lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
+	speaker_lbl.add_theme_constant_override("shadow_offset_x", 2)
+	speaker_lbl.add_theme_constant_override("shadow_offset_y", 2)
 	speaker_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	speech.add_child(speaker_lbl)
 
@@ -133,7 +136,7 @@ func _speaker_for_segment(story_id: String, i: int) -> String:
 
 func _story_bubble_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color("#fffaf0")
+	style.bg_color = Color(0.04, 0.12, 0.09, 0.93)
 	style.border_color = Color("#d7b15a")
 	style.set_border_width_all(3)
 	style.corner_radius_top_left = 28
