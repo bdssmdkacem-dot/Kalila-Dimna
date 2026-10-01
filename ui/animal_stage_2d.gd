@@ -24,13 +24,13 @@ const FALLBACK_ASSETS := {
 	"bull": "res://assets/images/characters/bull_2d.svg"
 }
 const BACKGROUND_ASSETS := {
-	"01_lion_bull:forest": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp",
-	"01_lion_bull:river_meadow": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp",
-	"02_crow_snake:forest": "res://assets/images/backgrounds/crow_snake_forest_realistic.webp",
-	"03_monkey_turtle:river_meadow": "res://assets/images/backgrounds/monkey_turtle_river_realistic.webp",
-	"04_dove_ring:forest": "res://assets/images/backgrounds/dove_ring_forest_realistic.webp",
-	"05_lion_hare:forest": "res://assets/images/backgrounds/lion_hare_forest_realistic.webp",
-	"05_lion_hare:river_meadow": "res://assets/images/backgrounds/lion_hare_well_realistic.webp"
+	"lion_bull:forest": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp",
+	"lion_bull:river_meadow": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp",
+	"crow_snake:forest": "res://assets/images/backgrounds/crow_snake_forest_realistic.webp",
+	"monkey_turtle:river_meadow": "res://assets/images/backgrounds/monkey_turtle_river_realistic.webp",
+	"dove_ring:forest": "res://assets/images/backgrounds/dove_ring_forest_realistic.webp",
+	"lion_hare:forest": "res://assets/images/backgrounds/lion_hare_forest_realistic.webp",
+	"lion_hare:river_meadow": "res://assets/images/backgrounds/lion_hare_well_realistic.webp"
 }
 const BACKGROUND_TEX := preload("res://assets/images/backgrounds/lion_bull_2d.svg")
 const FOREST_TEX := preload("res://assets/images/backgrounds/lion_bull_forest_2d.svg")

@@ -11,7 +11,8 @@
         "actors": [
           "crow"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/crow_snake_forest_realistic.webp"
       }
     },
     {
@@ -30,7 +31,8 @@
         "actors": [
           "crow"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/crow_snake_forest_realistic.webp"
       }
     },
     {
@@ -40,7 +42,8 @@
         "actors": [
           "crow"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/crow_snake_forest_realistic.webp"
       }
     },
     {
@@ -60,7 +63,8 @@
           "crow",
           "snake"
         ],
-        "shot": "two_shot"
+        "shot": "two_shot",
+        "background": "res://assets/images/backgrounds/crow_snake_forest_realistic.webp"
       }
     }
   ]

@@ -11,7 +11,8 @@
         "actors": [
           "lion"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_hare_forest_realistic.webp"
       }
     },
     {
@@ -31,7 +32,8 @@
           "lion",
           "hare"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_hare_forest_realistic.webp"
       }
     },
     {
@@ -42,7 +44,8 @@
           "lion",
           "hare"
         ],
-        "shot": "two_shot"
+        "shot": "two_shot",
+        "background": "res://assets/images/backgrounds/lion_hare_well_realistic.webp"
       }
     },
     {
@@ -62,7 +65,8 @@
           "lion",
           "hare"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_hare_well_realistic.webp"
       }
     }
   ]

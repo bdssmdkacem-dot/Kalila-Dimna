@@ -11,7 +11,8 @@
         "actors": [
           "lion"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -21,7 +22,8 @@
         "actors": [
           "lion"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -32,7 +34,8 @@
         "actors": [
           "lion"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -42,7 +45,8 @@
         "actors": [
           "bull"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -53,7 +57,8 @@
         "actors": [
           "bull"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -63,7 +68,8 @@
         "actors": [
           "bull"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp"
       }
     },
     {
@@ -74,7 +80,8 @@
         "actors": [
           "bull"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp"
       }
     },
     {
@@ -84,7 +91,8 @@
         "actors": [
           "lion"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -95,7 +103,8 @@
         "actors": [
           "lion"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -105,7 +114,8 @@
         "actors": [
           "lion"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -116,7 +126,8 @@
         "actors": [
           "lion"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -127,7 +138,8 @@
           "lion",
           "bull"
         ],
-        "shot": "two_shot"
+        "shot": "two_shot",
+        "background": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp"
       }
     },
     {
@@ -139,7 +151,8 @@
           "lion",
           "bull"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp"
       }
     },
     {
@@ -151,7 +164,8 @@
           "lion",
           "bull"
         ],
-        "shot": "two_shot"
+        "shot": "two_shot",
+        "background": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp"
       }
     },
     {
@@ -163,7 +177,8 @@
           "lion",
           "bull"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp"
       }
     },
     {
@@ -175,7 +190,8 @@
           "lion",
           "bull"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp"
       }
     },
     {
@@ -186,7 +202,8 @@
           "lion",
           "bull"
         ],
-        "shot": "two_shot"
+        "shot": "two_shot",
+        "background": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp"
       }
     },
     {
@@ -198,7 +215,8 @@
           "lion",
           "bull"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -210,7 +228,8 @@
           "lion",
           "bull"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -221,7 +240,8 @@
           "lion",
           "bull"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -233,7 +253,8 @@
           "lion",
           "bull"
         ],
-        "shot": "two_shot"
+        "shot": "two_shot",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -245,7 +266,8 @@
           "lion",
           "bull"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -256,7 +278,8 @@
           "lion",
           "bull"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -267,7 +290,8 @@
           "lion",
           "bull"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -279,7 +303,8 @@
           "lion",
           "bull"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -290,7 +315,8 @@
           "lion",
           "bull"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -311,7 +337,8 @@
           "lion",
           "bull"
         ],
-        "shot": "two_shot"
+        "shot": "two_shot",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -323,7 +350,8 @@
           "lion",
           "bull"
         ],
-        "shot": "speaker_close"
+        "shot": "speaker_close",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -334,7 +362,8 @@
           "lion",
           "bull"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     },
     {
@@ -345,7 +374,8 @@
           "lion",
           "bull"
         ],
-        "shot": "wide"
+        "shot": "wide",
+        "background": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
       }
     }
   ]
