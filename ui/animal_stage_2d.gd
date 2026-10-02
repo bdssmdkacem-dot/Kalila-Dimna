@@ -307,6 +307,7 @@ func _background_focus(story_id: String, place: String, shot_kind: String) -> Ve
 			return Vector2(0.0, -12.0 if shot_kind == "speaker_close" else 0.0)
 		"lion_hare":
 			if place == "forest": return Vector2(0.0, 8.0 if shot_kind == "wide" else -4.0)
+			if place == "well": return Vector2(0.0, -14.0 if shot_kind == "speaker_close" else -8.0)
 			return Vector2(0.0, -10.0)
 	return Vector2.ZERO
 
@@ -320,7 +321,13 @@ func _actor_position(story_id: String, place: String, actor_id: String, index: i
 			if actor_id == "lion": return Vector2(440.0, 415.0)
 			if actor_id == "bull": return Vector2(840.0, 440.0)
 		"crow_snake":
-			# Crow stays high in the canopy; snake remains near the den but above the dialogue zone.
+			# Keep the crow high in the canopy, shift it toward the palace flight path,
+			# and keep the snake close to the den in the final forest shot.
+			if place == "palace":
+				if actor_id == "crow": return Vector2(930.0, 220.0)
+			if place == "burrow":
+				if actor_id == "crow": return Vector2(620.0, 315.0)
+				if actor_id == "snake": return Vector2(780.0, 470.0)
 			if actor_id == "crow": return Vector2(805.0, 275.0)
 			if actor_id == "snake": return Vector2(735.0, 475.0)
 		"monkey_turtle":
