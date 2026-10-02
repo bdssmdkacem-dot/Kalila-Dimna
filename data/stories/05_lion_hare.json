@@ -12,7 +12,7 @@
           "lion"
         ],
         "shot": "wide",
-        "background": "res://assets/images/backgrounds/lion_hare_forest_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/forest_clean.svg"
       }
     },
     {
@@ -33,7 +33,7 @@
           "hare"
         ],
         "shot": "speaker_close",
-        "background": "res://assets/images/backgrounds/lion_hare_forest_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/forest_clean.svg"
       }
     },
     {
@@ -45,7 +45,7 @@
           "hare"
         ],
         "shot": "two_shot",
-        "background": "res://assets/images/backgrounds/lion_hare_well_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/well_clean.svg"
       }
     },
     {
@@ -66,7 +66,7 @@
           "hare"
         ],
         "shot": "wide",
-        "background": "res://assets/images/backgrounds/lion_hare_well_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/well_clean.svg"
       }
     }
   ]
