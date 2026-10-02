@@ -19,6 +19,7 @@ var speaker_lbl: Label
 var text_lbl: Label
 var feedback_lbl: Label
 var options_box: VBoxContainer
+var options_panel: PanelContainer
 var next_btn: Button
 var replay_btn: Button
 var audio: AudioStreamPlayer
@@ -147,12 +148,12 @@ func _build_ui() -> void:
 	next_btn.pressed.connect(_on_next_pressed)
 	controls.add_child(next_btn)
 
-	var options_panel := PanelContainer.new()
+	options_panel = PanelContainer.new()
 	options_panel.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	options_panel.offset_left = 55.0
 	options_panel.offset_right = -55.0
-	options_panel.offset_top = -112.0
-	options_panel.offset_bottom = -68.0
+	options_panel.offset_top = -360.0
+	options_panel.offset_bottom = -213.0
 	options_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	options_panel.visible = false
 	options_panel.add_theme_stylebox_override("panel", _options_overlay_style())
@@ -168,11 +169,8 @@ func _build_ui() -> void:
 	options_scroll.add_child(options_box)
 
 	# Keep the options overlay synchronized with whether choices exist.
-	options_box.child_entered_tree.connect(func(_child): options_panel.visible = true)
-	options_box.child_exiting_tree.connect(func(_child):
-		if options_box.get_child_count() <= 1:
-			options_panel.visible = false
-	)
+	# Choices appear in a separate translucent panel above the dialogue bar.
+	options_panel.visible = false
 
 	audio = AudioStreamPlayer.new()
 	add_child(audio)
@@ -320,6 +318,7 @@ func _on_text_done() -> void:
 		next_btn.disabled = false
 
 func _show_story_interaction(interaction: Dictionary) -> void:
+	options_panel.visible = true
 	options_box.add_child(UI.label("ساعد الشخصية في اتخاذ القرار", 28, UI.C_GOLD_DARK))
 	options_box.add_child(UI.label(String(interaction.question), 30, UI.C_GREEN))
 	var answer := int(interaction.answer)
@@ -361,11 +360,14 @@ func _on_next_pressed() -> void:
 		_next_segment()
 
 func _clear_options() -> void:
+	if options_panel:
+		options_panel.visible = false
 	for c in options_box.get_children():
 		c.queue_free()
 
 
 func _show_challenge(ch: Dictionary) -> void:
+	options_panel.visible = true
 	options_box.add_child(UI.label(ch.question, 30, UI.C_GREEN))
 	var answer := int(ch.answer)
 	var opts: Array = ch.options
