@@ -13,7 +13,7 @@
           "turtle"
         ],
         "shot": "wide",
-        "background": "res://assets/images/backgrounds/monkey_turtle_river_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/monkey_river_clean.svg"
       }
     },
     {
@@ -34,7 +34,7 @@
           "turtle"
         ],
         "shot": "speaker_close",
-        "background": "res://assets/images/backgrounds/monkey_turtle_river_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/monkey_river_clean.svg"
       }
     },
     {
@@ -46,7 +46,7 @@
           "turtle"
         ],
         "shot": "two_shot",
-        "background": "res://assets/images/backgrounds/monkey_turtle_river_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/monkey_river_clean.svg"
       }
     },
     {
@@ -67,7 +67,7 @@
           "turtle"
         ],
         "shot": "speaker_close",
-        "background": "res://assets/images/backgrounds/monkey_turtle_river_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/monkey_river_clean.svg"
       }
     }
   ]
