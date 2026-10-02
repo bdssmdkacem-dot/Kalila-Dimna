@@ -12,7 +12,7 @@
           "crow"
         ],
         "shot": "wide",
-        "background": "res://assets/images/backgrounds/crow_snake_forest_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/forest_clean.svg"
       }
     },
     {
@@ -32,7 +32,7 @@
           "crow"
         ],
         "shot": "speaker_close",
-        "background": "res://assets/images/backgrounds/crow_snake_forest_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/forest_clean.svg"
       }
     },
     {
@@ -43,7 +43,7 @@
           "crow"
         ],
         "shot": "wide",
-        "background": "res://assets/images/backgrounds/crow_snake_forest_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/palace_clean.svg"
       }
     },
     {
@@ -64,7 +64,7 @@
           "snake"
         ],
         "shot": "two_shot",
-        "background": "res://assets/images/backgrounds/crow_snake_forest_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/burrow_clean.svg"
       }
     }
   ]
