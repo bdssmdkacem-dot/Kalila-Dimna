@@ -62,6 +62,9 @@ var background_offset := Vector2.ZERO
 
 func _ready() -> void:
 	clip_contents = true
+	# The stage lives inside a VBoxContainer; give it a real minimum height so
+	# the first layout pass cannot collapse the rendering area to zero.
+	custom_minimum_size = Vector2(0.0, 400.0)
 	_build_stage()
 	_rescale_to_control()
 
@@ -112,7 +115,12 @@ func _build_stage() -> void:
 	add_child(transition_fade)
 
 func _rescale_to_control() -> void:
-	if world == null: return
+	if world == null:
+		return
+	# Container layout can briefly report a zero size while the scene is being
+	# constructed. Never propagate that into world.scale.
+	if size.x <= 0.0 or size.y <= 0.0:
+		return
 	base_world_scale = minf(size.x / DESIGN_SIZE.x, size.y / DESIGN_SIZE.y)
 	world.scale = Vector2.ONE * base_world_scale
 	world.position = (size - DESIGN_SIZE * base_world_scale) * 0.5
