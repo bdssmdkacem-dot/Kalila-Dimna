@@ -33,8 +33,19 @@ func _ready() -> void:
 		return
 	segments = story.segments
 	_build_ui()
+	# The story stage is inside a VBoxContainer. Wait until the container has
+	# assigned its real size before rendering the first segment.
+	await _wait_for_story_layout()
 	_next_segment()
 
+
+func _wait_for_story_layout() -> void:
+	if animal_stage == null:
+		return
+	for _i in range(8):
+		if animal_stage.size.x > 0.0 and animal_stage.size.y > 0.0:
+			return
+		await get_tree().process_frame
 
 func _build_ui() -> void:
 	var box := UI.page(self)
