@@ -313,11 +313,12 @@ func _background_focus(story_id: String, place: String, shot_kind: String) -> Ve
 func _actor_position(story_id: String, place: String, actor_id: String, index: int, count: int) -> Vector2:
 	match story_id:
 		"lion_bull":
+			# Keep the large animals in the middle band so the dialogue card has clear space below.
 			if place == "river_meadow":
-				if actor_id == "lion": return Vector2(390.0, 485.0)
-				if actor_id == "bull": return Vector2(875.0, 515.0)
-			if actor_id == "lion": return Vector2(465.0, 485.0)
-			if actor_id == "bull": return Vector2(765.0, 500.0)
+				if actor_id == "lion": return Vector2(390.0, 415.0)
+				if actor_id == "bull": return Vector2(875.0, 440.0)
+			if actor_id == "lion": return Vector2(440.0, 415.0)
+			if actor_id == "bull": return Vector2(840.0, 440.0)
 		"crow_snake":
 			if actor_id == "crow": return Vector2(800.0, 290.0)
 			if actor_id == "snake": return Vector2(735.0, 535.0)
@@ -328,10 +329,14 @@ func _actor_position(story_id: String, place: String, actor_id: String, index: i
 			if actor_id == "dove": return Vector2(640.0, 300.0)
 			if actor_id == "mouse": return Vector2(875.0, 535.0)
 		"lion_hare":
-			if actor_id == "lion": return Vector2(415.0, 485.0)
-			if actor_id == "hare": return Vector2(855.0, 515.0)
+			# The well scenes need the pair slightly higher to keep the well and dialogue visible.
+			if place == "forest":
+				if actor_id == "lion": return Vector2(425.0, 410.0)
+				if actor_id == "hare": return Vector2(850.0, 450.0)
+			if actor_id == "lion": return Vector2(420.0, 405.0)
+			if actor_id == "hare": return Vector2(835.0, 455.0)
 	var x := 640.0 if count == 1 else (350.0 + float(index) * 580.0)
-	return Vector2(x, 500.0)
+	return Vector2(x, 460.0)
 
 func set_speaker(actor_id: String) -> void:
 	speaking_actor = actor_id if active_actor_nodes.has(actor_id) else ""
