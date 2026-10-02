@@ -320,14 +320,17 @@ func _actor_position(story_id: String, place: String, actor_id: String, index: i
 			if actor_id == "lion": return Vector2(440.0, 415.0)
 			if actor_id == "bull": return Vector2(840.0, 440.0)
 		"crow_snake":
-			if actor_id == "crow": return Vector2(800.0, 290.0)
-			if actor_id == "snake": return Vector2(735.0, 535.0)
+			# Crow stays high in the canopy; snake remains near the den but above the dialogue zone.
+			if actor_id == "crow": return Vector2(805.0, 275.0)
+			if actor_id == "snake": return Vector2(735.0, 475.0)
 		"monkey_turtle":
-			if actor_id == "monkey": return Vector2(420.0, 320.0)
-			if actor_id == "turtle": return Vector2(865.0, 525.0)
+			# The monkey reads as a tree-side character while the turtle stays close to the river surface.
+			if actor_id == "monkey": return Vector2(410.0, 315.0)
+			if actor_id == "turtle": return Vector2(875.0, 475.0)
 		"dove_ring":
-			if actor_id == "dove": return Vector2(640.0, 300.0)
-			if actor_id == "mouse": return Vector2(875.0, 535.0)
+			# Keep the dove airborne and bring the mouse upward so the two-shot remains readable.
+			if actor_id == "dove": return Vector2(620.0, 285.0)
+			if actor_id == "mouse": return Vector2(850.0, 475.0)
 		"lion_hare":
 			# The well scenes need the pair slightly higher to keep the well and dialogue visible.
 			if place == "forest":
