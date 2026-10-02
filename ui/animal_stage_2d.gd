@@ -78,15 +78,17 @@ func _build_stage() -> void:
 
 	background = Sprite2D.new()
 	background.texture = BACKGROUND_TEX
-	background.position = DESIGN_SIZE * 0.5
+	background.position = size * 0.5
+	background.z_index = -20
 	background.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	world.add_child(background)
+	add_child(background)
 
 	forest_background = Sprite2D.new()
 	forest_background.texture = FOREST_TEX
-	forest_background.position = DESIGN_SIZE * 0.5
+	forest_background.position = size * 0.5
+	forest_background.z_index = -19
 	forest_background.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	world.add_child(forest_background)
+	add_child(forest_background)
 
 	shadows = Node2D.new()
 	shadows.z_index = 2
@@ -131,15 +133,12 @@ func _fit_background(sprite: Sprite2D) -> void:
 	if sprite == null or sprite.texture == null:
 		return
 	var tex_size := sprite.texture.get_size()
-	if tex_size.x <= 0.0 or tex_size.y <= 0.0:
+	if tex_size.x <= 0.0 or tex_size.y <= 0.0 or size.x <= 0.0 or size.y <= 0.0:
 		return
-	var design_cover := maxf(DESIGN_SIZE.x / tex_size.x, DESIGN_SIZE.y / tex_size.y)
-	var viewport_cover := maxf(
-		size.x / maxf(1.0, tex_size.x * base_world_scale),
-		size.y / maxf(1.0, tex_size.y * base_world_scale)
-	)
-	var cover_scale := maxf(design_cover, viewport_cover)
+	# Full-stage cover: the scene image fills every visible pixel of the story area.
+	var cover_scale := maxf(size.x / tex_size.x, size.y / tex_size.y)
 	sprite.scale = Vector2.ONE * cover_scale
+	sprite.position = size * 0.5
 
 func _clear_actors() -> void:
 	for child in actors.get_children(): child.queue_free()
@@ -416,8 +415,8 @@ func _process(delta: float) -> void:
 	var desired_pos := (size-DESIGN_SIZE*desired_scale)*0.5 + target_world_position*base_world_scale
 	world.position = world.position.lerp(desired_pos,minf(delta*3.2,1.0))
 	background_offset = background_offset.lerp(background_target_offset, minf(delta * 2.0, 1.0))
-	background.position = DESIGN_SIZE * 0.5 + background_offset
-	forest_background.position = DESIGN_SIZE * 0.5 + background_offset
+	background.position = size * 0.5 + background_offset
+	forest_background.position = size * 0.5 + background_offset
 	if speaking_actor != "" and active_actor_nodes.has(speaking_actor):
 		var n := active_actor_nodes[speaking_actor] as Sprite2D
 		var base: Vector2 = actor_base_scales.get(speaking_actor,n.scale)
