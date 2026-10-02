@@ -239,6 +239,7 @@ func _add_actor(id: String, pos: Vector2, entrance_index: int = 0) -> Sprite2D:
 	s.position = pos + entrance_offset
 	s.scale = final_scale * 0.965
 	actor_base_scales[id] = final_scale
+	s.z_index = 100 + int(pos.y)
 	actor_targets[id] = pos
 	actor_phase[id] = float(abs(id.hash()) % 1000) * 0.013
 	active_actor_nodes[id] = s
@@ -405,6 +406,7 @@ func _process(delta: float) -> void:
 		if actor_shadows.has(id):
 			var shadow := actor_shadows[id] as Polygon2D
 			shadow.position = Vector2(target.x + idle.x * 0.35, target.y + 8.0)
+			shadow.z_index = 1
 			shadow.scale = Vector2.ONE * (1.0 + sin(segment_time * 1.1 + float(actor_phase.get(id, 0.0))) * 0.025)
 	var desired_scale := base_world_scale*target_world_scale
 	world.scale = world.scale.lerp(Vector2.ONE*desired_scale,minf(delta*3.2,1.0))
