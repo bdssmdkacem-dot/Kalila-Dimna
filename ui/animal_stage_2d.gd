@@ -64,7 +64,7 @@ func _ready() -> void:
 	clip_contents = true
 	# The stage lives inside a VBoxContainer; give it a real minimum height so
 	# the first layout pass cannot collapse the rendering area to zero.
-	custom_minimum_size = Vector2(0.0, 400.0)
+	custom_minimum_size = Vector2(0.0, 220.0)
 	_build_stage()
 	_rescale_to_control()
 
