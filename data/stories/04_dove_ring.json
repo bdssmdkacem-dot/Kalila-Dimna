@@ -12,7 +12,7 @@
           "dove"
         ],
         "shot": "wide",
-        "background": "res://assets/images/backgrounds/dove_ring_forest_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/net_clean.svg"
       }
     },
     {
@@ -32,7 +32,7 @@
           "dove"
         ],
         "shot": "speaker_close",
-        "background": "res://assets/images/backgrounds/dove_ring_forest_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/net_clean.svg"
       }
     },
     {
@@ -43,7 +43,7 @@
           "dove"
         ],
         "shot": "wide",
-        "background": "res://assets/images/backgrounds/dove_ring_forest_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/forest_clean.svg"
       }
     },
     {
@@ -64,7 +64,7 @@
           "mouse"
         ],
         "shot": "two_shot",
-        "background": "res://assets/images/backgrounds/dove_ring_forest_realistic.webp"
+        "background": "res://assets/images/backgrounds/scene_clean/forest_clean.svg"
       }
     }
   ]
