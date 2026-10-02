@@ -48,83 +48,96 @@ func _wait_for_story_layout() -> void:
 		await get_tree().process_frame
 
 func _build_ui() -> void:
-	var box := UI.page(self)
-	box.add_theme_constant_override("separation", 14)
+	# Landscape-safe story layout. Keep the stage and controls in explicit bands
+	# instead of letting one VBox calculate the entire screen from portrait-era
+	# minimum heights.
+	layout_direction = Control.LAYOUT_DIRECTION_RTL
+
+	var bg := ColorRect.new()
+	bg.color = UI.C_BG
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(bg)
+
+	var root := VBoxContainer.new()
+	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.offset_left = 18.0
+	root.offset_right = -18.0
+	root.offset_top = 34.0
+	root.offset_bottom = -14.0
+	root.add_theme_constant_override("separation", 8)
+	add_child(root)
 
 	var top := HBoxContainer.new()
-	top.custom_minimum_size = Vector2(0, 58)
-	top.add_theme_constant_override("separation", 14)
-	box.add_child(top)
-	var back := UI.button("رجوع", 32, 58)
+	top.custom_minimum_size = Vector2(0, 48)
+	top.add_theme_constant_override("separation", 12)
+	root.add_child(top)
+	var back := UI.button("رجوع", 30, 48)
+	back.custom_minimum_size = Vector2(105, 48)
 	back.pressed.connect(_go_map)
 	top.add_child(back)
-	var title_lbl := UI.label(story.title, 42, UI.C_GREEN)
-	title_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	top.add_child(title_lbl)
-	progress_lbl = UI.label("", 30, UI.C_GOLD_DARK)
-	progress_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	progress_lbl.size_flags_horizontal = Control.SIZE_SHRINK_END
+	var title := UI.label(story.title, 38, UI.C_GREEN)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	top.add_child(title)
+	progress_lbl = UI.label("", 28, UI.C_GOLD_DARK)
+	progress_lbl.custom_minimum_size = Vector2(90, 48)
 	top.add_child(progress_lbl)
 
 	animal_stage = AnimalStage2D.new()
 	animal_stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	animal_stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	box.add_child(animal_stage)
+	animal_stage.custom_minimum_size = Vector2(0, 210)
+	root.add_child(animal_stage)
 
 	var card := PanelContainer.new()
-	card.custom_minimum_size = Vector2(0, 156)
+	card.custom_minimum_size = Vector2(0, 100)
 	card.size_flags_vertical = Control.SIZE_SHRINK_END
 	card.gui_input.connect(_on_card_input)
 	card.add_theme_stylebox_override("panel", _story_bubble_style())
-	box.add_child(card)
+	root.add_child(card)
 
 	var speech := VBoxContainer.new()
 	speech.add_theme_constant_override("separation", 2)
 	card.add_child(speech)
-
-	speaker_lbl = UI.label("", 34, Color.WHITE)
-	speaker_lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
-	speaker_lbl.add_theme_constant_override("shadow_offset_x", 2)
-	speaker_lbl.add_theme_constant_override("shadow_offset_y", 2)
-	speaker_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	speaker_lbl = UI.label("", 26, UI.C_GREEN)
+	speaker_lbl.custom_minimum_size = Vector2(0, 30)
 	speech.add_child(speaker_lbl)
 
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	speech.add_child(scroll)
-
-	text_lbl = UI.label("", 40, Color.WHITE)
-	text_lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.95))
-	text_lbl.add_theme_constant_override("shadow_offset_x", 2)
-	text_lbl.add_theme_constant_override("shadow_offset_y", 2)
+	text_lbl = UI.label("", 30)
 	text_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	text_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_lbl.custom_minimum_size = Vector2(0, 104)
+	text_lbl.custom_minimum_size = Vector2(0, 58)
 	scroll.add_child(text_lbl)
 
-	feedback_lbl = UI.label("", 32, UI.C_BAD)
-	feedback_lbl.custom_minimum_size = Vector2(0, 38)
-	feedback_lbl.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	box.add_child(feedback_lbl)
+	feedback_lbl = UI.label("", 26, UI.C_BAD)
+	feedback_lbl.custom_minimum_size = Vector2(0, 30)
+	root.add_child(feedback_lbl)
 
-	options_box = HBoxContainer.new()
-	options_box.alignment = BoxContainer.ALIGNMENT_CENTER
-	options_box.add_theme_constant_override("separation", 12)
-	options_box.custom_minimum_size = Vector2(0, 92)
-	box.add_child(options_box)
+	var options_scroll := ScrollContainer.new()
+	options_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	options_scroll.custom_minimum_size = Vector2(0, 0)
+	options_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	root.add_child(options_scroll)
+	options_box = VBoxContainer.new()
+	options_box.add_theme_constant_override("separation", 6)
+	options_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	options_scroll.add_child(options_box)
 
 	var row := HBoxContainer.new()
-	row.custom_minimum_size = Vector2(0, 64)
-	row.add_theme_constant_override("separation", 14)
-	box.add_child(row)
-	replay_btn = UI.button("أعد الاستماع", 30, 64)
+	row.custom_minimum_size = Vector2(0, 54)
+	row.add_theme_constant_override("separation", 10)
+	root.add_child(row)
+	replay_btn = UI.button("أعد الاستماع", 28, 54)
 	replay_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	replay_btn.pressed.connect(func(): audio.play())
 	row.add_child(replay_btn)
-	next_btn = UI.button("التالي", 34, 64)
+	next_btn = UI.button("التالي", 30, 54)
 	next_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	next_btn.pressed.connect(_on_next_pressed)
 	row.add_child(next_btn)
