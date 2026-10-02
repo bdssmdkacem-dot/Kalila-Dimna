@@ -38,7 +38,7 @@
     {
       "text": "طار الغراب إلى قصرٍ قريب، فرأى عِقداً ذهبياً لأميرة، فالتقطه بمنقاره وطار به، والخدم يركضون خلفه وهم يصيحون.",
       "scene": {
-        "place": "forest",
+        "place": "palace",
         "actors": [
           "crow"
         ],
@@ -58,7 +58,7 @@
         "answer": 0
       },
       "scene": {
-        "place": "forest",
+        "place": "burrow",
         "actors": [
           "crow",
           "snake"
