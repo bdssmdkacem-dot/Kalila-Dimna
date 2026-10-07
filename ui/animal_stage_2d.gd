@@ -278,21 +278,37 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	background_target_offset = _background_focus(story_id, place, String(data.get("shot", "wide")))
 	background_offset = background_target_offset
 	var explicit_background := String(data.get("background", ""))
-	var realistic_background := _background_for(story_id, place, explicit_background)
-	if realistic_background:
-		background.texture = realistic_background
-		forest_background.texture = realistic_background
-		_fit_background(background)
+	var next_background := _background_for(story_id, place, explicit_background)
+	if next_background == null:
+		next_background = BACKGROUND_TEX
+
+	# Cross-fade the new environment over the previous one instead of cutting
+	# between images. The second sprite acts as the outgoing scene layer.
+	if background.texture != null and background.visible and background.texture != next_background:
+		forest_background.texture = background.texture
+		forest_background.modulate.a = 1.0
+		forest_background.visible = true
 		_fit_background(forest_background)
+		background.texture = next_background
+		background.modulate.a = 0.0
+		background.visible = true
+		_fit_background(background)
+		var bg_tween := create_tween()
+		bg_tween.tween_property(background, "modulate:a", 1.0, 0.48).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		bg_tween.parallel().tween_property(forest_background, "modulate:a", 0.0, 0.48).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		bg_tween.finished.connect(func():
+			if is_instance_valid(forest_background):
+				forest_background.visible = false
+				forest_background.modulate.a = 1.0
+		)
+	else:
+		background.texture = next_background
+		background.modulate.a = 1.0
 		background.visible = true
 		forest_background.visible = false
-	else:
-		background.texture = BACKGROUND_TEX
-		forest_background.texture = FOREST_TEX
+		forest_background.modulate.a = 1.0
 		_fit_background(background)
-		_fit_background(forest_background)
-		forest_background.visible = place == "forest"
-		background.visible = place != "forest"
+
 	scene_glow.color = Color(0.82,0.94,0.78,0.045) if place == "forest" else Color(0.72,0.90,1.0,0.055)
 	vignette.color = Color(0.04,0.10,0.08,0.07)
 	var list: Array = data.get("actors", [])
@@ -302,11 +318,11 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 		_add_actor(id, _actor_position(story_id, place, id, i, count), i)
 	_keep_actors_inside_safe_frame()
 	_configure_shot(shot)
-	# Do not gate scene visibility behind a black fade. This avoids a permanent
-	# black screen if Android pauses or interrupts a startup tween.
-	transition_fade.color.a = 0.72
+	# Use a short neutral overlay only for the scene entrance; background
+	# cross-fade remains responsible for environment changes.
+	transition_fade.color.a = 0.22
 	var scene_tween := create_tween()
-	scene_tween.tween_property(transition_fade, "color:a", 0.0, 0.42).set_trans(Tween.TRANS_SINE)
+	scene_tween.tween_property(transition_fade, "color:a", 0.0, 0.28).set_trans(Tween.TRANS_SINE)
 
 func _background_focus(story_id: String, place: String, shot_kind: String) -> Vector2:
 	match story_id:
@@ -450,9 +466,9 @@ func _process(delta: float) -> void:
 	for id in active_actor_nodes:
 		var n := active_actor_nodes[id] as Sprite2D
 		var target: Vector2 = actor_targets.get(id,n.position)
-		n.position = n.position.lerp(target,minf(delta*2.4,1.0))
 		var idle := _idle_amount(id) + _motion_amount(id)
-		n.position += idle * minf(delta * 4.0, 1.0)
+		var desired_actor_position := target + idle
+		n.position = n.position.lerp(desired_actor_position,minf(delta*3.2,1.0))
 		if actor_shadows.has(id):
 			var shadow := actor_shadows[id] as Polygon2D
 			shadow.position = Vector2(target.x + idle.x * 0.35, target.y + 8.0)
