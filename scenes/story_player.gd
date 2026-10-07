@@ -97,20 +97,20 @@ func _build_ui() -> void:
 	bottom.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	bottom.offset_left = 18.0
 	bottom.offset_right = -18.0
-	bottom.offset_top = -214.0
-	bottom.offset_bottom = -12.0
+	bottom.offset_top = -318.0
+	bottom.offset_bottom = -16.0
 	bottom.mouse_filter = Control.MOUSE_FILTER_STOP
-	bottom.add_theme_stylebox_override("panel", _story_overlay_style())
+	bottom.add_theme_stylebox_override("panel", UI.story_card_style())
 	add_child(bottom)
 
 	var content := VBoxContainer.new()
-	content.add_theme_constant_override("separation", 5)
+	content.add_theme_constant_override("separation", 9)
 	bottom.add_child(content)
 
-	speaker_lbl = UI.label("", 27, UI.C_GOLD_LIGHT)
+	speaker_lbl = UI.label("", 25, UI.C_GOLD_LIGHT)
 	speaker_lbl.custom_minimum_size = Vector2(0, 34)
 	speaker_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	speaker_lbl.add_theme_stylebox_override("normal", UI.box(Color(0.10, 0.22, 0.17, 0.86), 15, 1, Color(0.78, 0.62, 0.23, 0.75)))
+	speaker_lbl.add_theme_stylebox_override("normal", UI.box(Color(0.07, 0.18, 0.14, 0.92), 14, 1, UI.C_GOLD_DARK))
 	content.add_child(speaker_lbl)
 
 	var speech_scroll := ScrollContainer.new()
@@ -119,12 +119,12 @@ func _build_ui() -> void:
 	speech_scroll.custom_minimum_size = Vector2(0, 70)
 	content.add_child(speech_scroll)
 
-	text_lbl = UI.label("", 31, UI.C_PAPER_LIGHT)
+	text_lbl = UI.label("", 34, UI.C_PAPER_LIGHT)
 	text_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	text_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_lbl.custom_minimum_size = Vector2(0, 66)
+	text_lbl.custom_minimum_size = Vector2(0, 104)
 	text_lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.75))
 	text_lbl.add_theme_constant_override("shadow_offset_x", 2)
 	text_lbl.add_theme_constant_override("shadow_offset_y", 2)
@@ -136,16 +136,16 @@ func _build_ui() -> void:
 	content.add_child(feedback_lbl)
 
 	var controls := HBoxContainer.new()
-	controls.add_theme_constant_override("separation", 8)
+	controls.add_theme_constant_override("separation", 12)
 	content.add_child(controls)
 
-	replay_btn = UI.button("أعد الاستماع", 24, 48)
+	replay_btn = UI.button("◀ أعد الاستماع", 23, 54)
 	replay_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	replay_btn.add_theme_stylebox_override("normal", UI.box(Color(0.08, 0.20, 0.16, 0.92), 15, 1, UI.C_GOLD_DARK))
 	replay_btn.pressed.connect(func(): audio.play())
 	controls.add_child(replay_btn)
 
-	next_btn = UI.button("التالي", 28, 48)
+	next_btn = UI.button("التالي  ◆", 27, 54)
 	next_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	next_btn.pressed.connect(_on_next_pressed)
 	controls.add_child(next_btn)
@@ -154,11 +154,11 @@ func _build_ui() -> void:
 	options_panel.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	options_panel.offset_left = 55.0
 	options_panel.offset_right = -55.0
-	options_panel.offset_top = -380.0
-	options_panel.offset_bottom = -222.0
+	options_panel.offset_top = -555.0
+	options_panel.offset_bottom = -326.0
 	options_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	options_panel.visible = false
-	options_panel.add_theme_stylebox_override("panel", _options_overlay_style())
+	options_panel.add_theme_stylebox_override("panel", UI.story_card_style())
 	add_child(options_panel)
 
 	var options_scroll := ScrollContainer.new()
@@ -321,7 +321,7 @@ func _on_text_done() -> void:
 
 func _show_story_interaction(interaction: Dictionary) -> void:
 	options_panel.visible = true
-	options_box.add_child(UI.pill("لحظة القرار", 26, UI.C_PAPER_LIGHT, UI.C_GREEN_DARK))
+	options_box.add_child(UI.section_label("◆  لحظة القرار"))
 	var q := UI.label(String(interaction.question), 30, UI.C_PAPER)
 	q.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	options_box.add_child(q)
@@ -332,8 +332,8 @@ func _show_story_interaction(interaction: Dictionary) -> void:
 	for i in order:
 		var b := UI.button(String(opts[i]), 29, 68)
 		b.custom_minimum_size.x = 190
-		b.add_theme_stylebox_override("normal", UI.box(UI.C_GREEN, 18, 1, UI.C_GOLD_DARK))
-		b.add_theme_stylebox_override("hover", UI.box(UI.C_GREEN_LIGHT, 18, 1, UI.C_GOLD_LIGHT))
+		b.add_theme_stylebox_override("normal", UI.decision_style(UI.C_GREEN))
+		b.add_theme_stylebox_override("hover", UI.decision_style(UI.C_GREEN_LIGHT))
 		b.pressed.connect(_on_story_choice.bind(b, i, interaction))
 		options_box.add_child(b)
 
@@ -375,7 +375,7 @@ func _clear_options() -> void:
 
 func _show_challenge(ch: Dictionary) -> void:
 	options_panel.visible = true
-	options_box.add_child(UI.pill("اختبر فهمك", 26, UI.C_PAPER_LIGHT, UI.C_GREEN_DARK))
+	options_box.add_child(UI.section_label("◆  اختبر فهمك"))
 	var q := UI.label(String(ch.question), 30, UI.C_INK)
 	q.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	options_box.add_child(q)
@@ -386,7 +386,7 @@ func _show_challenge(ch: Dictionary) -> void:
 	for i in order:
 		var b := UI.button(String(opts[i]), 29, 68)
 		b.custom_minimum_size.x = 190
-		b.add_theme_stylebox_override("normal", UI.box(UI.C_GREEN, 18, 1, UI.C_GOLD_DARK))
+		b.add_theme_stylebox_override("normal", UI.decision_style(UI.C_GREEN))
 		b.add_theme_stylebox_override("hover", UI.box(UI.C_GREEN_LIGHT, 18, 1, UI.C_GOLD_LIGHT))
 		b.pressed.connect(_on_option.bind(b, i == answer))
 		options_box.add_child(b)
