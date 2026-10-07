@@ -16,6 +16,7 @@ var pending_next_index := -1
 
 var progress_lbl: Label
 var stars_lbl: Label
+var segment_progress: ProgressBar
 var speaker_lbl: Label
 var text_lbl: Label
 var feedback_lbl: Label
@@ -83,6 +84,16 @@ func _build_ui() -> void:
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top_row.add_child(title)
 
+	segment_progress = ProgressBar.new()
+	segment_progress.custom_minimum_size = Vector2(110, 10)
+	segment_progress.min_value = 0
+	segment_progress.max_value = maxf(1.0, segments.size())
+	segment_progress.value = 0
+	segment_progress.show_percentage = false
+	segment_progress.add_theme_stylebox_override("background", UI.box(Color(0.02,0.07,0.05,0.65), 8, 1, UI.C_GOLD_DARK))
+	segment_progress.add_theme_stylebox_override("fill", UI.box(UI.C_GOLD, 8, 0))
+	top_row.add_child(segment_progress)
+
 	stars_lbl = UI.label("★★★", 22, UI.C_GOLD_LIGHT)
 	stars_lbl.custom_minimum_size = Vector2(82, 46)
 	top_row.add_child(stars_lbl)
@@ -131,7 +142,7 @@ func _build_ui() -> void:
 	text_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	text_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	text_lbl.custom_minimum_size = Vector2(0, 88)
+	text_lbl.custom_minimum_size = Vector2(0, 96)
 	text_lbl.mouse_filter = Control.MOUSE_FILTER_STOP
 	text_lbl.gui_input.connect(_on_card_input)
 	scroll.add_child(text_lbl)
@@ -208,6 +219,7 @@ func _next_segment() -> void:
 
 	speaker_lbl.text = _speaker_for_segment(idx)
 	text_lbl.text = String(seg.get("text", ""))
+	segment_progress.value = idx + 1
 	text_lbl.visible_ratio = 0.0
 	feedback_lbl.text = ""
 	text_done = false
@@ -220,7 +232,7 @@ func _next_segment() -> void:
 	elif idx == segments.size() - 1:
 		next_btn.text = "إنهاء الحكاية  ✦"
 	else:
-		next_btn.text = "التالي  →"
+		next_btn.text = "تابع الحكاية  →"
 
 	audio.stop()
 	var duration: float = maxf(1.5, text_lbl.text.length() * READ_SECONDS_PER_CHAR)
@@ -249,6 +261,7 @@ func _on_card_input(ev: InputEvent) -> void:
 		_on_text_done()
 
 func _on_text_done() -> void:
+	segment_progress.value = idx + 1
 	if text_done:
 		return
 	text_done = true
