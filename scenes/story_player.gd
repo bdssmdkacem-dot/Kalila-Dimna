@@ -413,7 +413,7 @@ func _finish() -> void:
 	var stars := 3 if mistakes == 0 else (2 if mistakes <= 2 else 1)
 	GameState.set_stars(story.id, stars)
 	GameState.last_stars = stars
-	get_tree().change_scene_to_file(RESULT)
+	UI.transition_to(self, RESULT)
 
 
 func _go_map() -> void:
