@@ -17,7 +17,12 @@ const REALISTIC_ASSETS := {
 	"turtle": "res://assets/images/characters/new/turtle_story_new.svg",
 	"dove": "res://assets/images/characters/new/dove_story_new.svg",
 	"mouse": "res://assets/images/characters/new/mouse_story_new.svg",
-	"hare": "res://assets/images/characters/new/hare_story_new.svg"
+	"hare": "res://assets/images/characters/new/hare_story_new.svg",
+	"rat": "res://assets/images/characters/new/rat_story_new.svg",
+	"cat": "res://assets/images/characters/new/cat_story_new.svg",
+	"owl": "res://assets/images/characters/new/owl_story_new.svg",
+	"jackal": "res://assets/images/characters/new/jackal_story_new.svg",
+	"duck": "res://assets/images/characters/new/duck_story_new.svg"
 }
 const FALLBACK_ASSETS := {
 	"lion": "res://assets/images/characters/lion_2d.svg",
@@ -30,7 +35,20 @@ const BACKGROUND_ASSETS := {
 	"monkey_turtle:river_meadow": "res://assets/images/new/monkey_turtle_river_new.svg",
 	"dove_ring:forest": "res://assets/images/new/dove_ring_forest_new.svg",
 	"lion_hare:forest": "res://assets/images/new/lion_hare_forest_new.svg",
-	"lion_hare:river_meadow": "res://assets/images/new/lion_hare_well_new.svg"
+	"lion_hare:river_meadow": "res://assets/images/new/lion_hare_well_new.svg",
+	"rat_cat:forest": "res://assets/images/new/rat_cat_forest_new.svg",
+	"rat_cat:trap": "res://assets/images/new/rat_cat_trap_new.svg",
+	"rat_cat:sunset": "res://assets/images/new/rat_cat_sunset_new.svg",
+	"owls_crows:forest": "res://assets/images/new/owls_crows_forest_new.svg",
+	"owls_crows:council": "res://assets/images/new/owls_crows_council_new.svg",
+	"owls_crows:sunset": "res://assets/images/new/owls_crows_sunset_new.svg",
+	"jackal_lion:king_clearing": "res://assets/images/new/jackal_lion_king_clearing_new.svg",
+	"jackal_lion:forest": "res://assets/images/new/jackal_lion_king_clearing_new.svg",
+	"jackal_lion:council": "res://assets/images/new/jackal_lion_council_new.svg",
+	"jackal_lion:sunset": "res://assets/images/new/jackal_lion_sunset_new.svg",
+	"turtle_ducks:lake": "res://assets/images/new/turtle_ducks_lake_new.svg",
+	"turtle_ducks:sky": "res://assets/images/new/turtle_ducks_sky_new.svg",
+	"turtle_ducks:sunset": "res://assets/images/new/turtle_ducks_sunset_new.svg"
 }
 const BACKGROUND_TEX := preload("res://assets/images/new/lion_bull_forest_new.svg")
 const FOREST_TEX := preload("res://assets/images/new/lion_bull_forest_new.svg")
@@ -179,6 +197,11 @@ func _height_for(id: String) -> float:
 		"dove": return 205.0
 		"mouse": return 165.0
 		"hare": return 260.0
+		"rat": return 175.0
+		"cat": return 275.0
+		"owl": return 235.0
+		"jackal": return 275.0
+		"duck": return 210.0
 		_: return 260.0
 
 func _shadow_size_for(id: String) -> Vector2:
@@ -300,6 +323,10 @@ func _background_focus(story_id: String, place: String, shot_kind: String) -> Ve
 			if place == "forest": return Vector2(0.0, 8.0 if shot_kind == "wide" else -4.0)
 			if place == "well": return Vector2(0.0, -14.0 if shot_kind == "speaker_close" else -8.0)
 			return Vector2(0.0, -10.0)
+		"rat_cat": return Vector2(0.0, 5.0)
+		"owls_crows": return Vector2(0.0, -8.0)
+		"jackal_lion": return Vector2(0.0, 4.0)
+		"turtle_ducks": return Vector2(0.0, -8.0)
 	return Vector2.ZERO
 
 func _actor_position(story_id: String, place: String, actor_id: String, index: int, count: int) -> Vector2:
