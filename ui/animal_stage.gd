@@ -7,6 +7,10 @@ const STORY_ACTORS := {
     "monkey_turtle": ["monkey", "turtle"],
     "dove_ring": ["dove"],
     "lion_hare": ["lion", "hare"],
+    "rat_cat": ["rat", "cat"],
+    "owls_crows": ["owl", "crow"],
+    "jackal_lion": ["jackal", "lion"],
+    "turtle_ducks": ["turtle", "duck"],
 }
 
 var viewport: SubViewport
@@ -339,6 +343,14 @@ func _build_story_environment(story_id: String, segment_index: int) -> void:
             _make_dove_garden_environment()
         "lion_hare":
             _make_meadow_environment(5, 3, false)
+        "rat_cat":
+            _make_forest_rocks_environment(4, 2)
+        "owls_crows":
+            _make_forest_rocks_environment(5, 3)
+        "jackal_lion":
+            _make_meadow_environment(4, 2, true)
+        "turtle_ducks":
+            _make_river_forest_environment()
         _:
             _make_meadow_environment(2, 1, true)
 
@@ -375,6 +387,26 @@ func _apply_story_visual_style(story_id: String) -> void:
             ambient_energy = 1.0
         "lion_hare":
             bg = Color("#c5d8b0")
+        "rat_cat":
+            bg = Color("#9b9b7b")
+            ambient = Color("#fff0d0")
+            ground_color = Color("#6f754d")
+            ambient_energy = 0.85
+        "owls_crows":
+            bg = Color("#4a5960")
+            ambient = Color("#d8e3dc")
+            ground_color = Color("#53604d")
+            ambient_energy = 0.7
+        "jackal_lion":
+            bg = Color("#c8d1a8")
+            ambient = Color("#fff1d2")
+            ground_color = Color("#7f8d5d")
+            ambient_energy = 0.9
+        "turtle_ducks":
+            bg = Color("#a8d1d0")
+            ambient = Color("#e7f5e8")
+            ground_color = Color("#789b67")
+            ambient_energy = 0.95
             ambient = Color("#fff0d0")
             ground_color = Color("#8ca566")
             ambient_energy = 0.9
@@ -535,7 +567,8 @@ func _make_animal(id: String) -> Node3D:
         imported.name = id
         return imported
 
-    if OS.has_feature("release"):
+    var procedural_only := id in ["rat", "cat", "owl", "jackal", "duck"]
+    if OS.has_feature("release") and not procedural_only:
         push_error("Required real animal asset is missing or failed to load: %s" % id)
         var release_root := Node3D.new()
         release_root.name = "%s_missing_asset" % id
@@ -553,6 +586,11 @@ func _make_animal(id: String) -> Node3D:
         "turtle": _make_turtle(root)
         "dove": _make_bird(root, Color("#e8e8df"), Color("#a9a9a2"))
         "hare": _make_hare(root)
+        "rat": _make_rat(root)
+        "cat": _make_cat(root)
+        "owl": _make_owl(root)
+        "jackal": _make_jackal(root)
+        "duck": _make_duck(root)
         _: _make_hare(root)
     return root
 
@@ -602,6 +640,12 @@ func _animal_frame_target(id: String, is_pair: bool) -> Vector3:
             "monkey": return Vector3(2.00, 1.80, 1.45)
             "turtle": return Vector3(2.20, 1.35, 1.70)
             "hare": return Vector3(1.80, 1.85, 1.35)
+    match id:
+        "rat": return Vector3(1.10, 0.75, 0.85)
+        "cat": return Vector3(1.65, 1.35, 1.15)
+        "owl": return Vector3(1.20, 1.35, 1.05)
+        "jackal": return Vector3(1.65, 1.45, 1.20)
+        "duck": return Vector3(1.25, 1.15, 1.15)
     return Vector3(1.50, 1.60, 1.25)
 
 func _get_animal_bounds(root: Node3D) -> AABB:
@@ -747,6 +791,38 @@ func _make_turtle(r: Node3D) -> void:
         for z in [-0.38, 0.38]:
             _sphere(r, Vector3(x, 0.35, z), Vector3(0.28, 0.22, 0.32), skin)
     _sphere(r, Vector3(0, 0.7, -0.82), Vector3(0.42, 0.38, 0.38), skin)
+
+func _make_rat(r: Node3D) -> void:
+    var fur := Color("#7a6048")
+    _sphere(r, Vector3(0, 0.55, 0), Vector3(0.72, 0.42, 0.42), fur)
+    _sphere(r, Vector3(0.0, 0.72, -0.36), Vector3(0.38, 0.32, 0.32), fur)
+    _sphere(r, Vector3(-0.18, 0.98, -0.35), Vector3(0.08, 0.25, 0.08), fur)
+    _sphere(r, Vector3(0.18, 0.98, -0.35), Vector3(0.08, 0.25, 0.08), fur)
+func _make_cat(r: Node3D) -> void:
+    var fur := Color("#b57b4d")
+    _sphere(r, Vector3(0, 0.82, 0), Vector3(0.82, 0.55, 0.5), fur)
+    _sphere(r, Vector3(0, 1.32, -0.18), Vector3(0.48, 0.48, 0.44), fur)
+    _cone(r, Vector3(-0.23, 1.68, -0.12), Vector3(0.13, 0.32, 0.13), fur)
+    _cone(r, Vector3(0.23, 1.68, -0.12), Vector3(0.13, 0.32, 0.13), fur)
+    _cylinder(r, Vector3(0.62, 0.9, 0.12), Vector3(0.12, 0.85, 0.12), fur)
+func _make_owl(r: Node3D) -> void:
+    var body := Color("#5c5548")
+    _sphere(r, Vector3(0, 0.95, 0), Vector3(0.72, 0.9, 0.55), body)
+    _sphere(r, Vector3(0, 1.62, -0.1), Vector3(0.6, 0.52, 0.52), body)
+    _sphere(r, Vector3(-0.22, 1.65, -0.5), Vector3(0.18, 0.18, 0.08), Color("#e6d9b5"))
+    _sphere(r, Vector3(0.22, 1.65, -0.5), Vector3(0.18, 0.18, 0.08), Color("#e6d9b5"))
+func _make_jackal(r: Node3D) -> void:
+    var fur := Color("#9a704d")
+    _sphere(r, Vector3(0, 0.82, 0), Vector3(0.95, 0.55, 0.5), fur)
+    _sphere(r, Vector3(0, 1.3, -0.25), Vector3(0.5, 0.48, 0.42), fur)
+    _cone(r, Vector3(-0.2, 1.68, -0.22), Vector3(0.13, 0.38, 0.13), fur)
+    _cone(r, Vector3(0.2, 1.68, -0.22), Vector3(0.13, 0.38, 0.13), fur)
+    _cylinder(r, Vector3(0.7, 0.95, 0.15), Vector3(0.11, 0.8, 0.11), fur)
+func _make_duck(r: Node3D) -> void:
+    var body := Color("#d8cfae")
+    _sphere(r, Vector3(0, 0.75, 0), Vector3(0.78, 0.5, 0.6), body)
+    _sphere(r, Vector3(0, 1.28, -0.35), Vector3(0.42, 0.42, 0.4), body)
+    _sphere(r, Vector3(0, 1.25, -0.67), Vector3(0.28, 0.12, 0.18), Color("#c98b3c"))
 
 func _make_hare(r: Node3D) -> void:
     var fur := Color("#b58d69")
