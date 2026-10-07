@@ -26,11 +26,11 @@ const FALLBACK_ASSETS := {
 const BACKGROUND_ASSETS := {
 	"lion_bull:forest": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp",
 	"lion_bull:river_meadow": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp",
-	"crow_snake:forest": "res://assets/images/backgrounds/crow_snake_forest_realistic.webp",
-	"monkey_turtle:river_meadow": "res://assets/images/backgrounds/monkey_turtle_river_realistic.webp",
-	"dove_ring:forest": "res://assets/images/backgrounds/dove_ring_forest_realistic.webp",
-	"lion_hare:forest": "res://assets/images/backgrounds/lion_hare_forest_realistic.webp",
-	"lion_hare:river_meadow": "res://assets/images/backgrounds/lion_hare_well_realistic.webp"
+	"crow_snake:forest": "res://assets/images/new/crow_snake_forest_new.svg",
+	"monkey_turtle:river_meadow": "res://assets/images/new/monkey_turtle_river_new.svg",
+	"dove_ring:forest": "res://assets/images/new/dove_ring_forest_new.svg",
+	"lion_hare:forest": "res://assets/images/new/lion_hare_forest_new.svg",
+	"lion_hare:river_meadow": "res://assets/images/new/lion_hare_well_new.svg"
 }
 const BACKGROUND_TEX := preload("res://assets/images/backgrounds/lion_bull_2d.svg")
 const FOREST_TEX := preload("res://assets/images/backgrounds/lion_bull_forest_2d.svg")

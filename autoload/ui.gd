@@ -18,8 +18,8 @@ const C_BAD := Color("#d66d61")
 const C_MUTED := Color("#6e6a58")
 
 const FONT_PATH := "res://assets/fonts/Amiri-Regular.ttf"
-const BRAND_MARK_PATH := "res://assets/branding/brand_mark.svg"
-const PARCHMENT_PATH := "res://assets/branding/parchment.svg"
+const BRAND_MARK_PATH := "res://icon.svg"
+const PARCHMENT_PATH := "res://assets/images/new/story_map_parchment_new.svg"
 
 func _ready() -> void:
 	get_tree().root.theme = _build_theme()
@@ -168,8 +168,12 @@ func page(root: Control, background_mode: String = "parchment") -> VBoxContainer
 	root.layout_direction = Control.LAYOUT_DIRECTION_RTL
 
 	if background_mode == "forest":
-		var bg := CinematicBackdrop.new()
+		var bg := TextureRect.new()
 		bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+		bg.texture = load("res://assets/images/new/main_menu_forest.svg") as Texture2D
+		bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		root.add_child(bg)
 	else:
 		var paper := TextureRect.new()

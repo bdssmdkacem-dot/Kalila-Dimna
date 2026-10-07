@@ -5,11 +5,11 @@ const MENU := "res://scenes/main_menu.tscn"
 const PLAYER := "res://scenes/story_player.tscn"
 
 const STORY_ICONS := {
-	"lion_bull": "res://assets/images/characters/lion_2d_realistic.webp",
-	"crow_snake": "res://assets/images/characters/crow_realistic.webp",
-	"monkey_turtle": "res://assets/images/characters/monkey_realistic.webp",
-	"dove_ring": "res://assets/images/characters/dove_realistic.webp",
-	"lion_hare": "res://assets/images/characters/lion_2d_realistic.webp"
+	"lion_bull": "res://assets/images/new/lion_medallion_new.svg",
+	"crow_snake": "res://assets/images/new/crow_medallion_new.svg",
+	"monkey_turtle": "res://assets/images/new/monkey_medallion_new.svg",
+	"dove_ring": "res://assets/images/new/dove_medallion_new.svg",
+	"lion_hare": "res://assets/images/new/hare_medallion_new.svg"
 }
 
 func _ready() -> void:

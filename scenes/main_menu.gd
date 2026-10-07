@@ -1,7 +1,7 @@
 extends Control
 
 const MAP := "res://scenes/story_map.tscn"
-const FOREST_BG := "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
+const FOREST_BG := "res://assets/images/new/main_menu_forest.svg"
 
 func _ready() -> void:
 	var page := UI.page(self, "forest")
