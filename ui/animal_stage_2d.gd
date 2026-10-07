@@ -59,6 +59,7 @@ var scene_glow: ColorRect
 var vignette: ColorRect
 var background_target_offset := Vector2.ZERO
 var background_offset := Vector2.ZERO
+var scene_intro_time := 0.0
 
 func _ready() -> void:
 	clip_contents = true
@@ -246,6 +247,7 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	active_segment_index = segment_index
 	scene_data = data
 	segment_time = 0.0
+	scene_intro_time = 0.0
 	speaking_actor = ""
 	shot = String(data.get("shot", "wide"))
 	_clear_actors()
@@ -279,7 +281,9 @@ func show_segment(story_id: String, segment_index: int, data: Dictionary = {}) -
 	_configure_shot(shot)
 	# Do not gate scene visibility behind a black fade. This avoids a permanent
 	# black screen if Android pauses or interrupts a startup tween.
-	transition_fade.color.a = 0.0
+	transition_fade.color.a = 0.72
+	var scene_tween := create_tween()
+	scene_tween.tween_property(transition_fade, "color:a", 0.0, 0.42).set_trans(Tween.TRANS_SINE)
 
 func _background_focus(story_id: String, place: String, shot_kind: String) -> Vector2:
 	match story_id:
@@ -387,6 +391,19 @@ func _keep_actors_inside_safe_frame() -> void:
 		n.position.y = clampf(n.position.y, SAFE_TOP+100.0, SAFE_BOTTOM-20.0)
 		actor_targets[id] = n.position
 
+func _motion_amount(id: String) -> Vector2:
+	var t := segment_time
+	var phase := float(actor_phase.get(id, 0.0))
+	match id:
+		"lion": return Vector2(sin(t * 0.55 + phase) * 3.0, sin(t * 1.15 + phase) * 1.5)
+		"bull": return Vector2(sin(t * 0.65 + phase) * 3.5, sin(t * 1.0 + phase) * 1.2)
+		"crow", "dove": return Vector2(sin(t * 1.15 + phase) * 10.0, sin(t * 1.8 + phase) * 7.0)
+		"snake": return Vector2(sin(t * 1.35 + phase) * 6.0, sin(t * 2.1 + phase) * 2.0)
+		"monkey": return Vector2(sin(t * 0.9 + phase) * 5.0, sin(t * 1.7 + phase) * 2.5)
+		"turtle", "mouse": return Vector2(sin(t * 0.8 + phase) * 2.0, sin(t * 1.4 + phase) * 1.0)
+		"hare": return Vector2(sin(t * 1.25 + phase) * 4.0, sin(t * 2.0 + phase) * 2.0)
+	return Vector2.ZERO
+
 func _idle_amount(id: String) -> Vector2:
 	if id == "crow" or id == "dove":
 		return Vector2(0.0, sin(segment_time * 1.8 + float(actor_phase.get(id, 0.0))) * 2.5)
@@ -399,11 +416,12 @@ func _idle_amount(id: String) -> Vector2:
 func _process(delta: float) -> void:
 	if world == null: return
 	segment_time += delta
+	scene_intro_time += delta
 	for id in active_actor_nodes:
 		var n := active_actor_nodes[id] as Sprite2D
 		var target: Vector2 = actor_targets.get(id,n.position)
 		n.position = n.position.lerp(target,minf(delta*2.4,1.0))
-		var idle := _idle_amount(id)
+		var idle := _idle_amount(id) + _motion_amount(id)
 		n.position += idle * minf(delta * 4.0, 1.0)
 		if actor_shadows.has(id):
 			var shadow := actor_shadows[id] as Polygon2D
