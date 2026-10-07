@@ -20,6 +20,23 @@ const REQUIRED := [
 	"res://assets/images/characters/dove_realistic.webp",
 	"res://assets/images/characters/mouse_realistic.webp",
 	"res://assets/images/characters/hare_realistic.webp",
+	"res://assets/images/characters/new/rat_story_new.svg",
+	"res://assets/images/characters/new/cat_story_new.svg",
+	"res://assets/images/characters/new/owl_story_new.svg",
+	"res://assets/images/characters/new/jackal_story_new.svg",
+	"res://assets/images/characters/new/duck_story_new.svg",
+	"res://assets/images/new/rat_cat_forest_new.svg",
+	"res://assets/images/new/rat_cat_trap_new.svg",
+	"res://assets/images/new/rat_cat_sunset_new.svg",
+	"res://assets/images/new/owls_crows_forest_new.svg",
+	"res://assets/images/new/owls_crows_council_new.svg",
+	"res://assets/images/new/owls_crows_sunset_new.svg",
+	"res://assets/images/new/jackal_lion_king_clearing_new.svg",
+	"res://assets/images/new/jackal_lion_council_new.svg",
+	"res://assets/images/new/jackal_lion_sunset_new.svg",
+	"res://assets/images/new/turtle_ducks_lake_new.svg",
+	"res://assets/images/new/turtle_ducks_sky_new.svg",
+	"res://assets/images/new/turtle_ducks_sunset_new.svg",
 ]
 
 const STORY_PATHS := [
