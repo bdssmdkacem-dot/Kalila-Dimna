@@ -191,7 +191,7 @@ func _top_bar_style() -> StyleBoxFlat:
 
 func _story_overlay_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.025, 0.09, 0.07, 0.90)
+	style.bg_color = Color(0.018, 0.065, 0.052, 0.92)
 	style.border_color = Color(0.88, 0.72, 0.34, 0.92)
 	style.set_border_width_all(2)
 	style.set_corner_radius_all(24)
@@ -207,8 +207,8 @@ func _story_overlay_style() -> StyleBoxFlat:
 
 func _options_overlay_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.97, 0.91, 0.77, 0.96)
-	style.border_color = Color(0.81, 0.64, 0.27, 0.96)
+	style.bg_color = Color(0.025, 0.09, 0.07, 0.96)
+	style.border_color = Color(0.84, 0.69, 0.32, 0.96)
 	style.set_border_width_all(2)
 	style.set_corner_radius_all(22)
 	style.content_margin_left = 16
@@ -322,7 +322,7 @@ func _on_text_done() -> void:
 func _show_story_interaction(interaction: Dictionary) -> void:
 	options_panel.visible = true
 	options_box.add_child(UI.pill("لحظة القرار", 26, UI.C_PAPER_LIGHT, UI.C_GREEN_DARK))
-	var q := UI.label(String(interaction.question), 30, UI.C_INK)
+	var q := UI.label(String(interaction.question), 30, UI.C_PAPER)
 	q.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	options_box.add_child(q)
 	var answer := int(interaction.answer)
