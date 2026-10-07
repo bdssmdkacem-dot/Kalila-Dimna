@@ -8,7 +8,7 @@ config/name="كليلة ودمنة"
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/quit_on_go_back=false
-config/icon="res://icon.svg"
+config/icon="res://assets/branding/brand_mark.svg"
 
 [autoload]
 
