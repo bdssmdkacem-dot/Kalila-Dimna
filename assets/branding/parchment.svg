@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+<defs>
+  <linearGradient id="paper" x2="0" y2="1">
+    <stop stop-color="#fbf1d6"/>
+    <stop offset=".52" stop-color="#f3e2b7"/>
+    <stop offset="1" stop-color="#e7cf9c"/>
+  </linearGradient>
+  <radialGradient id="glow" cx=".5" cy=".12" r=".75">
+    <stop stop-color="#fff8df" stop-opacity=".95"/>
+    <stop offset="1" stop-color="#fff8df" stop-opacity="0"/>
+  </radialGradient>
+  <pattern id="motif" width="88" height="88" patternUnits="userSpaceOnUse">
+    <path d="M44 13 L53 35 L75 44 L53 53 L44 75 L35 53 L13 44 L35 35Z" fill="none" stroke="#8a6d10" stroke-opacity=".055" stroke-width="2"/>
+    <circle cx="44" cy="44" r="4" fill="#8a6d10" fill-opacity=".05"/>
+  </pattern>
+</defs>
+<rect width="1600" height="900" fill="url(#paper)"/>
+<rect width="1600" height="900" fill="url(#glow)"/>
+<rect width="1600" height="900" fill="url(#motif)"/>
+<rect x="18" y="18" width="1564" height="864" rx="24" fill="none" stroke="#8a6d10" stroke-opacity=".14" stroke-width="3"/>
+<path d="M56 58 H430 M1170 58 H1544 M56 842 H430 M1170 842 H1544" stroke="#8a6d10" stroke-opacity=".16" stroke-width="4" stroke-linecap="round"/>
+<circle cx="800" cy="58" r="5" fill="#8a6d10" fill-opacity=".24"/>
+<circle cx="800" cy="842" r="5" fill="#8a6d10" fill-opacity=".24"/>
+</svg>
