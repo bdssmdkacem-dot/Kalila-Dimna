@@ -3,11 +3,15 @@ extends Control
 
 # مسار عمودي يشبه خريطة المخطوطة في التصميم المرجعي.
 const NODE_POSITIONS := [
-	Vector2(0.27, 0.12),
-	Vector2(0.27, 0.31),
-	Vector2(0.27, 0.50),
-	Vector2(0.27, 0.69),
-	Vector2(0.27, 0.88)
+	Vector2(0.22, 0.07),
+	Vector2(0.78, 0.18),
+	Vector2(0.22, 0.30),
+	Vector2(0.78, 0.42),
+	Vector2(0.22, 0.54),
+	Vector2(0.78, 0.66),
+	Vector2(0.22, 0.78),
+	Vector2(0.78, 0.90),
+	Vector2(0.50, 0.99)
 ]
 
 var node_positions := NODE_POSITIONS
