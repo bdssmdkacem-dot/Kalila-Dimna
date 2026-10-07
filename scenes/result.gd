@@ -47,21 +47,21 @@ func _ready() -> void:
 		var nxt := UI.button("الحكاية التالية  →", 44, 92)
 		nxt.custom_minimum_size.x = 390
 		nxt.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		nxt.pressed.connect(_play.bind(StoryLoader.stories[idx + 1]))
+		nxt.pressed.connect(func(): _transition_to_story(StoryLoader.stories[idx + 1]))
 		content.add_child(nxt)
 
 	var again := UI.button("إعادة الحكاية", 30, 68)
 	again.custom_minimum_size.x = 260
 	again.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	again.add_theme_stylebox_override("normal", UI.box(Color(0.04, 0.15, 0.12, 0.78), 16, 1, Color("#53645b")))
-	again.pressed.connect(_play.bind(story))
+	again.pressed.connect(func(): _transition_to_story(story))
 	content.add_child(again)
 
 	var map := UI.button("العودة إلى الطريق", 29, 68)
 	map.custom_minimum_size.x = 260
 	map.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	map.add_theme_stylebox_override("normal", UI.box(Color(0.04, 0.15, 0.12, 0.70), 16, 1, Color("#53645b")))
-	map.pressed.connect(func(): get_tree().change_scene_to_file(MAP))
+	map.pressed.connect(func(): UI.transition_to(self, MAP))
 	content.add_child(map)
 
 	var intro_tween := create_tween().set_parallel(true)
@@ -70,9 +70,12 @@ func _ready() -> void:
 	intro_tween.tween_property(complete, "modulate", Color(1.12, 1.06, 0.82), 0.65).set_delay(0.25)
 	intro_tween.tween_property(complete, "modulate", Color.WHITE, 0.8).set_delay(0.9)
 	
+func _transition_to_story(next_story: Dictionary) -> void:
+	GameState.current_story = next_story
+	UI.transition_to(self, PLAYER)
+
 func _play(story: Dictionary) -> void:
-	GameState.current_story = story
-	get_tree().change_scene_to_file(PLAYER)
+	_transition_to_story(story)
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
