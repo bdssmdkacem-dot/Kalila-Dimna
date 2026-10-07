@@ -10,6 +10,10 @@ func _ready() -> void:
 		get_tree().change_scene_to_file(MAP)
 		return
 
+	var fx := RewardFX.new()
+	fx.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(fx)
+
 	var page := UI.page(self)
 	page.alignment = BoxContainer.ALIGNMENT_CENTER
 
@@ -30,6 +34,7 @@ func _ready() -> void:
 	content.add_child(story_title)
 
 	var stars := StarRow.new().setup(GameState.last_stars, 82.0)
+	stars.modulate.a = 0.0
 	stars.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	content.add_child(stars)
 
@@ -68,6 +73,7 @@ func _ready() -> void:
 	intro_tween.tween_property(hero, "modulate:a", 1.0, 0.55).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	intro_tween.tween_property(hero, "scale", Vector2.ONE, 0.65).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	intro_tween.tween_property(complete, "modulate", Color(1.12, 1.06, 0.82), 0.65).set_delay(0.25)
+	intro_tween.tween_property(stars, "modulate:a", 1.0, 0.7).set_delay(0.38).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	intro_tween.tween_property(complete, "modulate", Color.WHITE, 0.8).set_delay(0.9)
 	
 func _transition_to_story(next_story: Dictionary) -> void:
