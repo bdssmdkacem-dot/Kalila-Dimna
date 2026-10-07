@@ -9,7 +9,11 @@ const STORY_ICONS := {
 	"crow_snake": "res://assets/images/new/crow_medallion_new.svg",
 	"monkey_turtle": "res://assets/images/new/monkey_medallion_new.svg",
 	"dove_ring": "res://assets/images/new/dove_medallion_new.svg",
-	"lion_hare": "res://assets/images/new/hare_medallion_new.svg"
+	"lion_hare": "res://assets/images/new/hare_medallion_new.svg",
+	"rat_cat": "res://assets/images/new/rat_medallion_new.svg",
+	"owls_crows": "res://assets/images/new/owl_medallion_new.svg",
+	"jackal_lion": "res://assets/images/new/jackal_medallion_new.svg",
+	"turtle_ducks": "res://assets/images/new/duck_medallion_new.svg"
 }
 
 func _ready() -> void:
