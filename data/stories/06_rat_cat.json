@@ -1,0 +1,86 @@
+{
+  "id": "rat_cat",
+  "order": 6,
+  "title": "الجرذ والسنور",
+  "moral": "قد يجتمع المختلفون عند الحاجة، لكن الصداقة تحتاج إلى الحذر والوفاء.",
+  "segments": [
+    {
+      "text": "في غابةٍ قديمة، عاش جرذٌ ذكيّ داخل جحرٍ آمن، وكان سنورٌ صيّادٌ يترصّد الحيوانات حول المكان.",
+      "scene": {
+        "place": "forest",
+        "actors": [
+          "rat"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/rat_cat_forest_new.svg"
+      }
+    },
+    {
+      "text": "وقع السنور ذات يوم في شبكة الصياد، فظلّ يضرب الحبال محاولاً النجاة.",
+      "scene": {
+        "place": "trap",
+        "actors": [
+          "cat"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/rat_cat_trap_new.svg"
+      }
+    },
+    {
+      "text": "رأى الجرذ عدوه القديم في مأزق، فقال: لا أريد أن أموت معه، لكن يمكنني أن أساعده عندما يقترب الصياد.",
+      "scene": {
+        "place": "forest",
+        "actors": [
+          "rat",
+          "cat"
+        ],
+        "shot": "two_shot",
+        "background": "res://assets/images/new/rat_cat_forest_new.svg"
+      }
+    },
+    {
+      "text": "اقترب الجرذ وبدأ يقرض الحبال قليلاً قليلاً، ثم توقف كلما اقترب الصياد، حتى اطمأن أن الطريق أصبح آمناً.",
+      "scene": {
+        "place": "trap",
+        "actors": [
+          "rat",
+          "cat"
+        ],
+        "shot": "two_shot",
+        "background": "res://assets/images/new/rat_cat_trap_new.svg"
+      }
+    },
+    {
+      "text": "تحرر السنور أخيراً، وعرض على الجرذ أن يصبحا صديقين، لكن الجرذ قال: قد نتعاون عند الحاجة، أما الثقة فتحتاج إلى وقت.",
+      "challenge": {
+        "question": "ما التصرف الحكيم في هذا الموقف؟",
+        "options": [
+          "التفكير والتعاون قبل التصرف",
+          "التسرع دون تفكير"
+        ],
+        "answer": 0
+      },
+      "scene": {
+        "place": "forest",
+        "actors": [
+          "rat",
+          "cat"
+        ],
+        "shot": "two_shot",
+        "background": "res://assets/images/new/rat_cat_forest_new.svg"
+      }
+    },
+    {
+      "text": "وهكذا تعلّما أن الحكمة ليست في كراهية الآخرين، ولا في الثقة العمياء، بل في معرفة متى نتعاون وكيف نحفظ حدودنا.",
+      "scene": {
+        "place": "sunset",
+        "actors": [
+          "rat",
+          "cat"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/rat_cat_sunset_new.svg"
+      }
+    }
+  ]
+}
