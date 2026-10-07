@@ -1,23 +1,88 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
 <defs>
-  <linearGradient id="bg" x2="0" y2="1">
-    <stop stop-color="#2a705d"/>
-    <stop offset="1" stop-color="#133b31"/>
+  <radialGradient id="bg" cx="50%" cy="38%" r="75%">
+    <stop offset="0" stop-color="#245f4e"/>
+    <stop offset=".62" stop-color="#123d32"/>
+    <stop offset="1" stop-color="#071d18"/>
+  </radialGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#f8df91"/>
+    <stop offset=".42" stop-color="#d8b35a"/>
+    <stop offset="1" stop-color="#8a681f"/>
   </linearGradient>
-  <linearGradient id="gold" x2="0" y2="1">
-    <stop stop-color="#f0d487"/>
-    <stop offset="1" stop-color="#bb8f2c"/>
+  <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#fff0c4"/>
+    <stop offset="1" stop-color="#d7bd7e"/>
   </linearGradient>
+  <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+    <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity=".42"/>
+  </filter>
 </defs>
-<rect width="512" height="512" rx="112" fill="url(#bg)"/>
-<circle cx="256" cy="256" r="195" fill="#efe0b8" stroke="#b98728" stroke-width="12"/>
-<circle cx="256" cy="256" r="173" fill="#173d34" stroke="#f0d487" stroke-width="4"/>
-<path d="M149 322 Q191 282 236 295 L256 309 L276 295 Q321 282 363 322 L363 377 Q321 351 276 365 L256 377 L236 365 Q191 351 149 377Z" fill="url(#gold)" stroke="#7c5b18" stroke-width="6" stroke-linejoin="round"/>
-<path d="M256 307 V377" stroke="#7c5b18" stroke-width="6"/>
-<path d="M181 221 Q145 184 174 147 Q198 116 232 135 Q256 149 256 183 Q243 207 219 218 Q198 229 181 221Z" fill="#efe0b8" stroke="#b98728" stroke-width="5"/>
-<path d="M331 221 Q367 184 338 147 Q314 116 280 135 Q256 149 256 183 Q269 207 293 218 Q314 229 331 221Z" fill="#efe0b8" stroke="#b98728" stroke-width="5"/>
-<circle cx="214" cy="177" r="7" fill="#173d34"/>
-<circle cx="298" cy="177" r="7" fill="#173d34"/>
-<path d="M233 203 Q256 218 279 203" fill="none" stroke="#b98728" stroke-width="5" stroke-linecap="round"/>
-<circle cx="256" cy="97" r="14" fill="url(#gold)" stroke="#7c5b18" stroke-width="4"/>
+
+<!-- Emerald storybook background -->
+<rect x="18" y="18" width="988" height="988" rx="235" fill="url(#bg)" stroke="url(#gold)" stroke-width="18"/>
+<rect x="48" y="48" width="928" height="928" rx="208" fill="none" stroke="#d8b35a" stroke-opacity=".28" stroke-width="4"/>
+
+<!-- subtle ornamental stars -->
+<g fill="#f5dc8d" opacity=".7">
+  <circle cx="190" cy="190" r="7"/><circle cx="834" cy="190" r="7"/>
+  <circle cx="150" cy="430" r="5"/><circle cx="874" cy="430" r="5"/>
+</g>
+
+<!-- Lion emblem -->
+<g filter="url(#shadow)" stroke="url(#gold)" stroke-linejoin="round">
+  <!-- mane -->
+  <path d="M512 178
+    C431 135 336 175 315 257
+    C262 270 240 331 274 380
+    C226 429 247 502 302 525
+    C281 591 330 643 393 640
+    C417 707 491 733 542 689
+    C590 721 665 694 678 635
+    C744 643 792 589 766 529
+    C824 497 829 425 780 381
+    C815 322 780 263 711 254
+    C688 176 592 136 512 178 Z"
+    fill="#8b5d28" stroke-width="13"/>
+  <!-- face -->
+  <path d="M512 235
+    C451 215 394 257 397 322
+    L411 459
+    C418 529 463 583 512 596
+    C561 583 606 529 613 459
+    L627 322
+    C630 257 573 215 512 235 Z"
+    fill="url(#paper)" stroke-width="11"/>
+  <!-- ears -->
+  <path d="M411 300 C365 268 365 211 402 191 C435 213 449 251 439 292Z" fill="#b9893b" stroke-width="9"/>
+  <path d="M613 300 C659 268 659 211 622 191 C589 213 575 251 585 292Z" fill="#b9893b" stroke-width="9"/>
+  <!-- eyes -->
+  <path d="M438 350 Q470 329 493 350" fill="none" stroke="#6b4b1e" stroke-width="12" stroke-linecap="round"/>
+  <path d="M531 350 Q554 329 586 350" fill="none" stroke="#6b4b1e" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="467" cy="355" r="7" fill="#183d31" stroke="none"/>
+  <circle cx="557" cy="355" r="7" fill="#183d31" stroke="none"/>
+  <!-- muzzle -->
+  <path d="M448 420 Q512 380 576 420 L568 492 Q512 542 456 492Z" fill="#f7e6b7" stroke-width="8"/>
+  <path d="M487 430 Q512 412 537 430 Q528 451 512 455 Q496 451 487 430Z" fill="#55381d" stroke="none"/>
+  <path d="M512 453 L512 476 Q489 499 466 484 M512 476 Q535 499 558 484" fill="none" stroke="#6b4b1e" stroke-width="8" stroke-linecap="round"/>
+</g>
+
+<!-- Open storybook -->
+<g filter="url(#shadow)" stroke="url(#gold)" stroke-linejoin="round">
+  <path d="M166 657 Q258 610 368 651 Q437 675 512 713 L512 886 Q433 842 365 832 Q258 815 166 859Z"
+        fill="url(#paper)" stroke-width="14"/>
+  <path d="M858 657 Q766 610 656 651 Q587 675 512 713 L512 886 Q591 842 659 832 Q766 815 858 859Z"
+        fill="url(#paper)" stroke-width="14"/>
+  <path d="M512 713 L512 886" stroke="#80601f" stroke-width="12"/>
+  <path d="M212 709 Q292 684 367 706 M212 753 Q292 728 367 750 M657 706 Q732 684 812 709 M657 750 Q732 728 812 753"
+        fill="none" stroke="#8e6d2b" stroke-opacity=".48" stroke-width="8" stroke-linecap="round"/>
+</g>
+
+<!-- central gold seal -->
+<circle cx="512" cy="716" r="42" fill="#123d32" stroke="url(#gold)" stroke-width="9"/>
+<path d="M512 688 L520 707 L541 709 L525 723 L530 744 L512 733 L494 744 L499 723 L483 709 L504 707Z"
+      fill="url(#gold)"/>
+
+<!-- tiny title mark -->
+<path d="M367 927 Q512 967 657 927" fill="none" stroke="#d8b35a" stroke-width="5" stroke-linecap="round"/>
 </svg>
