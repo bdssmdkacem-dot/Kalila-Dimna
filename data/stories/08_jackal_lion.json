@@ -1,0 +1,86 @@
+{
+  "id": "jackal_lion",
+  "order": 8,
+  "title": "الأسد وابن آوى",
+  "moral": "الحكمة في قول الحقيقة في الوقت المناسب، لا في مدح الأقوياء.",
+  "segments": [
+    {
+      "text": "كان أسدٌ ملكاً للغابة، وكان حوله عددٌ من الحيوانات التي تخشى غضبه.",
+      "scene": {
+        "place": "king_clearing",
+        "actors": [
+          "lion"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/jackal_lion_king_clearing_new.svg"
+      }
+    },
+    {
+      "text": "وكان ابن آوى يراقب ما يحدث، فلا يمدح الأسد بلا سبب ولا يعارضه بلا حكمة.",
+      "scene": {
+        "place": "king_clearing",
+        "actors": [
+          "jackal"
+        ],
+        "shot": "speaker_close",
+        "background": "res://assets/images/new/jackal_lion_king_clearing_new.svg"
+      }
+    },
+    {
+      "text": "في يومٍ ادعى بعض الحيوانات أن الأسد لا يخطئ أبداً، لكن ابن آوى قال: حتى الملك يحتاج إلى من ينصحه.",
+      "scene": {
+        "place": "forest",
+        "actors": [
+          "jackal",
+          "lion"
+        ],
+        "shot": "two_shot",
+        "background": "res://assets/images/new/jackal_lion_forest_new.svg"
+      }
+    },
+    {
+      "text": "غضب الأسد وقال: أتظن أنك تعرف أكثر مني؟ فأجاب ابن آوى: لا، لكنني أعرف أن من يسمع النصيحة يرى ما لا يراه وحده.",
+      "scene": {
+        "place": "council",
+        "actors": [
+          "jackal",
+          "lion"
+        ],
+        "shot": "two_shot",
+        "background": "res://assets/images/new/jackal_lion_council_new.svg"
+      }
+    },
+    {
+      "text": "هدأ الأسد وفكر في كلامه، ثم قال: صدقت. من يخاف قول الحقيقة قد يقود الملك إلى الخطأ.",
+      "challenge": {
+        "question": "ما التصرف الحكيم في هذا الموقف؟",
+        "options": [
+          "التفكير والتعاون قبل التصرف",
+          "التسرع دون تفكير"
+        ],
+        "answer": 0
+      },
+      "scene": {
+        "place": "king_clearing",
+        "actors": [
+          "lion",
+          "jackal"
+        ],
+        "shot": "two_shot",
+        "background": "res://assets/images/new/jackal_lion_king_clearing_new.svg"
+      }
+    },
+    {
+      "text": "ومنذ ذلك اليوم أصبح الأسد يستمع إلى النصيحة الصادقة، وأصبح ابن آوى معروفاً بحكمته.",
+      "scene": {
+        "place": "sunset",
+        "actors": [
+          "lion",
+          "jackal"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/jackal_lion_sunset_new.svg"
+      }
+    }
+  ]
+}
