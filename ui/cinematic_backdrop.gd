@@ -17,47 +17,45 @@ func _draw() -> void:
 	if s.x <= 1.0 or s.y <= 1.0:
 		return
 
-	# Deep cinematic base.
 	draw_rect(Rect2(Vector2.ZERO, s), Color("#071c19"))
 
-	# Atmospheric light pools.
-	var center := Vector2(s.x * 0.52, s.y * 0.34)
+	# Slow parallax light: the background never feels static.
+	var drift := Vector2(sin(pulse * 0.18) * s.x * 0.018, cos(pulse * 0.14) * s.y * 0.010)
+	var center := Vector2(s.x * 0.52, s.y * 0.34) + drift
 	for i in range(12, 0, -1):
 		var r := s.x * (0.035 + i * 0.032)
 		var a := 0.006 + (12 - i) * 0.002
 		draw_circle(center, r, Color(0.86, 0.68, 0.31, a))
 
-	# Moon / lantern glow.
-	var moon := Vector2(s.x * 0.78, s.y * 0.22)
-	draw_circle(moon, minf(s.x, s.y) * 0.11, Color(0.96, 0.82, 0.48, 0.08))
-	draw_circle(moon, minf(s.x, s.y) * 0.075, Color("#f2d58a"))
+	var moon := Vector2(s.x * 0.78, s.y * 0.22) + drift * 0.45
+	var breathe := 1.0 + sin(pulse * 0.9) * 0.025
+	draw_circle(moon, minf(s.x, s.y) * 0.11 * breathe, Color(0.96, 0.82, 0.48, 0.08))
+	draw_circle(moon, minf(s.x, s.y) * 0.075 * breathe, Color("#f2d58a"))
 	draw_circle(moon + Vector2(-8, -6), minf(s.x, s.y) * 0.061, Color("#fff4c9"))
 
-	# Distant hills.
 	var h := s.y * 0.62
+	var hill_shift := sin(pulse * 0.10) * 10.0
 	var hills := PackedVector2Array([
-		Vector2(0, h + 80), Vector2(s.x * 0.12, h - 20),
-		Vector2(s.x * 0.25, h + 36), Vector2(s.x * 0.40, h - 65),
-		Vector2(s.x * 0.55, h + 18), Vector2(s.x * 0.72, h - 44),
+		Vector2(0, h + 80), Vector2(s.x * 0.12, h - 20 + hill_shift),
+		Vector2(s.x * 0.25, h + 36), Vector2(s.x * 0.40, h - 65 - hill_shift),
+		Vector2(s.x * 0.55, h + 18), Vector2(s.x * 0.72, h - 44 + hill_shift),
 		Vector2(s.x * 0.88, h + 20), Vector2(s.x, h - 10),
 		Vector2(s.x, s.y), Vector2(0, s.y)
 	])
 	draw_colored_polygon(hills, Color("#0a2923"))
 
-	# Foreground forest silhouettes.
 	for x in range(-30, int(s.x) + 60, 70):
 		var base := s.y
 		var th := 120.0 + fmod(abs(float(x) * 1.73), 150.0)
 		_draw_tree(Vector2(x, base), th, Color("#051411"))
 
-	# Floating golden dust.
 	for i in range(26):
-		var px := fmod(float(i * 137 + 53), s.x)
+		var px := fmod(float(i * 137 + 53) + sin(pulse * 0.12 + i) * 10.0, s.x)
 		var py := fmod(float(i * 71 + 31) + pulse * (8.0 + i % 4), s.y * 0.72)
 		var rr := 1.5 + float(i % 3)
-		draw_circle(Vector2(px, py), rr, Color(0.95, 0.78, 0.38, 0.16))
+		var alpha := 0.10 + (sin(pulse * 1.4 + i) + 1.0) * 0.05
+		draw_circle(Vector2(px, py), rr, Color(0.95, 0.78, 0.38, alpha))
 
-	# Cinematic vignette.
 	draw_rect(Rect2(0, 0, s.x, 26), Color(0, 0, 0, 0.22))
 	draw_rect(Rect2(0, s.y - 110, s.x, 110), Color(0, 0, 0, 0.20))
 
