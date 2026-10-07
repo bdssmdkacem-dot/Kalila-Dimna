@@ -9,31 +9,31 @@ const SAFE_TOP := 80.0
 const SAFE_BOTTOM := 640.0
 
 const REALISTIC_ASSETS := {
-	"lion": "res://assets/images/characters/lion_2d_realistic.webp",
-	"bull": "res://assets/images/characters/bull_2d_realistic.webp",
-	"crow": "res://assets/images/characters/crow_realistic.webp",
-	"snake": "res://assets/images/characters/snake_realistic.webp",
-	"monkey": "res://assets/images/characters/monkey_realistic.webp",
-	"turtle": "res://assets/images/characters/turtle_realistic.webp",
-	"dove": "res://assets/images/characters/dove_realistic.webp",
-	"mouse": "res://assets/images/characters/mouse_realistic.webp",
-	"hare": "res://assets/images/characters/hare_realistic.webp"
+	"lion": "res://assets/images/characters/new/lion_story_new.svg",
+	"bull": "res://assets/images/characters/new/bull_story_new.svg",
+	"crow": "res://assets/images/characters/new/crow_story_new.svg",
+	"snake": "res://assets/images/characters/new/snake_story_new.svg",
+	"monkey": "res://assets/images/characters/new/monkey_story_new.svg",
+	"turtle": "res://assets/images/characters/new/turtle_story_new.svg",
+	"dove": "res://assets/images/characters/new/dove_story_new.svg",
+	"mouse": "res://assets/images/characters/new/mouse_story_new.svg",
+	"hare": "res://assets/images/characters/new/hare_story_new.svg"
 }
 const FALLBACK_ASSETS := {
 	"lion": "res://assets/images/characters/lion_2d.svg",
 	"bull": "res://assets/images/characters/bull_2d.svg"
 }
 const BACKGROUND_ASSETS := {
-	"lion_bull:forest": "res://assets/images/backgrounds/lion_bull_forest_realistic.webp",
-	"lion_bull:river_meadow": "res://assets/images/backgrounds/lion_bull_river_meadow_realistic.webp",
+	"lion_bull:forest": "res://assets/images/new/lion_bull_forest_new.svg",
+	"lion_bull:river_meadow": "res://assets/images/new/lion_bull_river_new.svg",
 	"crow_snake:forest": "res://assets/images/new/crow_snake_forest_new.svg",
 	"monkey_turtle:river_meadow": "res://assets/images/new/monkey_turtle_river_new.svg",
 	"dove_ring:forest": "res://assets/images/new/dove_ring_forest_new.svg",
 	"lion_hare:forest": "res://assets/images/new/lion_hare_forest_new.svg",
 	"lion_hare:river_meadow": "res://assets/images/new/lion_hare_well_new.svg"
 }
-const BACKGROUND_TEX := preload("res://assets/images/backgrounds/lion_bull_2d.svg")
-const FOREST_TEX := preload("res://assets/images/backgrounds/lion_bull_forest_2d.svg")
+const BACKGROUND_TEX := preload("res://assets/images/new/lion_bull_forest_new.svg")
+const FOREST_TEX := preload("res://assets/images/new/lion_bull_forest_new.svg")
 
 var world: Node2D
 var background: Sprite2D
