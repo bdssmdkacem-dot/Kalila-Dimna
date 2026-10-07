@@ -7,7 +7,7 @@ func _ready() -> void:
 	page.alignment = BoxContainer.ALIGNMENT_CENTER
 
 	var hero := UI.hero_panel()
-	hero.custom_minimum_size = Vector2(0, 690)
+	hero.custom_minimum_size = Vector2(0, 730)
 	hero.modulate.a = 0.0
 	hero.scale = Vector2(0.96, 0.96)
 	page.add_child(hero)
@@ -22,7 +22,7 @@ func _ready() -> void:
 	mark.scale = Vector2(0.82, 0.82)
 	content.add_child(mark)
 
-	var eyebrow := UI.label("مكتبة الحكايات الشرقية", 25, UI.C_GOLD)
+	var eyebrow := UI.section_label("مكتبة الحكايات الشرقية  ·  حكايات وقرارات")
 	content.add_child(eyebrow)
 
 	var title := UI.label("كليلة ودمنة", 92, UI.C_GOLD_LIGHT)
@@ -38,14 +38,14 @@ func _ready() -> void:
 	line.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	content.add_child(line)
 
-	var intro := UI.label("حكايات تفاعلية بصوتٍ ومشهدٍ وقرارٍ يغيّر طريق القصة.", 29, UI.C_PAPER_DEEP)
+	var intro := UI.label("ادخل الحكاية، استمع، ثم اختر ما سيحدث بعد ذلك.", 30, UI.C_PAPER_DEEP)
 	intro.custom_minimum_size = Vector2(0, 58)
 	content.add_child(intro)
 
 	var play := UI.button("ابدأ الرحلة  ✦", 48, 104)
 	play.custom_minimum_size.x = 430
 	play.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	play.pressed.connect(func(): get_tree().change_scene_to_file(MAP))
+	play.pressed.connect(func(): UI.transition_to(self, MAP))
 	content.add_child(play)
 
 	var meta := UI.label("%d حكايات  ·  أصوات  ·  اختيارات  ·  عِبر" % StoryLoader.stories.size(), 23, UI.C_MUTED)
