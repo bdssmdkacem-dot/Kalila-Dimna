@@ -1,5 +1,8 @@
 # كليلة ودمنة — لعبة أندرويد (Godot 4.3)
 
+## الهوية البصرية
+راجع `docs/VISUAL_IDENTITY.md` عند إضافة أي شاشة أو عنصر جديد، للحفاظ على نفس لوحة الألوان والخط والعناصر الزخرفية.
+
 ## التشغيل محلياً
 1. افتح المجلد في Godot 4.3 واضغط F5.
 2. الاختبارات: `godot --headless -s tests/validate_stories.gd` و `godot --headless -s tests/smoke_test.gd`
