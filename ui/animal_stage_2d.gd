@@ -379,6 +379,49 @@ func _actor_position(story_id: String, place: String, actor_id: String, index: i
 				if actor_id == "hare": return Vector2(850.0, 450.0)
 			if actor_id == "lion": return Vector2(420.0, 405.0)
 			if actor_id == "hare": return Vector2(835.0, 455.0)
+		"rat_cat":
+			# Rat stays low and close to the ground; the cat remains larger and slightly higher.
+			if place == "trap":
+				if actor_id == "rat": return Vector2(405.0, 475.0)
+				if actor_id == "cat": return Vector2(835.0, 430.0)
+			if place == "sunset":
+				if actor_id == "rat": return Vector2(455.0, 445.0)
+				if actor_id == "cat": return Vector2(825.0, 420.0)
+			if actor_id == "rat": return Vector2(400.0, 455.0)
+			if actor_id == "cat": return Vector2(840.0, 420.0)
+		"owls_crows":
+			# Crows read higher in the canopy; owls sit a little lower so both remain visible.
+			if place == "mountain":
+				if actor_id == "crow": return Vector2(560.0, 305.0)
+				if actor_id == "owl": return Vector2(780.0, 340.0)
+			if place == "council":
+				if actor_id == "crow": return Vector2(640.0, 390.0)
+				if actor_id == "owl": return Vector2(800.0, 385.0)
+			if actor_id == "crow": return Vector2(430.0, 330.0)
+			if actor_id == "owl": return Vector2(850.0, 365.0)
+		"jackal_lion":
+			# Keep the lion dominant without crowding the jackal or the dialogue area.
+			if place == "forest":
+				if actor_id == "jackal": return Vector2(430.0, 435.0)
+				if actor_id == "lion": return Vector2(835.0, 405.0)
+			if place == "council":
+				if actor_id == "jackal": return Vector2(450.0, 425.0)
+				if actor_id == "lion": return Vector2(820.0, 395.0)
+			if place == "sunset":
+				if actor_id == "lion": return Vector2(455.0, 425.0)
+				if actor_id == "jackal": return Vector2(820.0, 440.0)
+			if actor_id == "lion": return Vector2(640.0, 405.0)
+			if actor_id == "jackal": return Vector2(640.0, 450.0)
+		"turtle_ducks":
+			# Lake scenes stay near the waterline; flight scenes move upward to make the sky read correctly.
+			if place == "sky":
+				if actor_id == "turtle": return Vector2(640.0, 315.0)
+				if actor_id == "duck": return Vector2(820.0, 285.0)
+			if place == "sunset":
+				if actor_id == "turtle": return Vector2(640.0, 440.0)
+				if actor_id == "duck": return Vector2(840.0, 405.0)
+			if actor_id == "turtle": return Vector2(520.0, 465.0)
+			if actor_id == "duck": return Vector2(825.0, 390.0)
 	var x := 640.0 if count == 1 else (350.0 + float(index) * 580.0)
 	return Vector2(x, 460.0)
 
