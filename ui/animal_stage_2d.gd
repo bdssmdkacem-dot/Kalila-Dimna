@@ -439,8 +439,8 @@ func _configure_shot(kind: String) -> void:
 	if kind == "speaker_close" and speaking_actor != "":
 		var n := active_actor_nodes.get(speaking_actor) as Sprite2D
 		if n:
-			target_world_scale = 1.12
-			target_world_position = DESIGN_SIZE*0.5 - n.position*target_world_scale
+			target_world_scale = _safe_close_scale(n, 1.10)
+			target_world_position = _safe_focus_position(n, target_world_scale)
 			var focus_delta := (n.position - DESIGN_SIZE * 0.5)
 			background_target_offset = Vector2(
 				clampf(-focus_delta.x * 0.035, -18.0, 18.0),
@@ -449,26 +449,62 @@ func _configure_shot(kind: String) -> void:
 	elif kind == "two_shot" and active_actor_nodes.size() >= 2:
 		var a := active_actor_nodes.values()[0] as Sprite2D
 		var b := active_actor_nodes.values()[1] as Sprite2D
-		var mid := (a.position+b.position)*0.5
-		target_world_scale = 1.03
-		target_world_position = DESIGN_SIZE*0.5-mid*target_world_scale
+		var min_x := minf(a.position.x - _actor_half_width(a), b.position.x - _actor_half_width(b))
+		var max_x := maxf(a.position.x + _actor_half_width(a), b.position.x + _actor_half_width(b))
+		var min_y := minf(a.position.y - _actor_half_height(a), b.position.y - _actor_half_height(b))
+		var max_y := maxf(a.position.y + _actor_half_height(a), b.position.y + _actor_half_height(b))
+		var center := Vector2((min_x + max_x) * 0.5, (min_y + max_y) * 0.5)
+		var span := Vector2(max_x - min_x, max_y - min_y)
+		var horizontal_scale := (SAFE_RIGHT - SAFE_LEFT) / maxf(span.x + 120.0, 1.0)
+		var vertical_scale := (SAFE_BOTTOM - SAFE_TOP) / maxf(span.y + 100.0, 1.0)
+		target_world_scale = minf(1.03, minf(horizontal_scale, vertical_scale))
+		target_world_scale = maxf(0.94, target_world_scale)
+		target_world_position = DESIGN_SIZE * 0.5 - center * target_world_scale
 		background_target_offset = Vector2(
-			clampf((DESIGN_SIZE.x * 0.5 - mid.x) * 0.025, -12.0, 12.0),
-			clampf((DESIGN_SIZE.y * 0.5 - mid.y) * 0.018, -8.0, 8.0)
+			clampf((DESIGN_SIZE.x * 0.5 - center.x) * 0.025, -12.0, 12.0),
+			clampf((DESIGN_SIZE.y * 0.5 - center.y) * 0.018, -8.0, 8.0)
 		)
 	elif kind == "reaction" and speaking_actor != "":
 		var ids := active_actor_nodes.keys()
 		for id in ids:
 			if id != speaking_actor:
 				var n := active_actor_nodes[id] as Sprite2D
-				target_world_scale = 1.10
-				target_world_position = DESIGN_SIZE*0.5-n.position*target_world_scale
+				target_world_scale = _safe_close_scale(n, 1.07)
+				target_world_position = _safe_focus_position(n, target_world_scale)
 				var reaction_delta := (n.position - DESIGN_SIZE * 0.5)
 				background_target_offset = Vector2(
 					clampf(-reaction_delta.x * 0.03, -14.0, 14.0),
 					clampf(-reaction_delta.y * 0.02, -10.0, 10.0)
 				)
 				break
+
+func _actor_half_width(n: Sprite2D) -> float:
+	if n == null or n.texture == null:
+		return 80.0
+	return n.texture.get_size().x * n.scale.x * 0.5
+
+func _actor_half_height(n: Sprite2D) -> float:
+	if n == null or n.texture == null:
+		return 120.0
+	return n.texture.get_size().y * n.scale.y * 0.5
+
+func _safe_close_scale(n: Sprite2D, requested: float) -> float:
+	var half_w := _actor_half_width(n)
+	var half_h := _actor_half_height(n)
+	var max_x := (DESIGN_SIZE.x * 0.5 - 55.0) / maxf(half_w, 1.0)
+	var max_y := (DESIGN_SIZE.y * 0.5 - 55.0) / maxf(half_h, 1.0)
+	return clampf(minf(requested, minf(max_x, max_y)), 0.92, requested)
+
+func _safe_focus_position(n: Sprite2D, zoom: float) -> Vector2:
+	var half_w := _actor_half_width(n) * zoom
+	var half_h := _actor_half_height(n) * zoom
+	var center := DESIGN_SIZE * 0.5
+	var min_center := Vector2(SAFE_LEFT + half_w, SAFE_TOP + half_h)
+	var max_center := Vector2(SAFE_RIGHT - half_w, SAFE_BOTTOM - half_h)
+	var focus := center
+	focus.x = clampf(n.position.x * zoom, min_center.x, max_center.x)
+	focus.y = clampf(n.position.y * zoom, min_center.y, max_center.y)
+	return center - focus
 
 func _keep_actors_inside_safe_frame() -> void:
 	for id in active_actor_nodes:
