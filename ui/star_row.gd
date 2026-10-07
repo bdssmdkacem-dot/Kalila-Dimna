@@ -28,6 +28,11 @@ func _draw() -> void:
 			var a: float = -PI / 2.0 + k * PI / 5.0
 			pts.append(Vector2(cx + r * cos(a), cy + r * sin(a)))
 		var on := i < filled
-		draw_colored_polygon(pts, UI.C_GOLD if on else Color("ddd3b8"))
+		draw_colored_polygon(pts, Color(0.12, 0.08, 0.03, 0.12))
 		pts.append(pts[0])
-		draw_polyline(pts, UI.C_GOLD_DARK if on else Color("b9ad8d"), 3.0)
+		draw_polyline(pts, Color(0.36, 0.28, 0.15, 0.34), 4.0)
+		pts.remove_at(pts.size() - 1)
+		var fill_color := UI.C_GOLD_LIGHT if on else UI.C_PAPER_DEEP
+		draw_colored_polygon(pts, fill_color)
+		pts.append(pts[0])
+		draw_polyline(pts, UI.C_GOLD_DARK if on else UI.C_MUTED, 2.5)
