@@ -6,6 +6,10 @@ const EXPECTED := {
     "monkey_turtle": ["monkey", "turtle"],
     "dove_ring": ["dove"],
     "lion_hare": ["lion", "hare"],
+    "rat_cat": ["rat", "cat"],
+    "owls_crows": ["owl", "crow"],
+    "jackal_lion": ["jackal", "lion"],
+    "turtle_ducks": ["turtle", "duck"],
 }
 
 func _init() -> void:
