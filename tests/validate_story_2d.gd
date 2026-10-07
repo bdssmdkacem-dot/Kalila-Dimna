@@ -28,6 +28,10 @@ const STORY_PATHS := [
 	"res://data/stories/03_monkey_turtle.json",
 	"res://data/stories/04_dove_ring.json",
 	"res://data/stories/05_lion_hare.json",
+	"res://data/stories/06_rat_cat.json",
+	"res://data/stories/07_owls_crows.json",
+	"res://data/stories/08_jackal_lion.json",
+	"res://data/stories/09_turtle_ducks.json",
 ]
 
 func _init() -> void:
