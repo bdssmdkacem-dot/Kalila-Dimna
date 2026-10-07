@@ -1,0 +1,84 @@
+{
+  "id": "owls_crows",
+  "order": 7,
+  "title": "البوم والغربان",
+  "moral": "الاتحاد والتخطيط أفضل من الاندفاع في مواجهة الخطر.",
+  "segments": [
+    {
+      "text": "عاشت جماعة من الغربان بين الأشجار، وكان بينها وبين البوم خصامٌ قديم لا ينتهي.",
+      "scene": {
+        "place": "forest",
+        "actors": [
+          "crow",
+          "owl"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/owls_crows_forest_new.svg"
+      }
+    },
+    {
+      "text": "اشتدّ هجوم البوم ليلاً، فاجتمعت الغربان تبحث عن طريقة تحمي بها جماعتها.",
+      "scene": {
+        "place": "council",
+        "actors": [
+          "crow"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/owls_crows_council_new.svg"
+      }
+    },
+    {
+      "text": "قال أحد الغربان: لنواجههم بالقوة! لكن غراباً حكيماً قال: القوة وحدها لا تكفي، فلنخطط أولاً.",
+      "scene": {
+        "place": "council",
+        "actors": [
+          "crow"
+        ],
+        "shot": "speaker_close",
+        "background": "res://assets/images/new/owls_crows_council_new.svg"
+      }
+    },
+    {
+      "text": "اختارت الغربان خطةً ذكية، فراقبت مخابئ البوم وأوقات خروجهم، ثم غيّرت أماكن أعشاشها بعيداً عن الخطر.",
+      "scene": {
+        "place": "mountain",
+        "actors": [
+          "crow"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/owls_crows_mountain_new.svg"
+      }
+    },
+    {
+      "text": "حاول البوم مفاجأتهم، لكن الغربان كانت مستعدة، فتراجعت المجموعة من دون قتال كبير.",
+      "challenge": {
+        "question": "ما التصرف الحكيم في هذا الموقف؟",
+        "options": [
+          "التفكير والتعاون قبل التصرف",
+          "التسرع دون تفكير"
+        ],
+        "answer": 0
+      },
+      "scene": {
+        "place": "forest",
+        "actors": [
+          "crow",
+          "owl"
+        ],
+        "shot": "two_shot",
+        "background": "res://assets/images/new/owls_crows_forest_new.svg"
+      }
+    },
+    {
+      "text": "فهمت الغربان أن النجاح لا يكون بالصوت العالي، بل بالتعاون والصبر وحسن التخطيط.",
+      "scene": {
+        "place": "sunset",
+        "actors": [
+          "crow"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/owls_crows_sunset_new.svg"
+      }
+    }
+  ]
+}
