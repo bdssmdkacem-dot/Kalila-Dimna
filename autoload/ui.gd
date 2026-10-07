@@ -186,6 +186,35 @@ func transition_to(root: Control, path: String, duration: float = 0.28) -> void:
 	await tw.finished
 	get_tree().change_scene_to_file(path)
 
+
+func story_card_style() -> StyleBoxFlat:
+	var s := box(Color(0.035, 0.10, 0.08, 0.96), 30, 1, Color(0.83, 0.67, 0.31, 0.86))
+	s.shadow_color = Color(0, 0, 0, 0.48)
+	s.shadow_size = 22
+	s.shadow_offset = Vector2(0, 8)
+	s.content_margin_left = 26
+	s.content_margin_right = 26
+	s.content_margin_top = 20
+	s.content_margin_bottom = 20
+	return s
+
+func decision_style(bg: Color = C_GREEN) -> StyleBoxFlat:
+	var s := box(bg, 22, 1, C_GOLD_DARK)
+	s.shadow_color = Color(0, 0, 0, 0.34)
+	s.shadow_size = 10
+	s.shadow_offset = Vector2(0, 4)
+	s.content_margin_left = 22
+	s.content_margin_right = 22
+	s.content_margin_top = 14
+	s.content_margin_bottom = 14
+	return s
+
+func section_label(text_value: String) -> Label:
+	var l := label(text_value, 21, C_GOLD)
+	l.add_theme_constant_override("outline_size", 4)
+	l.add_theme_color_override("font_outline_color", Color(0,0,0,0.35))
+	return l
+
 func spacer(h: int = 40) -> Control:
 	var c := Control.new()
 	c.custom_minimum_size = Vector2(0, h)
