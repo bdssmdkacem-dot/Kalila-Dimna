@@ -15,6 +15,8 @@ func _ready() -> void:
 
 	var hero := UI.hero_panel()
 	hero.custom_minimum_size = Vector2(0, 620)
+	hero.modulate.a = 0.0
+	hero.scale = Vector2(0.97, 0.97)
 	page.add_child(hero)
 
 	var content := VBoxContainer.new()
@@ -22,8 +24,10 @@ func _ready() -> void:
 	content.add_theme_constant_override("separation", 10)
 	hero.add_child(content)
 
-	content.add_child(UI.label("اكتملت الرحلة", 30, UI.C_GOLD))
-	content.add_child(UI.label(story.title, 66, UI.C_GOLD_LIGHT))
+	var complete := UI.label("✦  اكتملت الرحلة  ✦", 32, UI.C_GOLD)
+	content.add_child(complete)
+	var story_title := UI.label(story.title, 66, UI.C_GOLD_LIGHT)
+	content.add_child(story_title)
 
 	var stars := StarRow.new().setup(GameState.last_stars, 82.0)
 	stars.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
@@ -60,6 +64,12 @@ func _ready() -> void:
 	map.pressed.connect(func(): get_tree().change_scene_to_file(MAP))
 	content.add_child(map)
 
+	var intro_tween := create_tween().set_parallel(true)
+	intro_tween.tween_property(hero, "modulate:a", 1.0, 0.55).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	intro_tween.tween_property(hero, "scale", Vector2.ONE, 0.65).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	intro_tween.tween_property(complete, "modulate", Color(1.12, 1.06, 0.82), 0.65).set_delay(0.25)
+	intro_tween.tween_property(complete, "modulate", Color.WHITE, 0.8).set_delay(0.9)
+	
 func _play(story: Dictionary) -> void:
 	GameState.current_story = story
 	get_tree().change_scene_to_file(PLAYER)
