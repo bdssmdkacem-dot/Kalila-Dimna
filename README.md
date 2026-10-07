@@ -1,36 +1,47 @@
 # كليلة ودمنة — لعبة أندرويد (Godot 4.3)
 
-## الهوية البصرية
-راجع `docs/VISUAL_IDENTITY.md` عند إضافة أي شاشة أو عنصر جديد، للحفاظ على نفس لوحة الألوان والخط والعناصر الزخرفية.
+## الحالة الحالية
+الواجهة الموحدة أصبحت مبنية حول التصميم المرجعي:
+- الشاشة الرئيسية: غابة سينمائية داكنة، عنوان ذهبي، شعار، وزر بدء واضح.
+- خريطة الحكايات: مخطوطة عمودية، محطات دائرية للشخصيات، حالات فتح/قفل، ونجوم التقدم.
+- صفحة القصة: صورة واقعية سينمائية، عنوان ونجوم، بطاقة نص ورقية، ثم بطاقات القرار/اختبر فهمك.
+- النتيجة: بطاقة مخطوطة موحدة تعرض النجوم والحكمة والحكاية التالية.
+- الخط العربي الموحد: assets/fonts/Amiri-Regular.ttf.
+- الهوية اللونية: أخضر زمردي + ذهب معتّق + ورق مخطوط، وفق docs/VISUAL_IDENTITY.md.
+- التطبيق مضبوط افتراضياً على العرض العمودي للهاتف.
+
+## القصص
+البيانات موجودة في data/stories/:
+1. الأسد والثور
+2. الغراب والحيّة
+3. القرد والغَيْلَم
+4. الحمامة المطوّقة
+5. الأسد والأرنب
+
+جميع القصص تستخدم نفس قالب السرد والتفاعل، لذلك يمكن إضافة حكايات جديدة بنفس البنية دون إنشاء واجهة جديدة.
 
 ## التشغيل محلياً
-1. افتح المجلد في Godot 4.3 واضغط F5.
-2. الاختبارات: `godot --headless -s tests/validate_stories.gd` و `godot --headless -s tests/smoke_test.gd`
+افتح المجلد في Godot 4.3 واضغط F6/F5 حسب المشهد المطلوب.
 
-## إضافة الأصوات (لاحقاً)
-سجّل كل مقطع بصيغة `.ogg` وسمّه: `<id القصة>_<رقم المقطع بخانتين>.ogg`
-ضعه في `assets/audio/voice/` — مثال: `lion_bull_01.ogg` ثم `lion_bull_02.ogg` …
-لا حاجة لتعديل الكود: النص يتزامن تلقائياً مع طول الصوت، وبدون صوت يظهر بسرعة قراءة ثابتة.
+الاختبارات:
+- godot --headless -s tests/validate_stories.gd
+- godot --headless -s tests/smoke_test.gd
+
+## الأصوات
+ضع ملفات .ogg أو .mp3 في assets/audio/voice/ باسم:
+<story_id>_<رقم المقطع بخانتين>.ogg
+
+النص يتزامن تلقائياً مع طول الصوت، وبدون صوت يستخدم التطبيق سرعة قراءة ثابتة.
 
 ## إضافة قصة
-أنشئ ملفاً في `data/stories/` بنفس بنية الملفات الموجودة (id، order، title، moral، segments).
+أنشئ ملف JSON جديداً في data/stories/ بنفس البنية الموجودة:
+id, order, title, moral, segments.
 
-## GitHub Actions (`.github/workflows/android.yml`)
-- كل push/PR: فحص القصص + اختبار دخان.
-- كل push على main: APK تجريبي يظهر في Actions ← Artifacts.
-- عند وسم `v1.0.0` مثلاً: AAB موقّع، ويُرفع إلى Google Play (Internal) إن وُجد السر.
+كل segment يمكن أن يحتوي:
+- text
+- speaker
+- scene
+- challenge
+- interaction
 
-### الأسرار (Settings ← Secrets and variables ← Actions)
-| السر | المحتوى |
-|---|---|
-| `KEYSTORE_BASE64` | مفتاح النشر بصيغة base64: `base64 -w0 release.keystore` |
-| `KEYSTORE_ALIAS` / `KEYSTORE_PASSWORD` | اسم المفتاح وكلمة المرور |
-| `PLAY_SERVICE_ACCOUNT_JSON` | (اختياري) ملف JSON لحساب الخدمة من Play Console |
-
-إنشاء مفتاح النشر (مرة واحدة، واحتفظ به في مكان آمن):
-`keytool -genkey -v -keystore release.keystore -alias kalila -keyalg RSA -keysize 2048 -validity 10000`
-
-## قبل النشر
-- غيّر معرّف الحزمة `com.example.kaliladimna` في `export_presets.cfg` وفي `android.yml` (PACKAGE_NAME).
-- استبدل `icon.svg` بأيقونتك (512×512).
-- أول رفع إلى Play يكون يدوياً (إنشاء التطبيق ورفع أول AAB من Play Console)، وبعدها يعمل الرفع الآلي.
+ولا تحتاج إلى تعديل قالب الواجهة عند إضافة قصة.

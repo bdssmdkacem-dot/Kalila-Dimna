@@ -1,6 +1,5 @@
 extends Control
-## تشغيل الحكاية: نص يظهر تدريجياً متزامناً مع الصوت (إن وُجد)،
-## ثم تحدٍّ اختياري بعد كل مقطع.
+## قالب السرد النهائي: مشهد واقعي + بطاقة مخطوطة + قرار/اختبار.
 
 const MAP := "res://scenes/story_map.tscn"
 const RESULT := "res://scenes/result.tscn"
@@ -8,13 +7,15 @@ const VOICE_DIR := "res://assets/audio/voice/"
 const READ_SECONDS_PER_CHAR := 0.055
 
 var story: Dictionary
-var segments: Array
+var segments: Array = []
 var idx := -1
 var mistakes := 0
 var text_done := false
 var tween: Tween
+var pending_next_index := -1
 
 var progress_lbl: Label
+var stars_lbl: Label
 var speaker_lbl: Label
 var text_lbl: Label
 var feedback_lbl: Label
@@ -24,271 +25,214 @@ var next_btn: Button
 var replay_btn: Button
 var audio: AudioStreamPlayer
 var animal_stage: AnimalStage2D
-var pending_next_index := -1
-
 
 func _ready() -> void:
+	layout_direction = Control.LAYOUT_DIRECTION_RTL
 	story = GameState.current_story
 	if story.is_empty():
 		get_tree().change_scene_to_file(MAP)
 		return
+
 	segments = story.segments
 	_build_ui()
-	# The story stage is inside a VBoxContainer. Wait until the container has
-	# assigned its real size before rendering the first segment.
-	await _wait_for_story_layout()
+	await get_tree().process_frame
 	_next_segment()
 
-
-func _wait_for_story_layout() -> void:
-	if animal_stage == null:
-		return
-	for _i in range(8):
-		if animal_stage.size.x > 0.0 and animal_stage.size.y > 0.0:
-			return
-		await get_tree().process_frame
-
 func _build_ui() -> void:
-	layout_direction = Control.LAYOUT_DIRECTION_RTL
-
-	animal_stage = AnimalStage2D.new()
-	animal_stage.set_anchors_preset(Control.PRESET_FULL_RECT)
-	animal_stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(animal_stage)
+	var backdrop := CinematicBackdrop.new()
+	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(backdrop)
 
 	var shade := ColorRect.new()
-	shade.color = Color(0.01, 0.03, 0.025, 0.08)
+	shade.color = Color(0.015, 0.055, 0.04, 0.28)
 	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(shade)
 
-	var top_panel := PanelContainer.new()
-	top_panel.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	top_panel.offset_left = 18.0
-	top_panel.offset_right = -18.0
-	top_panel.offset_top = 18.0
-	top_panel.offset_bottom = 82.0
-	top_panel.add_theme_stylebox_override("panel", _top_bar_style())
-	top_panel.mouse_filter = Control.MOUSE_FILTER_STOP
-	add_child(top_panel)
+	var margin := MarginContainer.new()
+	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_top", 10)
+	margin.add_theme_constant_override("margin_bottom", 10)
+	add_child(margin)
 
-	var top := HBoxContainer.new()
-	top.add_theme_constant_override("separation", 10)
-	top_panel.add_child(top)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 7)
+	margin.add_child(column)
 
-	var back := UI.button("رجوع", 25, 46)
-	back.custom_minimum_size = Vector2(105, 46)
-	back.add_theme_stylebox_override("normal", UI.box(Color(0.08, 0.20, 0.16, 0.92), 16, 1, UI.C_GOLD_DARK))
-	back.add_theme_stylebox_override("hover", UI.box(Color(0.12, 0.29, 0.23, 0.96), 16, 1, UI.C_GOLD_LIGHT))
+	var top := PanelContainer.new()
+	top.custom_minimum_size = Vector2(0, 56)
+	top.add_theme_stylebox_override("panel", UI.box(Color(0.04, 0.15, 0.11, 0.92), 16, 1, UI.C_GOLD_DARK))
+	column.add_child(top)
+
+	var top_row := HBoxContainer.new()
+	top_row.add_theme_constant_override("separation", 7)
+	top.add_child(top_row)
+
+	var back := UI.icon_button("‹", 31, 50)
+	back.tooltip_text = "خريطة الحكايات"
 	back.pressed.connect(_go_map)
-	top.add_child(back)
+	top_row.add_child(back)
 
-	var title := UI.label(story.title, 31, UI.C_PAPER_LIGHT)
+	progress_lbl = UI.label("%d/%d" % [int(story.get("order", 1)), StoryLoader.stories.size()], 20, UI.C_GOLD_LIGHT)
+	progress_lbl.custom_minimum_size = Vector2(58, 46)
+	top_row.add_child(progress_lbl)
+
+	var title := UI.label(String(story.title), 28, UI.C_PAPER_LIGHT)
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	top.add_child(title)
+	top_row.add_child(title)
 
-	progress_lbl = UI.label("", 24, UI.C_GOLD_LIGHT)
-	progress_lbl.custom_minimum_size = Vector2(112, 46)
-	progress_lbl.add_theme_stylebox_override("normal", UI.box(Color(0.08, 0.20, 0.16, 0.92), 16, 1, UI.C_GOLD_DARK))
-	top.add_child(progress_lbl)
+	stars_lbl = UI.label("★★★", 22, UI.C_GOLD_LIGHT)
+	stars_lbl.custom_minimum_size = Vector2(82, 46)
+	top_row.add_child(stars_lbl)
 
-	var bottom := PanelContainer.new()
-	bottom.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	bottom.offset_left = 18.0
-	bottom.offset_right = -18.0
-	bottom.offset_top = -318.0
-	bottom.offset_bottom = -16.0
-	bottom.mouse_filter = Control.MOUSE_FILTER_STOP
-	bottom.add_theme_stylebox_override("panel", UI.story_card_style())
-	add_child(bottom)
+	replay_btn = UI.icon_button("◉", 24, 50)
+	replay_btn.tooltip_text = "إعادة الاستماع"
+	replay_btn.visible = false
+	replay_btn.pressed.connect(func():
+		if audio and audio.stream:
+			audio.play()
+	)
+	top_row.add_child(replay_btn)
 
-	var content := VBoxContainer.new()
-	content.add_theme_constant_override("separation", 9)
-	bottom.add_child(content)
+	var stage_frame := PanelContainer.new()
+	stage_frame.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	stage_frame.custom_minimum_size = Vector2(0, 245)
+	stage_frame.add_theme_stylebox_override("panel", UI.box(Color(0.02, 0.07, 0.05, 0.96), 18, 2, UI.C_GOLD_DARK))
+	column.add_child(stage_frame)
 
-	speaker_lbl = UI.label("", 25, UI.C_GOLD_LIGHT)
-	speaker_lbl.custom_minimum_size = Vector2(0, 34)
-	speaker_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	speaker_lbl.add_theme_stylebox_override("normal", UI.box(Color(0.07, 0.18, 0.14, 0.92), 14, 1, UI.C_GOLD_DARK))
-	content.add_child(speaker_lbl)
+	animal_stage = AnimalStage2D.new()
+	animal_stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	animal_stage.custom_minimum_size = Vector2(0, 245)
+	animal_stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stage_frame.add_child(animal_stage)
 
-	var speech_scroll := ScrollContainer.new()
-	speech_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	speech_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	speech_scroll.custom_minimum_size = Vector2(0, 70)
-	content.add_child(speech_scroll)
+	var dialogue := PanelContainer.new()
+	dialogue.custom_minimum_size = Vector2(0, 148)
+	dialogue.add_theme_stylebox_override("panel", UI.parchment_style(18, 2))
+	column.add_child(dialogue)
 
-	text_lbl = UI.label("", 34, UI.C_PAPER_LIGHT)
+	var speech := VBoxContainer.new()
+	speech.add_theme_constant_override("separation", 2)
+	dialogue.add_child(speech)
+
+	speaker_lbl = UI.label("", 19, UI.C_GOLD_DARK)
+	speaker_lbl.custom_minimum_size = Vector2(0, 27)
+	speech.add_child(speaker_lbl)
+
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	speech.add_child(scroll)
+
+	text_lbl = UI.label("", 23, UI.C_INK)
 	text_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	text_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	text_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_lbl.custom_minimum_size = Vector2(0, 104)
-	text_lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.75))
-	text_lbl.add_theme_constant_override("shadow_offset_x", 2)
-	text_lbl.add_theme_constant_override("shadow_offset_y", 2)
-	speech_scroll.add_child(text_lbl)
+	text_lbl.custom_minimum_size = Vector2(0, 88)
+	text_lbl.mouse_filter = Control.MOUSE_FILTER_STOP
+	text_lbl.gui_input.connect(_on_card_input)
+	scroll.add_child(text_lbl)
 
-	feedback_lbl = UI.label("", 23, UI.C_GOOD)
-	feedback_lbl.custom_minimum_size = Vector2(0, 28)
-	feedback_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	content.add_child(feedback_lbl)
-
-	var controls := HBoxContainer.new()
-	controls.add_theme_constant_override("separation", 12)
-	content.add_child(controls)
-
-	replay_btn = UI.button("◀ أعد الاستماع", 23, 54)
-	replay_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	replay_btn.add_theme_stylebox_override("normal", UI.box(Color(0.08, 0.20, 0.16, 0.92), 15, 1, UI.C_GOLD_DARK))
-	replay_btn.pressed.connect(func(): audio.play())
-	controls.add_child(replay_btn)
-
-	next_btn = UI.button("التالي  ◆", 27, 54)
-	next_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	next_btn.pressed.connect(_on_next_pressed)
-	controls.add_child(next_btn)
+	feedback_lbl = UI.label("", 17, UI.C_GOOD)
+	feedback_lbl.custom_minimum_size = Vector2(0, 24)
+	speech.add_child(feedback_lbl)
 
 	options_panel = PanelContainer.new()
-	options_panel.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	options_panel.offset_left = 55.0
-	options_panel.offset_right = -55.0
-	options_panel.offset_top = -555.0
-	options_panel.offset_bottom = -326.0
-	options_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	options_panel.custom_minimum_size = Vector2(0, 0)
+	options_panel.add_theme_stylebox_override("panel", UI.box(Color(0.035, 0.12, 0.09, 0.94), 18, 2, UI.C_GOLD_DARK))
 	options_panel.visible = false
-	options_panel.add_theme_stylebox_override("panel", UI.story_card_style())
-	add_child(options_panel)
+	column.add_child(options_panel)
 
 	var options_scroll := ScrollContainer.new()
 	options_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	options_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	options_panel.add_child(options_scroll)
+
 	options_box = VBoxContainer.new()
-	options_box.add_theme_constant_override("separation", 7)
+	options_box.add_theme_constant_override("separation", 6)
 	options_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	options_scroll.add_child(options_box)
+
+	var controls := HBoxContainer.new()
+	controls.custom_minimum_size = Vector2(0, 54)
+	controls.add_theme_constant_override("separation", 7)
+	column.add_child(controls)
+
+	next_btn = UI.button("ابدأ الحكاية  →", 25, 54)
+	next_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	next_btn.pressed.connect(_on_next_pressed)
+	controls.add_child(next_btn)
 
 	audio = AudioStreamPlayer.new()
 	add_child(audio)
 
-func _top_bar_style() -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.06, 0.16, 0.13, 0.86)
-	style.border_color = Color(0.84, 0.69, 0.32, 0.85)
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(20)
-	style.content_margin_left = 10
-	style.content_margin_right = 10
-	style.content_margin_top = 8
-	style.content_margin_bottom = 8
-	style.shadow_color = Color(0, 0, 0, 0.28)
-	style.shadow_size = 10
-	style.shadow_offset = Vector2(0, 4)
-	return style
-
-
-func _story_overlay_style() -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.018, 0.065, 0.052, 0.92)
-	style.border_color = Color(0.88, 0.72, 0.34, 0.92)
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(24)
-	style.content_margin_left = 18
-	style.content_margin_right = 18
-	style.content_margin_top = 10
-	style.content_margin_bottom = 10
-	style.shadow_color = Color(0, 0, 0, 0.34)
-	style.shadow_size = 14
-	style.shadow_offset = Vector2(0, 5)
-	return style
-
-
-func _options_overlay_style() -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.025, 0.09, 0.07, 0.96)
-	style.border_color = Color(0.84, 0.69, 0.32, 0.96)
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(22)
-	style.content_margin_left = 16
-	style.content_margin_right = 16
-	style.content_margin_top = 12
-	style.content_margin_bottom = 12
-	style.shadow_color = Color(0, 0, 0, 0.30)
-	style.shadow_size = 12
-	style.shadow_offset = Vector2(0, 4)
-	return style
-
-
-func _speaker_for_segment(_story_id: String, i: int) -> String:
+func _speaker_for_segment(i: int) -> String:
 	if i < 0 or i >= segments.size():
 		return "الراوي"
 	var speaker := String(segments[i].get("speaker", ""))
 	match speaker:
-		"lion":
-			return "بينغالاكا · الأسد"
-		"bull":
-			return "سانجيفاكا · الثور"
-		"crow":
-			return "الغراب"
-		"snake":
-			return "الحيّة"
-		"monkey":
-			return "القرد"
-		"turtle":
-			return "الغَيْلَم · السلحفاة"
-		"dove":
-			return "المطوّقة · الحمامة"
-		"hare":
-			return "الأرنب"
-		_:
-			return "الراوي"
-
+		"lion": return "الأسد · بينغالاكا"
+		"bull": return "الثور · سانجيفاكا"
+		"crow": return "الغراب"
+		"snake": return "الحيّة"
+		"monkey": return "القرد"
+		"turtle": return "الغَيْلَم · السلحفاة"
+		"dove": return "المطوّقة · الحمامة"
+		"hare": return "الأرنب"
+		_: return "الراوي"
 
 func _load_voice(i: int) -> AudioStream:
-	# Prefer OGG for packaged voice assets, but accept MP3 recordings directly.
 	var ogg_path := "%s%s_%02d.ogg" % [VOICE_DIR, story.id, i + 1]
 	var mp3_path := "%s%s_%02d.mp3" % [VOICE_DIR, story.id, i + 1]
 	for path in [ogg_path, mp3_path]:
 		if ResourceLoader.exists(path):
-			var stream := load(path) as AudioStream
-			if stream:
-				return stream
+			return load(path) as AudioStream
 	return null
-
 
 func _next_segment() -> void:
 	if pending_next_index >= 0:
 		_advance_after_choice()
 		return
+
 	idx += 1
 	if idx >= segments.size():
 		_finish()
 		return
+
 	var seg: Dictionary = segments[idx]
-	progress_lbl.text = "%d / %d" % [idx + 1, segments.size()]
 	animal_stage.show_segment(story.id, idx, seg.get("scene", {}))
-	var segment_speaker := String(seg.get("speaker", ""))
-	animal_stage.set_speaker(segment_speaker)
-	speaker_lbl.text = _speaker_for_segment(story.id, idx)
-	text_lbl.text = seg.text
+	animal_stage.set_speaker(String(seg.get("speaker", "")))
+
+	speaker_lbl.text = _speaker_for_segment(idx)
+	text_lbl.text = String(seg.get("text", ""))
 	text_lbl.visible_ratio = 0.0
 	feedback_lbl.text = ""
 	text_done = false
 	pending_next_index = -1
 	_clear_options()
+
 	next_btn.disabled = true
-	next_btn.text = "النهاية" if idx == segments.size() - 1 else "التالي"
+	if idx == 0:
+		next_btn.text = "ابدأ الحكاية  →"
+	elif idx == segments.size() - 1:
+		next_btn.text = "إنهاء الحكاية  ✦"
+	else:
+		next_btn.text = "التالي  →"
 
 	audio.stop()
-	var duration: float = maxf(2.0, text_lbl.text.length() * READ_SECONDS_PER_CHAR)
+	var duration: float = maxf(1.5, text_lbl.text.length() * READ_SECONDS_PER_CHAR)
 	var stream := _load_voice(idx)
 	if stream:
 		audio.stream = stream
 		audio.play()
 		duration = maxf(1.0, stream.get_length())
-	replay_btn.visible = stream != null
+		replay_btn.visible = true
+	else:
+		replay_btn.visible = false
+
 	animal_stage.start_cinematic(idx, duration)
 
 	if tween:
@@ -297,20 +241,18 @@ func _next_segment() -> void:
 	tween.tween_property(text_lbl, "visible_ratio", 1.0, duration)
 	tween.finished.connect(_on_text_done)
 
-
 func _on_card_input(ev: InputEvent) -> void:
-	# لمسة على النص = إظهاره كاملاً
 	if ev is InputEventMouseButton and ev.pressed and not text_done:
 		if tween:
 			tween.kill()
 		text_lbl.visible_ratio = 1.0
 		_on_text_done()
 
-
 func _on_text_done() -> void:
 	if text_done:
 		return
 	text_done = true
+
 	var seg: Dictionary = segments[idx]
 	if seg.has("interaction"):
 		_show_story_interaction(seg.interaction)
@@ -321,38 +263,112 @@ func _on_text_done() -> void:
 
 func _show_story_interaction(interaction: Dictionary) -> void:
 	options_panel.visible = true
-	options_box.add_child(UI.section_label("◆  لحظة القرار"))
-	var q := UI.label(String(interaction.question), 30, UI.C_PAPER)
-	q.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	options_panel.custom_minimum_size.y = 148
+	options_box.add_child(UI.section_label("◆  ماذا سيفعل؟"))
+
+	var q := UI.label(String(interaction.question), 20, UI.C_PAPER_LIGHT)
+	q.custom_minimum_size = Vector2(0, 34)
 	options_box.add_child(q)
-	var answer := int(interaction.answer)
+
 	var opts: Array = interaction.options
 	var order := range(opts.size())
 	order.shuffle()
-	for i in order:
-		var b := UI.button(String(opts[i]), 29, 68)
-		b.custom_minimum_size.x = 190
-		b.add_theme_stylebox_override("normal", UI.decision_style(UI.C_GREEN))
-		b.add_theme_stylebox_override("hover", UI.decision_style(UI.C_GREEN_LIGHT))
-		b.pressed.connect(_on_story_choice.bind(b, i, interaction))
-		options_box.add_child(b)
+	var answer := int(interaction.answer)
 
+	if opts.size() == 2:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 7)
+		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		options_box.add_child(row)
+		for i in order:
+			var b := UI.card_button(76)
+			b.text = String(opts[i])
+			b.add_theme_font_size_override("font_size", 20)
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			b.pressed.connect(_on_story_choice.bind(b, i, interaction))
+			row.add_child(b)
+	else:
+		for i in order:
+			var b := UI.card_button(56)
+			b.text = String(opts[i])
+			b.add_theme_font_size_override("font_size", 19)
+			b.pressed.connect(_on_story_choice.bind(b, i, interaction))
+			options_box.add_child(b)
 
 func _on_story_choice(btn: Button, choice_index: int, interaction: Dictionary) -> void:
 	var correct := choice_index == int(interaction.answer)
 	pending_next_index = int(interaction.next_correct if correct else interaction.next_wrong)
+
 	for c in options_box.get_children():
 		if c is Button:
 			c.disabled = true
+		elif c is HBoxContainer:
+			for child in c.get_children():
+				if child is Button:
+					child.disabled = true
+
 	if correct:
 		feedback_lbl.add_theme_color_override("font_color", UI.C_GOOD)
-		feedback_lbl.text = "أحسنت! قرارك يغيّر ما سيحدث الآن."
+		feedback_lbl.text = "أحسنت! اختيارك يغيّر مجرى الحكاية."
 	else:
 		mistakes += 1
 		feedback_lbl.add_theme_color_override("font_color", UI.C_BAD)
-		feedback_lbl.text = "هذا القرار يقود إلى نتيجة مختلفة في الحكاية."
+		feedback_lbl.text = "اختيار مختلف… لنرَ ماذا يحدث."
+
 	next_btn.disabled = false
-	next_btn.text = "متابعة الحكاية"
+	next_btn.text = "متابعة الحكاية  →"
+
+func _show_challenge(ch: Dictionary) -> void:
+	options_panel.visible = true
+	options_panel.custom_minimum_size.y = 148
+	options_box.add_child(UI.section_label("◆  اختبر فهمك"))
+
+	var q := UI.label(String(ch.question), 20, UI.C_PAPER_LIGHT)
+	q.custom_minimum_size = Vector2(0, 34)
+	options_box.add_child(q)
+
+	var answer := int(ch.answer)
+	var opts: Array = ch.options
+	var order := range(opts.size())
+	order.shuffle()
+
+	if opts.size() == 2:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 7)
+		options_box.add_child(row)
+		for i in order:
+			var b := UI.card_button(72)
+			b.text = String(opts[i])
+			b.add_theme_font_size_override("font_size", 19)
+			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			b.pressed.connect(_on_option.bind(b, i == answer))
+			row.add_child(b)
+	else:
+		for i in order:
+			var b := UI.card_button(50)
+			b.text = String(opts[i])
+			b.add_theme_font_size_override("font_size", 18)
+			b.pressed.connect(_on_option.bind(b, i == answer))
+			options_box.add_child(b)
+
+func _on_option(btn: Button, correct: bool) -> void:
+	if correct:
+		feedback_lbl.add_theme_color_override("font_color", UI.C_GOOD)
+		feedback_lbl.text = "أحسنت! إجابة صحيحة."
+		for c in options_box.get_children():
+			if c is Button:
+				c.disabled = true
+			elif c is HBoxContainer:
+				for child in c.get_children():
+					if child is Button:
+						child.disabled = true
+		btn.add_theme_stylebox_override("disabled", UI.box(UI.C_GOOD, 16, 1, UI.C_GOLD_DARK))
+		next_btn.disabled = false
+	else:
+		mistakes += 1
+		feedback_lbl.add_theme_color_override("font_color", UI.C_BAD)
+		feedback_lbl.text = "حاول مرة أخرى."
+		btn.disabled = true
 
 func _advance_after_choice() -> void:
 	var target := pending_next_index
@@ -369,45 +385,10 @@ func _on_next_pressed() -> void:
 func _clear_options() -> void:
 	if options_panel:
 		options_panel.visible = false
-	for c in options_box.get_children():
-		c.queue_free()
-
-
-func _show_challenge(ch: Dictionary) -> void:
-	options_panel.visible = true
-	options_box.add_child(UI.section_label("◆  اختبر فهمك"))
-	var q := UI.label(String(ch.question), 30, UI.C_INK)
-	q.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	options_box.add_child(q)
-	var answer := int(ch.answer)
-	var opts: Array = ch.options
-	var order := range(opts.size())
-	order.shuffle()
-	for i in order:
-		var b := UI.button(String(opts[i]), 29, 68)
-		b.custom_minimum_size.x = 190
-		b.add_theme_stylebox_override("normal", UI.decision_style(UI.C_GREEN))
-		b.add_theme_stylebox_override("hover", UI.box(UI.C_GREEN_LIGHT, 18, 1, UI.C_GOLD_LIGHT))
-		b.pressed.connect(_on_option.bind(b, i == answer))
-		options_box.add_child(b)
-
-
-func _on_option(btn: Button, correct: bool) -> void:
-	if correct:
-		feedback_lbl.add_theme_color_override("font_color", UI.C_GOOD)
-		feedback_lbl.text = "أحسنت! إجابة صحيحة"
+		options_panel.custom_minimum_size.y = 0
+	if options_box:
 		for c in options_box.get_children():
-			if c is Button:
-				c.disabled = true
-		btn.add_theme_stylebox_override("disabled", UI.box(UI.C_GOOD))
-		next_btn.disabled = false
-	else:
-		mistakes += 1
-		feedback_lbl.add_theme_color_override("font_color", UI.C_BAD)
-		feedback_lbl.text = "حاول مرة أخرى"
-		btn.disabled = true
-		btn.add_theme_stylebox_override("disabled", UI.box(UI.C_BAD))
-
+			c.queue_free()
 
 func _finish() -> void:
 	var stars := 3 if mistakes == 0 else (2 if mistakes <= 2 else 1)
@@ -415,10 +396,8 @@ func _finish() -> void:
 	GameState.last_stars = stars
 	UI.transition_to(self, RESULT)
 
-
 func _go_map() -> void:
-	get_tree().change_scene_to_file(MAP)
-
+	UI.transition_to(self, MAP)
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:

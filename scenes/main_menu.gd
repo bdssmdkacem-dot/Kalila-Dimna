@@ -1,73 +1,88 @@
 extends Control
 
 const MAP := "res://scenes/story_map.tscn"
+const FOREST_BG := "res://assets/images/backgrounds/lion_bull_forest_realistic.webp"
 
 func _ready() -> void:
-	var page := UI.page(self)
-	page.alignment = BoxContainer.ALIGNMENT_CENTER
+	var page := UI.page(self, "forest")
 
-	var hero := UI.hero_panel()
-	hero.custom_minimum_size = Vector2(0, 730)
-	hero.modulate.a = 0.0
-	hero.scale = Vector2(0.96, 0.96)
+	var top := HBoxContainer.new()
+	top.custom_minimum_size = Vector2(0, 62)
+	top.add_theme_constant_override("separation", 10)
+	page.add_child(top)
+
+	var settings := UI.icon_button("⚙", 29, 56)
+	settings.tooltip_text = "الإعدادات"
+	top.add_child(settings)
+
+	var top_spacer := Control.new()
+	top_spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	top.add_child(top_spacer)
+
+	var book := UI.icon_button("▤", 30, 56)
+	book.tooltip_text = "خريطة الحكايات"
+	book.pressed.connect(func(): UI.transition_to(self, MAP))
+	top.add_child(book)
+
+	var hero := VBoxContainer.new()
+	hero.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	hero.alignment = BoxContainer.ALIGNMENT_CENTER
+	hero.add_theme_constant_override("separation", 6)
 	page.add_child(hero)
 
-	var content := VBoxContainer.new()
-	content.alignment = BoxContainer.ALIGNMENT_CENTER
-	content.add_theme_constant_override("separation", 10)
-	hero.add_child(content)
+	var dark_card := PanelContainer.new()
+	dark_card.custom_minimum_size = Vector2(0, 0)
+	dark_card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	dark_card.add_theme_stylebox_override("panel", UI.box(Color(0.015, 0.07, 0.055, 0.30), 28, 1, Color(0.84, 0.67, 0.29, 0.36)))
+	hero.add_child(dark_card)
 
-	var mark := UI.brand_mark(205)
-	mark.modulate.a = 0.0
-	mark.scale = Vector2(0.82, 0.82)
-	content.add_child(mark)
+	var content_box := VBoxContainer.new()
+	content_box.alignment = BoxContainer.ALIGNMENT_CENTER
+	content_box.add_theme_constant_override("separation", 6)
+	dark_card.add_child(content_box)
 
-	var eyebrow := UI.section_label("مكتبة الحكايات الشرقية  ·  حكايات وقرارات")
-	content.add_child(eyebrow)
+	var mark := UI.brand_mark(116)
+	content_box.add_child(mark)
 
-	var title := UI.label("كليلة ودمنة", 92, UI.C_GOLD_LIGHT)
-	title.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.75))
-	title.add_theme_constant_override("shadow_offset_y", 5)
-	content.add_child(title)
+	var title := UI.label("كليلة ودمنة", 70, UI.C_GOLD_LIGHT)
+	title.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.78))
+	title.add_theme_constant_override("shadow_offset_y", 4)
+	content_box.add_child(title)
 
-	var subtitle := UI.label("حين تتكلم الحيوانات… تبدأ الحكمة.", 38, UI.C_PAPER)
-	content.add_child(subtitle)
+	var subtitle := UI.label("حِكم وأمثال من زمن بعيد", 27, UI.C_PAPER_LIGHT)
+	content_box.add_child(subtitle)
 
-	var line := UI.section_divider()
-	line.custom_minimum_size.x = 360
-	line.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	content.add_child(line)
+	var divider := UI.section_divider()
+	divider.custom_minimum_size.x = 230
+	divider.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	content_box.add_child(divider)
 
-	var intro := UI.label("ادخل الحكاية، استمع، ثم اختر ما سيحدث بعد ذلك.", 30, UI.C_PAPER_DEEP)
-	intro.custom_minimum_size = Vector2(0, 58)
-	content.add_child(intro)
+	var intro := UI.label("استمع إلى الحكاية، اختر طريقها، واكتشف الحكمة.", 22, UI.C_PAPER_DEEP)
+	intro.custom_minimum_size = Vector2(0, 42)
+	content_box.add_child(intro)
 
-	var play := UI.button("ابدأ الرحلة  ✦", 48, 104)
-	play.custom_minimum_size.x = 430
-	play.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	play.pressed.connect(func(): UI.transition_to(self, MAP))
-	content.add_child(play)
+	var start := UI.button("ابدأ الحكاية  →", 35, 72)
+	start.custom_minimum_size.x = 300
+	start.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	start.add_theme_stylebox_override("normal", UI._button_style(UI.C_GREEN_DARK, UI.C_GOLD, 18))
+	start.add_theme_stylebox_override("hover", UI._button_style(UI.C_GREEN, UI.C_GOLD_LIGHT, 18))
+	start.pressed.connect(func(): UI.transition_to(self, MAP))
+	content_box.add_child(start)
 
-	var meta := UI.label("%d حكايات  ·  أصوات  ·  اختيارات  ·  عِبر" % StoryLoader.stories.size(), 23, UI.C_MUTED)
-	content.add_child(meta)
+	var meta := UI.label("%d حكايات  ·  اختيارات  ·  نجوم  ·  عِبر" % StoryLoader.stories.size(), 18, Color(0.86, 0.82, 0.68, 0.82))
+	content_box.add_child(meta)
 
-	var quit := UI.button("خروج", 28, 64)
-	quit.custom_minimum_size.x = 150
-	quit.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	quit.add_theme_stylebox_override("normal", UI.box(Color(0.03, 0.11, 0.09, 0.72), 16, 1, Color("#485a52")))
-	quit.add_theme_stylebox_override("hover", UI.box(Color(0.06, 0.18, 0.14, 0.90), 16, 1, UI.C_GOLD))
-	quit.pressed.connect(func(): get_tree().quit())
-	content.add_child(quit)
+	var footer := UI.label("رحلة تفاعلية للأطفال والعائلة", 16, Color(0.78, 0.78, 0.66, 0.75))
+	footer.custom_minimum_size = Vector2(0, 30)
+	page.add_child(footer)
 
 	var intro_tween := create_tween().set_parallel(true)
-	intro_tween.tween_property(hero, "modulate:a", 1.0, 0.65).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	intro_tween.tween_property(hero, "scale", Vector2.ONE, 0.75).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-	intro_tween.tween_property(mark, "modulate:a", 1.0, 0.8).set_delay(0.12)
-	intro_tween.tween_property(mark, "scale", Vector2.ONE, 0.9).set_delay(0.10).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
-
-	var glow := create_tween().set_loops()
-	glow.tween_property(mark, "modulate", Color(1.08, 1.03, 0.86), 1.8).set_trans(Tween.TRANS_SINE)
-	glow.tween_property(mark, "modulate", Color.WHITE, 1.8).set_trans(Tween.TRANS_SINE)
+	dark_card.modulate.a = 0.0
+	dark_card.scale = Vector2(0.97, 0.97)
+	intro_tween.tween_property(dark_card, "modulate:a", 1.0, 0.55).set_trans(Tween.TRANS_SINE)
+	intro_tween.tween_property(dark_card, "scale", Vector2.ONE, 0.65).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	mark.modulate.a = 0.0
+	intro_tween.tween_property(mark, "modulate:a", 1.0, 0.55).set_delay(0.10)
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
