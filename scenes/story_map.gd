@@ -14,7 +14,7 @@ func _ready() -> void:
 
 	var back := UI.button("‹  رجوع", 27, 62)
 	back.custom_minimum_size.x = 145
-	back.pressed.connect(func(): get_tree().change_scene_to_file(MENU))
+	back.pressed.connect(func(): UI.transition_to(self, MENU))
 	header.add_child(back)
 
 	var title_wrap := UI.title_block("طريق الحكايات", "كل محطة تفتح لك حكاية جديدة")
@@ -48,12 +48,12 @@ func _add_node(stage: Control, i: int) -> void:
 	var s: Dictionary = StoryLoader.stories[i]
 	var node := Button.new()
 	node.text = "✦" if unlocked else "🔒"
-	node.add_theme_font_size_override("font_size", 42)
-	node.custom_minimum_size = Vector2(132, 132)
+	node.add_theme_font_size_override("font_size", 48)
+	node.custom_minimum_size = Vector2(148, 148)
 	node.disabled = not unlocked
-	node.add_theme_stylebox_override("normal", UI.box(Color("#123d31"), 66, 2, UI.C_GOLD_DARK))
-	node.add_theme_stylebox_override("hover", UI.box(Color("#1d5a47"), 66, 3, UI.C_GOLD_LIGHT))
-	node.add_theme_stylebox_override("pressed", UI.box(Color("#09261f"), 66, 3, UI.C_GOLD))
+	node.add_theme_stylebox_override("normal", UI.box(Color("#102f27"), 74, 2, UI.C_GOLD_DARK))
+	node.add_theme_stylebox_override("hover", UI.box(Color("#1d5a47"), 74, 3, UI.C_GOLD_LIGHT))
+	node.add_theme_stylebox_override("pressed", UI.box(Color("#09261f"), 74, 3, UI.C_GOLD))
 	node.add_theme_stylebox_override("disabled", UI.box(Color("#172521"), 66, 2, Color("#4b5853")))
 	node.add_theme_color_override("font_color", UI.C_GOLD_LIGHT)
 	node.pressed.connect(_on_story_pressed.bind(s))
@@ -81,8 +81,8 @@ func _add_node(stage: Control, i: int) -> void:
 
 func _on_story_pressed(story: Dictionary) -> void:
 	GameState.current_story = story
-	get_tree().change_scene_to_file(PLAYER)
+	UI.transition_to(self, PLAYER)
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
-		get_tree().change_scene_to_file(MENU)
+		UI.transition_to(self, MENU)
