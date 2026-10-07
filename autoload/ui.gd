@@ -175,6 +175,17 @@ func section_divider() -> HSeparator:
 	h.modulate = C_GOLD
 	return h
 
+func transition_to(root: Control, path: String, duration: float = 0.28) -> void:
+	var fade := ColorRect.new()
+	fade.color = Color(0.015, 0.035, 0.03, 0.0)
+	fade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	fade.mouse_filter = Control.MOUSE_FILTER_STOP
+	root.add_child(fade)
+	var tw := root.create_tween()
+	tw.tween_property(fade, "color:a", 1.0, duration).set_trans(Tween.TRANS_SINE)
+	await tw.finished
+	get_tree().change_scene_to_file(path)
+
 func spacer(h: int = 40) -> Control:
 	var c := Control.new()
 	c.custom_minimum_size = Vector2(0, h)
