@@ -1,0 +1,87 @@
+{
+  "id": "turtle_ducks",
+  "order": 9,
+  "title": "السلحفاة والبطتان",
+  "moral": "من عرف عاقبة كلامه حفظ نفسه من الندم.",
+  "segments": [
+    {
+      "text": "عاشت سلحفاة قرب بحيرة جميلة، وكانت صديقتاها بطتين تزورانها كل يوم.",
+      "scene": {
+        "place": "lake",
+        "actors": [
+          "turtle",
+          "duck"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/turtle_ducks_lake_new.svg"
+      }
+    },
+    {
+      "text": "جفّت البحيرة شيئاً فشيئاً، فقالت البطتان: سنبحث عن بحيرة أخرى، ونحملك معنا بعصا تمسكينها بفمك.",
+      "scene": {
+        "place": "lake",
+        "actors": [
+          "turtle",
+          "duck"
+        ],
+        "shot": "two_shot",
+        "background": "res://assets/images/new/turtle_ducks_lake_new.svg"
+      }
+    },
+    {
+      "text": "قالتا لها: أهم شيء ألا تتكلمي أثناء الطيران، مهما سمعت من كلام.",
+      "scene": {
+        "place": "sky",
+        "actors": [
+          "turtle",
+          "duck"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/turtle_ducks_sky_new.svg"
+      }
+    },
+    {
+      "text": "بدأت السلحفاة رحلتها وهي متمسكة بالعصا، ورأت الحيوانات تنظر إليها بدهشة.",
+      "scene": {
+        "place": "sky",
+        "actors": [
+          "turtle",
+          "duck"
+        ],
+        "shot": "two_shot",
+        "background": "res://assets/images/new/turtle_ducks_sky_new.svg"
+      }
+    },
+    {
+      "text": "سمعت السلحفاة كلاماً يضحك عليها، فنسيت النصيحة وفتحت فمها لتجيب، فسقطت قبل أن تصل إلى البحيرة الجديدة.",
+      "challenge": {
+        "question": "ما التصرف الحكيم في هذا الموقف؟",
+        "options": [
+          "التفكير والتعاون قبل التصرف",
+          "التسرع دون تفكير"
+        ],
+        "answer": 0
+      },
+      "scene": {
+        "place": "lake",
+        "actors": [
+          "turtle",
+          "duck"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/turtle_ducks_lake_new.svg"
+      }
+    },
+    {
+      "text": "وهكذا تعلمت أن ضبط اللسان قد يكون أحياناً سبب النجاة، وأن بعض الكلمات لا يمكن استرجاعها بعد قولها.",
+      "scene": {
+        "place": "sunset",
+        "actors": [
+          "turtle"
+        ],
+        "shot": "wide",
+        "background": "res://assets/images/new/turtle_ducks_sunset_new.svg"
+      }
+    }
+  ]
+}
