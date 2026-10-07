@@ -1,71 +1,8 @@
 {
-  "id": "crow_snake",
-  "order": 2,
-  "title": "الغراب والحيّة",
-  "moral": "الحيلة والذكاء أنفع من القوة.",
-  "segments": [
-    {
-      "text": "على شجرةٍ كبيرة عاش غرابٌ وزوجته، وتحت الشجرة في جحرٍ سكنت حيّةٌ شرّيرة، كانت كلما باض الغراب بيضه أكلته. فحزن الغراب حزناً شديداً.",
-      "scene": {
-        "place": "forest",
-        "actors": [
-          "crow"
-        ],
-        "shot": "wide",
-        "background": "res://assets/images/backgrounds/scene_clean/forest_clean.svg"
-      }
-    },
-    {
-      "text": "ذهب الغراب إلى صديقٍ حكيم يستشيره. فقال له: القوّةُ لا تنفعك ضدّ الحيّة، لكنّ العقل ينفع. اخطف عِقداً لامعاً من أهل القصر، وألقِه قرب جحرها.",
-      "challenge": {
-        "question": "بماذا نصح الصديقُ الحكيم الغراب؟",
-        "options": [
-          "أن يستعمل حيلةً ذكية",
-          "أن يقاتل الحيّة بمنقاره",
-          "أن يترك الشجرة فوراً"
-        ],
-        "answer": 0
-      },
-      "scene": {
-        "place": "forest",
-        "actors": [
-          "crow"
-        ],
-        "shot": "speaker_close",
-        "background": "res://assets/images/backgrounds/scene_clean/forest_clean.svg"
-      }
-    },
-    {
-      "text": "طار الغراب إلى قصرٍ قريب، فرأى عِقداً ذهبياً لأميرة، فالتقطه بمنقاره وطار به، والخدم يركضون خلفه وهم يصيحون.",
-      "scene": {
-        "place": "palace",
-        "actors": [
-          "crow"
-        ],
-        "shot": "wide",
-        "background": "res://assets/images/backgrounds/scene_clean/palace_clean.svg"
-      }
-    },
-    {
-      "text": "أسقط الغراب العِقد قرب جحر الحيّة، فلمّا وصل الخدم رأوا العِقد وبجانبه الحيّة، فأبعدوها عن المكان. وعاش الغراب وزوجته بأمان، وفقس بيضهما وكبر الصغار.",
-      "challenge": {
-        "question": "لماذا انتصر الغراب؟",
-        "options": [
-          "لأنه استعمل ذكاءه",
-          "لأنه أقوى من الحيّة",
-          "لأنه محظوظ فقط"
-        ],
-        "answer": 0
-      },
-      "scene": {
-        "place": "burrow",
-        "actors": [
-          "crow",
-          "snake"
-        ],
-        "shot": "two_shot",
-        "background": "res://assets/images/backgrounds/scene_clean/burrow_clean.svg"
-      }
-    }
+  "id":"crow_snake","order":2,"title":"الغراب والحيّة","moral":"الحيلة والذكاء أنفع من القوة.","segments":[
+    {"text":"على شجرةٍ كبيرة عاش غرابٌ وزوجته، وتحت الشجرة في جحرٍ سكنت حيّةٌ شرّيرة، كانت كلما باض الغراب بيضه أكلته. فحزن الغراب حزناً شديداً.","scene":{"place":"forest","actors":["crow"],"shot":"wide","background":"res://assets/images/backgrounds/crow_snake_forest_realistic.webp"}},
+    {"text":"ذهب الغراب إلى صديقٍ حكيم يستشيره. فقال له: القوّةُ لا تنفعك ضدّ الحيّة، لكنّ العقل ينفع. اخطف عِقداً لامعاً من أهل القصر، وألقِه قرب جحرها.","challenge":{"question":"بماذا نصح الصديقُ الحكيم الغراب؟","options":["أن يستعمل حيلةً ذكية","أن يقاتل الحيّة بمنقاره","أن يترك الشجرة فوراً"],"answer":0},"scene":{"place":"forest","actors":["crow"],"shot":"speaker_close","background":"res://assets/images/backgrounds/crow_snake_forest_realistic.webp"}},
+    {"text":"طار الغراب إلى قصرٍ قريب، فرأى عِقداً ذهبياً لأميرة، فالتقطه بمنقاره وطار به، والخدم يركضون خلفه وهم يصيحون.","scene":{"place":"palace","actors":["crow"],"shot":"wide","background":"res://assets/images/backgrounds/crow_snake_palace_storybook.svg"}},
+    {"text":"أسقط الغراب العِقد قرب جحر الحيّة، فلمّا وصل الخدم رأوا العِقد وبجانبه الحيّة، فأبعدوها عن المكان. وعاش الغراب وزوجته بأمان، وفقس بيضهما وكبر الصغار.","challenge":{"question":"لماذا انتصر الغراب؟","options":["لأنه استعمل ذكاءه","لأنه أقوى من الحيّة","لأنه محظوظ فقط"],"answer":0},"scene":{"place":"burrow","actors":["crow","snake"],"shot":"two_shot","background":"res://assets/images/backgrounds/crow_snake_burrow_storybook.svg"}}
   ]
 }

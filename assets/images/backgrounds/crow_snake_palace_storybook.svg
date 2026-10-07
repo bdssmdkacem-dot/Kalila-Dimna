@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+<defs>
+ <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#78b8c8"/><stop offset=".58" stop-color="#d8d49f"/><stop offset="1" stop-color="#315b48"/></linearGradient>
+ <linearGradient id="stone" x2="0" y2="1"><stop stop-color="#ead9aa"/><stop offset="1" stop-color="#9c7c4d"/></linearGradient>
+ <radialGradient id="sun"><stop stop-color="#fff0b0" stop-opacity=".9"/><stop offset="1" stop-color="#fff0b0" stop-opacity="0"/></radialGradient>
+</defs>
+<rect width="1280" height="720" fill="url(#sky)"/>
+<circle cx="980" cy="150" r="125" fill="url(#sun)"/>
+<path d="M0 440 Q180 330 340 425 T680 410 T1020 400 T1280 430 V720 H0Z" fill="#244d3e"/>
+<path d="M0 520 Q250 450 510 515 T930 500 T1280 515 V720 H0Z" fill="#17392f"/>
+<!-- palace -->
+<g stroke="#8b6a29" stroke-width="9" stroke-linejoin="round">
+ <path d="M335 490 V290 L640 180 L945 290 V490Z" fill="url(#stone)"/>
+ <path d="M300 300 L640 145 L980 300 L955 332 L640 205 L325 332Z" fill="#c3a268"/>
+ <path d="M420 295 Q640 205 860 295 V490 H420Z" fill="#d9c08a"/>
+ <path d="M610 490 V345 Q640 315 670 345 V490Z" fill="#493b27"/>
+ <path d="M380 350 H455 V490 H380Z M825 350 H900 V490 H825Z" fill="#6e9b93"/>
+ <path d="M500 275 H780 V310 H500Z" fill="#8d6c32"/>
+ <path d="M548 255 L640 208 L732 255" fill="none"/>
+ <circle cx="640" cy="240" r="13" fill="#dcb75d"/>
+</g>
+<!-- flying crow -->
+<path d="M1010 260 Q1050 225 1090 255 Q1050 250 1028 280 Q1005 250 970 260 Q995 225 1010 260Z" fill="#151f1d"/>
+<circle cx="1087" cy="255" r="5" fill="#d9b35a"/>
+<!-- gold vignette -->
+<rect x="16" y="16" width="1248" height="688" rx="28" fill="none" stroke="#d8b35a" stroke-width="10" opacity=".8"/>
+</svg>

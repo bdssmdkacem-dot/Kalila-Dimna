@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+<defs>
+ <linearGradient id="bg" x2="0" y2="1"><stop stop-color="#5c8f72"/><stop offset=".55" stop-color="#b4a16b"/><stop offset="1" stop-color="#203c2f"/></linearGradient>
+ <radialGradient id="hole"><stop stop-color="#0b1713"/><stop offset=".65" stop-color="#20170f"/><stop offset="1" stop-color="#634827"/></radialGradient>
+</defs>
+<rect width="1280" height="720" fill="url(#bg)"/>
+<path d="M0 445 Q190 355 360 425 T700 410 T1030 430 T1280 400 V720 H0Z" fill="#294f3b"/>
+<path d="M0 560 Q220 470 470 545 T850 535 T1280 550 V720 H0Z" fill="#17372c"/>
+<!-- ancient tree -->
+<path d="M220 620 Q250 440 300 310 Q355 185 420 125 Q385 245 395 355 Q400 500 470 620Z" fill="#4b3723" stroke="#8d6b2d" stroke-width="8"/>
+<path d="M330 265 Q220 190 130 225 Q235 250 300 320 M365 250 Q470 155 565 195 Q460 225 395 315" fill="none" stroke="#284d3a" stroke-width="55" stroke-linecap="round"/>
+<!-- burrow mound -->
+<path d="M650 595 Q705 420 870 415 Q1035 420 1100 595Z" fill="#8b6337" stroke="#c29a55" stroke-width="10"/>
+<ellipse cx="875" cy="535" rx="145" ry="120" fill="url(#hole)" stroke="#d2aa5b" stroke-width="10"/>
+<!-- snake -->
+<path d="M770 570 Q820 500 875 555 T985 545 Q1010 535 1035 565" fill="none" stroke="#243d2b" stroke-width="34" stroke-linecap="round"/>
+<path d="M770 570 Q820 500 875 555 T985 545 Q1010 535 1035 565" fill="none" stroke="#8da65b" stroke-width="9" stroke-linecap="round"/>
+<circle cx="1038" cy="565" r="8" fill="#f2d27b"/>
+<!-- crow -->
+<path d="M580 190 Q620 150 660 185 Q620 180 600 212 Q580 180 545 190 Q570 155 580 190Z" fill="#151d1b"/>
+<circle cx="657" cy="185" r="5" fill="#d9b35a"/>
+<rect x="16" y="16" width="1248" height="688" rx="28" fill="none" stroke="#d8b35a" stroke-width="10" opacity=".8"/>
+</svg>
