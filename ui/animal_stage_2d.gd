@@ -429,6 +429,9 @@ func _motion_amount(id: String) -> Vector2:
 		"monkey": return Vector2(sin(t * 0.9 + phase) * 5.0, sin(t * 1.7 + phase) * 2.5)
 		"turtle", "mouse": return Vector2(sin(t * 0.8 + phase) * 2.0, sin(t * 1.4 + phase) * 1.0)
 		"hare": return Vector2(sin(t * 1.25 + phase) * 4.0, sin(t * 2.0 + phase) * 2.0)
+		"rat": return Vector2(sin(t * 1.05 + phase) * 2.5, sin(t * 1.8 + phase) * 1.2)
+		"cat", "jackal": return Vector2(sin(t * 0.7 + phase) * 3.0, sin(t * 1.1 + phase) * 1.3)
+		"owl", "duck": return Vector2(sin(t * 0.8 + phase) * 2.0, sin(t * 1.5 + phase) * 1.5)
 	return Vector2.ZERO
 
 func _idle_amount(id: String) -> Vector2:
