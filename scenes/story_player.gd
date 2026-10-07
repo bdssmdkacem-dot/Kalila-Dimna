@@ -193,6 +193,11 @@ func _speaker_for_segment(i: int) -> String:
 		"turtle": return "الغَيْلَم · السلحفاة"
 		"dove": return "المطوّقة · الحمامة"
 		"hare": return "الأرنب"
+		"rat": return "الجرذ"
+		"cat": return "السنور"
+		"owl": return "البوم"
+		"jackal": return "ابن آوى"
+		"duck": return "البطّة"
 		_: return "الراوي"
 
 func _load_voice(i: int) -> AudioStream:
