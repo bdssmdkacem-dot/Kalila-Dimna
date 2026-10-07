@@ -11,7 +11,7 @@ const NODE_POSITIONS := [
 	Vector2(0.78, 0.66),
 	Vector2(0.22, 0.78),
 	Vector2(0.78, 0.90),
-	Vector2(0.50, 0.99)
+	Vector2(0.50, 0.94)
 ]
 
 var node_positions := NODE_POSITIONS
