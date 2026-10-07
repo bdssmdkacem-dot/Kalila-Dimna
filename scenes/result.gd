@@ -1,9 +1,8 @@
 extends Control
-## شاشة النتيجة: نهاية الحكاية + النجوم + العبرة + الحركة التالية.
+## نهاية سينمائية للحكاية مع مكافأة واضحة ومسار متابعة.
 
 const MAP := "res://scenes/story_map.tscn"
 const PLAYER := "res://scenes/story_player.tscn"
-
 
 func _ready() -> void:
 	var story: Dictionary = GameState.current_story
@@ -11,56 +10,59 @@ func _ready() -> void:
 		get_tree().change_scene_to_file(MAP)
 		return
 
-	var box := UI.page(self)
-	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	var page := UI.page(self)
+	page.alignment = BoxContainer.ALIGNMENT_CENTER
 
-	box.add_child(UI.brand_mark(132))
-	box.add_child(UI.label("انتهت الحكاية", 34, UI.C_GOLD_DARK))
-	box.add_child(UI.label(story.title, 58, UI.C_GREEN))
-	box.add_child(UI.spacer(4))
+	var hero := UI.hero_panel()
+	hero.custom_minimum_size = Vector2(0, 620)
+	page.add_child(hero)
 
-	var stars := StarRow.new().setup(GameState.last_stars, 92.0)
+	var content := VBoxContainer.new()
+	content.alignment = BoxContainer.ALIGNMENT_CENTER
+	content.add_theme_constant_override("separation", 10)
+	hero.add_child(content)
+
+	content.add_child(UI.label("اكتملت الرحلة", 30, UI.C_GOLD))
+	content.add_child(UI.label(story.title, 66, UI.C_GOLD_LIGHT))
+
+	var stars := StarRow.new().setup(GameState.last_stars, 82.0)
 	stars.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	box.add_child(stars)
+	content.add_child(stars)
 
-	var card := PanelContainer.new()
-	card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	card.add_theme_stylebox_override("panel", UI.box(UI.C_CARD, 30, 2, UI.C_GOLD))
-	box.add_child(card)
+	var quote := UI.label("«%s»" % story.moral, 36, UI.C_PAPER)
+	quote.custom_minimum_size = Vector2(0, 100)
+	content.add_child(quote)
 
-	var v := VBoxContainer.new()
-	v.alignment = BoxContainer.ALIGNMENT_CENTER
-	v.add_theme_constant_override("separation", 12)
-	card.add_child(v)
-
-	v.add_child(UI.pill("العِبرة", 30, UI.C_PAPER_LIGHT, UI.C_GREEN_DARK))
-	v.add_child(UI.label(story.moral, 45, UI.C_INK))
+	var divider := UI.section_divider()
+	divider.custom_minimum_size.x = 300
+	divider.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	content.add_child(divider)
 
 	var idx := StoryLoader.index_of(story.id)
 	if idx >= 0 and idx + 1 < StoryLoader.stories.size():
-		var nxt := UI.button("الحكاية التالية", 48, 100)
+		var nxt := UI.button("الحكاية التالية  →", 44, 92)
+		nxt.custom_minimum_size.x = 390
+		nxt.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		nxt.pressed.connect(_play.bind(StoryLoader.stories[idx + 1]))
-		box.add_child(nxt)
+		content.add_child(nxt)
 
-	var again := UI.button("أعد الحكاية", 38, 86)
-	again.add_theme_stylebox_override("normal", UI.box(Color("f0dfb7"), 20, 1, Color("b79b61")))
-	again.add_theme_stylebox_override("hover", UI.box(Color("fff2cf"), 20, 1, UI.C_GOLD))
-	again.add_theme_color_override("font_color", UI.C_GREEN_DARK)
+	var again := UI.button("إعادة الحكاية", 30, 68)
+	again.custom_minimum_size.x = 260
+	again.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	again.add_theme_stylebox_override("normal", UI.box(Color(0.04, 0.15, 0.12, 0.78), 16, 1, Color("#53645b")))
 	again.pressed.connect(_play.bind(story))
-	box.add_child(again)
+	content.add_child(again)
 
-	var map := UI.button("خريطة الحكايات", 38, 86)
-	map.add_theme_stylebox_override("normal", UI.box(Color("f0dfb7"), 20, 1, Color("b79b61")))
-	map.add_theme_stylebox_override("hover", UI.box(Color("fff2cf"), 20, 1, UI.C_GOLD))
-	map.add_theme_color_override("font_color", UI.C_GREEN_DARK)
+	var map := UI.button("العودة إلى الطريق", 29, 68)
+	map.custom_minimum_size.x = 260
+	map.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	map.add_theme_stylebox_override("normal", UI.box(Color(0.04, 0.15, 0.12, 0.70), 16, 1, Color("#53645b")))
 	map.pressed.connect(func(): get_tree().change_scene_to_file(MAP))
-	box.add_child(map)
-
+	content.add_child(map)
 
 func _play(story: Dictionary) -> void:
 	GameState.current_story = story
 	get_tree().change_scene_to_file(PLAYER)
-
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
