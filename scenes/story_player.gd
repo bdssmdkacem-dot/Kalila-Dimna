@@ -49,8 +49,6 @@ func _wait_for_story_layout() -> void:
 		await get_tree().process_frame
 
 func _build_ui() -> void:
-	# Full-screen cinematic composition: the story stage is the background layer,
-	# while controls float above it so the scene remains visible behind the dialogue.
 	layout_direction = Control.LAYOUT_DIRECTION_RTL
 
 	animal_stage = AnimalStage2D.new()
@@ -59,42 +57,47 @@ func _build_ui() -> void:
 	add_child(animal_stage)
 
 	var shade := ColorRect.new()
-	shade.color = Color(0.01, 0.03, 0.025, 0.10)
+	shade.color = Color(0.01, 0.03, 0.025, 0.08)
 	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(shade)
 
-	var top := HBoxContainer.new()
-	top.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	top.offset_left = 18.0
-	top.offset_right = -18.0
-	top.offset_top = 18.0
-	top.offset_bottom = 70.0
-	top.add_theme_constant_override("separation", 12)
-	add_child(top)
+	var top_panel := PanelContainer.new()
+	top_panel.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	top_panel.offset_left = 18.0
+	top_panel.offset_right = -18.0
+	top_panel.offset_top = 18.0
+	top_panel.offset_bottom = 82.0
+	top_panel.add_theme_stylebox_override("panel", _top_bar_style())
+	top_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(top_panel)
 
-	var back := UI.button("رجوع", 26, 48)
-	back.custom_minimum_size = Vector2(105, 48)
+	var top := HBoxContainer.new()
+	top.add_theme_constant_override("separation", 10)
+	top_panel.add_child(top)
+
+	var back := UI.button("رجوع", 25, 46)
+	back.custom_minimum_size = Vector2(105, 46)
+	back.add_theme_stylebox_override("normal", UI.box(Color(0.08, 0.20, 0.16, 0.92), 16, 1, UI.C_GOLD_DARK))
+	back.add_theme_stylebox_override("hover", UI.box(Color(0.12, 0.29, 0.23, 0.96), 16, 1, UI.C_GOLD_LIGHT))
 	back.pressed.connect(_go_map)
 	top.add_child(back)
 
-	var title := UI.label(story.title, 34, UI.C_GREEN)
+	var title := UI.label(story.title, 31, UI.C_PAPER_LIGHT)
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.75))
-	title.add_theme_constant_override("shadow_offset_x", 2)
-	title.add_theme_constant_override("shadow_offset_y", 2)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	top.add_child(title)
 
-	progress_lbl = UI.label("", 25, UI.C_GOLD_DARK)
-	progress_lbl.custom_minimum_size = Vector2(90, 48)
-	progress_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	progress_lbl = UI.label("", 24, UI.C_GOLD_LIGHT)
+	progress_lbl.custom_minimum_size = Vector2(112, 46)
+	progress_lbl.add_theme_stylebox_override("normal", UI.box(Color(0.08, 0.20, 0.16, 0.92), 16, 1, UI.C_GOLD_DARK))
 	top.add_child(progress_lbl)
 
 	var bottom := PanelContainer.new()
 	bottom.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	bottom.offset_left = 18.0
 	bottom.offset_right = -18.0
-	bottom.offset_top = -205.0
+	bottom.offset_top = -214.0
 	bottom.offset_bottom = -12.0
 	bottom.mouse_filter = Control.MOUSE_FILTER_STOP
 	bottom.add_theme_stylebox_override("panel", _story_overlay_style())
@@ -104,32 +107,30 @@ func _build_ui() -> void:
 	content.add_theme_constant_override("separation", 5)
 	bottom.add_child(content)
 
-	speaker_lbl = UI.label("", 24, UI.C_GOLD_DARK)
-	speaker_lbl.custom_minimum_size = Vector2(0, 28)
+	speaker_lbl = UI.label("", 27, UI.C_GOLD_LIGHT)
+	speaker_lbl.custom_minimum_size = Vector2(0, 34)
 	speaker_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	speaker_lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.85))
-	speaker_lbl.add_theme_constant_override("shadow_offset_x", 2)
-	speaker_lbl.add_theme_constant_override("shadow_offset_y", 2)
+	speaker_lbl.add_theme_stylebox_override("normal", UI.box(Color(0.10, 0.22, 0.17, 0.86), 15, 1, Color(0.78, 0.62, 0.23, 0.75)))
 	content.add_child(speaker_lbl)
 
 	var speech_scroll := ScrollContainer.new()
 	speech_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	speech_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	speech_scroll.custom_minimum_size = Vector2(0, 70)
 	content.add_child(speech_scroll)
 
-	text_lbl = UI.label("", 28)
+	text_lbl = UI.label("", 31, UI.C_PAPER_LIGHT)
 	text_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	text_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text_lbl.custom_minimum_size = Vector2(0, 58)
-	text_lbl.add_theme_color_override("font_color", Color(1, 1, 1, 1))
-	text_lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.95))
+	text_lbl.custom_minimum_size = Vector2(0, 66)
+	text_lbl.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.75))
 	text_lbl.add_theme_constant_override("shadow_offset_x", 2)
 	text_lbl.add_theme_constant_override("shadow_offset_y", 2)
 	speech_scroll.add_child(text_lbl)
 
-	feedback_lbl = UI.label("", 23, UI.C_BAD)
+	feedback_lbl = UI.label("", 23, UI.C_GOOD)
 	feedback_lbl.custom_minimum_size = Vector2(0, 28)
 	feedback_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	content.add_child(feedback_lbl)
@@ -138,8 +139,9 @@ func _build_ui() -> void:
 	controls.add_theme_constant_override("separation", 8)
 	content.add_child(controls)
 
-	replay_btn = UI.button("أعد الاستماع", 25, 48)
+	replay_btn = UI.button("أعد الاستماع", 24, 48)
 	replay_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	replay_btn.add_theme_stylebox_override("normal", UI.box(Color(0.08, 0.20, 0.16, 0.92), 15, 1, UI.C_GOLD_DARK))
 	replay_btn.pressed.connect(func(): audio.play())
 	controls.add_child(replay_btn)
 
@@ -152,8 +154,8 @@ func _build_ui() -> void:
 	options_panel.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	options_panel.offset_left = 55.0
 	options_panel.offset_right = -55.0
-	options_panel.offset_top = -360.0
-	options_panel.offset_bottom = -213.0
+	options_panel.offset_top = -380.0
+	options_panel.offset_bottom = -222.0
 	options_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	options_panel.visible = false
 	options_panel.add_theme_stylebox_override("panel", _options_overlay_style())
@@ -164,85 +166,85 @@ func _build_ui() -> void:
 	options_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	options_panel.add_child(options_scroll)
 	options_box = VBoxContainer.new()
-	options_box.add_theme_constant_override("separation", 5)
+	options_box.add_theme_constant_override("separation", 7)
 	options_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	options_scroll.add_child(options_box)
-
-	# Keep the options overlay synchronized with whether choices exist.
-	# Choices appear in a separate translucent panel above the dialogue bar.
-	options_panel.visible = false
 
 	audio = AudioStreamPlayer.new()
 	add_child(audio)
 
+func _top_bar_style() -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.06, 0.16, 0.13, 0.86)
+	style.border_color = Color(0.84, 0.69, 0.32, 0.85)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(20)
+	style.content_margin_left = 10
+	style.content_margin_right = 10
+	style.content_margin_top = 8
+	style.content_margin_bottom = 8
+	style.shadow_color = Color(0, 0, 0, 0.28)
+	style.shadow_size = 10
+	style.shadow_offset = Vector2(0, 4)
+	return style
+
+
 func _story_overlay_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.015, 0.055, 0.042, 0.86)
-	style.border_color = Color(0.84, 0.69, 0.32, 0.92)
+	style.bg_color = Color(0.025, 0.09, 0.07, 0.90)
+	style.border_color = Color(0.88, 0.72, 0.34, 0.92)
 	style.set_border_width_all(2)
-	style.corner_radius_top_left = 22
-	style.corner_radius_top_right = 22
-	style.corner_radius_bottom_left = 22
-	style.corner_radius_bottom_right = 22
+	style.set_corner_radius_all(24)
 	style.content_margin_left = 18
 	style.content_margin_right = 18
-	style.content_margin_top = 9
-	style.content_margin_bottom = 9
+	style.content_margin_top = 10
+	style.content_margin_bottom = 10
+	style.shadow_color = Color(0, 0, 0, 0.34)
+	style.shadow_size = 14
+	style.shadow_offset = Vector2(0, 5)
 	return style
+
 
 func _options_overlay_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.015, 0.045, 0.035, 0.92)
-	style.border_color = Color(0.84, 0.69, 0.32, 0.80)
+	style.bg_color = Color(0.97, 0.91, 0.77, 0.96)
+	style.border_color = Color(0.81, 0.64, 0.27, 0.96)
 	style.set_border_width_all(2)
-	style.corner_radius_top_left = 18
-	style.corner_radius_top_right = 18
-	style.corner_radius_bottom_left = 18
-	style.corner_radius_bottom_right = 18
-	style.content_margin_left = 14
-	style.content_margin_right = 14
-	style.content_margin_top = 8
-	style.content_margin_bottom = 8
+	style.set_corner_radius_all(22)
+	style.content_margin_left = 16
+	style.content_margin_right = 16
+	style.content_margin_top = 12
+	style.content_margin_bottom = 12
+	style.shadow_color = Color(0, 0, 0, 0.30)
+	style.shadow_size = 12
+	style.shadow_offset = Vector2(0, 4)
 	return style
 
-func _speaker_for_segment(story_id: String, i: int) -> String:
+
+func _speaker_for_segment(_story_id: String, i: int) -> String:
 	if i < 0 or i >= segments.size():
-		return "📖 الراوي"
+		return "الراوي"
 	var speaker := String(segments[i].get("speaker", ""))
 	match speaker:
 		"lion":
-			return "🦁 بينغالاكا"
+			return "بينغالاكا · الأسد"
 		"bull":
-			return "🐂 سانجيفاكا"
+			return "سانجيفاكا · الثور"
 		"crow":
-			return "🐦 الغراب"
+			return "الغراب"
 		"snake":
-			return "🐍 الأفعى"
+			return "الحيّة"
 		"monkey":
-			return "🐒 القرد"
+			return "القرد"
 		"turtle":
-			return "🐢 السلحفاة"
+			return "الغَيْلَم · السلحفاة"
 		"dove":
-			return "🕊️ الحمامة"
+			return "المطوّقة · الحمامة"
 		"hare":
-			return "🐇 الأرنب"
+			return "الأرنب"
 		_:
-			return "📖 الراوي"
+			return "الراوي"
 
-func _story_bubble_style() -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.04, 0.12, 0.09, 0.93)
-	style.border_color = Color("#d7b15a")
-	style.set_border_width_all(3)
-	style.corner_radius_top_left = 28
-	style.corner_radius_top_right = 28
-	style.corner_radius_bottom_left = 28
-	style.corner_radius_bottom_right = 28
-	style.content_margin_left = 24
-	style.content_margin_right = 24
-	style.content_margin_top = 12
-	style.content_margin_bottom = 12
-	return style
 
 func _load_voice(i: int) -> AudioStream:
 	# Prefer OGG for packaged voice assets, but accept MP3 recordings directly.
@@ -319,17 +321,22 @@ func _on_text_done() -> void:
 
 func _show_story_interaction(interaction: Dictionary) -> void:
 	options_panel.visible = true
-	options_box.add_child(UI.label("ساعد الشخصية في اتخاذ القرار", 28, UI.C_GOLD_DARK))
-	options_box.add_child(UI.label(String(interaction.question), 30, UI.C_GREEN))
+	options_box.add_child(UI.pill("لحظة القرار", 26, UI.C_PAPER_LIGHT, UI.C_GREEN_DARK))
+	var q := UI.label(String(interaction.question), 30, UI.C_INK)
+	q.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	options_box.add_child(q)
 	var answer := int(interaction.answer)
 	var opts: Array = interaction.options
 	var order := range(opts.size())
 	order.shuffle()
 	for i in order:
-		var b := UI.button(String(opts[i]), 30, 72)
+		var b := UI.button(String(opts[i]), 29, 68)
 		b.custom_minimum_size.x = 190
+		b.add_theme_stylebox_override("normal", UI.box(UI.C_GREEN, 18, 1, UI.C_GOLD_DARK))
+		b.add_theme_stylebox_override("hover", UI.box(UI.C_GREEN_LIGHT, 18, 1, UI.C_GOLD_LIGHT))
 		b.pressed.connect(_on_story_choice.bind(b, i, interaction))
 		options_box.add_child(b)
+
 
 func _on_story_choice(btn: Button, choice_index: int, interaction: Dictionary) -> void:
 	var correct := choice_index == int(interaction.answer)
@@ -368,14 +375,19 @@ func _clear_options() -> void:
 
 func _show_challenge(ch: Dictionary) -> void:
 	options_panel.visible = true
-	options_box.add_child(UI.label(ch.question, 30, UI.C_GREEN))
+	options_box.add_child(UI.pill("اختبر فهمك", 26, UI.C_PAPER_LIGHT, UI.C_GREEN_DARK))
+	var q := UI.label(String(ch.question), 30, UI.C_INK)
+	q.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	options_box.add_child(q)
 	var answer := int(ch.answer)
 	var opts: Array = ch.options
 	var order := range(opts.size())
 	order.shuffle()
 	for i in order:
-		var b := UI.button(opts[i], 30, 72)
+		var b := UI.button(String(opts[i]), 29, 68)
 		b.custom_minimum_size.x = 190
+		b.add_theme_stylebox_override("normal", UI.box(UI.C_GREEN, 18, 1, UI.C_GOLD_DARK))
+		b.add_theme_stylebox_override("hover", UI.box(UI.C_GREEN_LIGHT, 18, 1, UI.C_GOLD_LIGHT))
 		b.pressed.connect(_on_option.bind(b, i == answer))
 		options_box.add_child(b)
 
