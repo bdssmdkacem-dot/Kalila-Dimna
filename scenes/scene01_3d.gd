@@ -27,6 +27,9 @@ var startup_guard: CanvasLayer
 var startup_message: Label
 var startup_button: Button
 var animation_players: Array[AnimationPlayer] = []
+var actor_nodes: Dictionary = {}
+var actor_home_positions: Dictionary = {}
+var previous_speaker := ""
 
 func _ready() -> void:
 	_create_startup_guard()
@@ -46,6 +49,7 @@ func _ready() -> void:
 		return
 	_build_overlay()
 	_cache_animation_players(glb_root)
+	_cache_actor_nodes(glb_root)
 	if segments.is_empty():
 		dialogue_label.text = "تعذّر العثور على مقاطع هذه الحكاية."
 		next_button.text = "العودة إلى الخريطة"
@@ -230,6 +234,44 @@ func _cache_animation_players(root: Node) -> void:
 		if player:
 			animation_players.append(player)
 
+func _cache_actor_nodes(root: Node) -> void:
+	actor_nodes.clear()
+	actor_home_positions.clear()
+	for node in root.find_children("*", "Node3D", true, false):
+		var lower := String(node.name).to_lower()
+		if lower.contains("lion") or lower.contains("pengal") or lower.contains("ping"):
+			actor_nodes["lion"] = node
+			actor_home_positions["lion"] = node.position
+		elif lower.contains("bull") or lower.contains("sanj") or lower.contains("sanje"):
+			actor_nodes["bull"] = node
+			actor_home_positions["bull"] = node.position
+
+func _animate_actor_presence(seg: Dictionary) -> void:
+	var scene_data: Dictionary = seg.get("scene", {})
+	var actors_value = scene_data.get("actors", [])
+	var actors: Array = actors_value if actors_value is Array else []
+	for key in ["lion", "bull"]:
+		if not actor_nodes.has(key):
+			continue
+		var node: Node3D = actor_nodes[key]
+		var home: Vector3 = actor_home_positions[key]
+		var present := actors.has(key)
+		var target_position := home
+		if not present:
+			target_position += Vector3(-camera_distance * 0.18 if key == "lion" else camera_distance * 0.18, 0.0, 0.0)
+		var target_scale := Vector3.ONE if present else Vector3(0.001, 0.001, 0.001)
+		var duration := 0.55
+		var tw := create_tween().set_parallel(true)
+		tw.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+		tw.tween_property(node, "position", target_position, duration)
+		tw.tween_property(node, "scale", target_scale, duration)
+		if present and previous_speaker != "" and previous_speaker != String(seg.get("speaker", "")) and actors.size() > 1:
+			var start := home + Vector3(0.0, 0.035, 0.0)
+			node.position = start
+			tw.tween_property(node, "position", home, 0.32)
+
+	previous_speaker = String(seg.get("speaker", ""))
+
 func _play_character_animation(seg: Dictionary) -> void:
 	if animation_players.is_empty():
 		return
@@ -307,6 +349,7 @@ func _play_next_segment() -> void:
 				break
 	# Set the camera motion only after the current audio stream is known.
 	_apply_cinematic_shot(seg)
+	_animate_actor_presence(seg)
 	_play_character_animation(seg)
 	if loaded_voice:
 		audio.play()
@@ -328,27 +371,39 @@ func _apply_cinematic_shot(seg: Dictionary) -> void:
 		"two_shot": factor = 0.88
 		_: factor = 1.0
 	var horizontal := 0.0
+	var vertical := 0.0
+	var depth := 0.0
 	if speaker == "lion":
-		horizontal = -camera_distance * 0.07
+		horizontal = -camera_distance * 0.11
+		vertical = camera_distance * 0.015
+		depth = -camera_distance * 0.035
 	elif speaker == "bull":
-		horizontal = camera_distance * 0.07
+		horizontal = camera_distance * 0.11
+		vertical = camera_distance * 0.01
+		depth = camera_distance * 0.02
 	var target_position := camera_center + Vector3(
 		horizontal + camera_distance * 0.38 * factor,
-		camera_distance * 0.23 * factor,
-		camera_distance * 0.78 * factor
+		camera_distance * (0.23 * factor + vertical),
+		camera_distance * (0.78 * factor + depth)
 	)
 	var target_look := camera_center
 	if speaker == "lion":
-		target_look.x -= camera_distance * 0.06
+		target_look.x -= camera_distance * 0.09
 	elif speaker == "bull":
-		target_look.x += camera_distance * 0.06
+		target_look.x += camera_distance * 0.09
 	var target_rotation := Basis.looking_at(target_look - target_position, Vector3.UP).get_euler()
 	if camera_tween and camera_tween.is_running():
 		camera_tween.kill()
+	var cut_duration := 0.9
+	if shot == "speaker_close":
+		cut_duration = 0.75
+	elif shot == "two_shot":
+		cut_duration = 1.05
 	camera_tween = create_tween().set_parallel(true)
-	camera_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	camera_tween.tween_property(camera, "position", target_position, 0.7)
-	camera_tween.tween_property(camera, "rotation", target_rotation, 0.7)
+	camera_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	camera_tween.tween_property(camera, "position", target_position, cut_duration)
+	camera_tween.tween_property(camera, "rotation", target_rotation, cut_duration)
+	camera_tween.tween_property(camera, "fov", 48.0 if shot == "wide" else (43.0 if shot == "two_shot" else 40.0), cut_duration)
 
 	if scene_tween and scene_tween.is_running():
 		scene_tween.kill()
