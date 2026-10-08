@@ -219,6 +219,10 @@ func section_divider() -> HSeparator:
 	return h
 
 func transition_to(root: Control, path: String, duration: float = 0.22) -> void:
+	# Never leave a failed scene change behind an opaque black/fade screen.
+	if not ResourceLoader.exists(path):
+		push_error("UI: target scene does not exist: " + path)
+		return
 	var fade := ColorRect.new()
 	fade.color = Color(0.02, 0.06, 0.045, 0.0)
 	fade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -227,7 +231,10 @@ func transition_to(root: Control, path: String, duration: float = 0.22) -> void:
 	var tw := root.create_tween()
 	tw.tween_property(fade, "color:a", 1.0, duration).set_trans(Tween.TRANS_SINE)
 	await tw.finished
-	get_tree().change_scene_to_file(path)
+	var err := get_tree().change_scene_to_file(path)
+	if err != OK:
+		push_error("UI: scene change failed (%s): %s" % [err, path])
+		fade.queue_free()
 
 func story_card_style() -> StyleBoxFlat:
 	return parchment_style(18, 2)
