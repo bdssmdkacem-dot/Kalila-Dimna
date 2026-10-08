@@ -31,6 +31,10 @@ var actor_nodes: Dictionary = {}
 var actor_home_positions: Dictionary = {}
 var previous_speaker := ""
 var previous_action := ""
+var background_layer: CanvasLayer
+var background_rect: TextureRect
+var background_tween: Tween
+var ending_tween: Tween
 
 func _ready() -> void:
 	_create_startup_guard()
@@ -48,6 +52,7 @@ func _ready() -> void:
 	var camera_ready := await _setup_camera()
 	if not camera_ready:
 		return
+	_build_background_layer()
 	_build_overlay()
 	_cache_animation_players(glb_root)
 	_cache_actor_nodes(glb_root)
@@ -162,6 +167,59 @@ func _transform_aabb(box: AABB, transform: Transform3D) -> AABB:
 				else:
 					result = result.expand(point)
 	return result
+
+func _build_background_layer() -> void:
+	background_layer = CanvasLayer.new()
+	background_layer.layer = -1
+	add_child(background_layer)
+	background_rect = TextureRect.new()
+	background_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	background_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	background_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	background_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	background_rect.modulate = Color(1, 1, 1, 0)
+	background_layer.add_child(background_rect)
+
+func _set_story_background(seg: Dictionary) -> void:
+	if background_rect == null:
+		return
+	var scene_data: Dictionary = seg.get("scene", {})
+	var path := String(scene_data.get("background", ""))
+	if path == "" or not ResourceLoader.exists(path):
+		return
+	var texture := load(path) as Texture2D
+	if texture == null:
+		return
+	if background_tween and background_tween.is_running():
+		background_tween.kill()
+	background_rect.texture = texture
+	background_rect.modulate = Color(1, 1, 1, 0)
+	background_tween = create_tween()
+	background_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	background_tween.tween_property(background_rect, "modulate", Color(1, 1, 1, 0.22), 0.55)
+
+func _play_friendship_end_shot() -> void:
+	if not actor_nodes.has("lion") or not actor_nodes.has("bull"):
+		return
+	if ending_tween and ending_tween.is_running():
+		ending_tween.kill()
+	var lion: Node3D = actor_nodes["lion"]
+	var bull: Node3D = actor_nodes["bull"]
+	var midpoint := (lion.global_position + bull.global_position) * 0.5
+	var target_position := midpoint + Vector3(0.0, camera_distance * 0.24, camera_distance * 1.12)
+	var target_rotation := Basis.looking_at(midpoint - target_position, Vector3.UP).get_euler()
+	ending_tween = create_tween().set_parallel(true)
+	ending_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	ending_tween.tween_property(camera, "position", target_position, 1.6)
+	ending_tween.tween_property(camera, "rotation", target_rotation, 1.6)
+	ending_tween.tween_property(camera, "fov", 52.0, 1.6)
+	var hold := create_tween()
+	hold.tween_interval(1.6)
+	hold.tween_property(camera, "fov", 54.0, 2.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	if background_rect:
+		var glow_tween := create_tween()
+		glow_tween.tween_property(background_rect, "modulate", Color(1, 0.92, 0.72, 0.30), 1.4)
+		glow_tween.tween_property(background_rect, "modulate", Color(1, 1, 1, 0.24), 2.0)
 
 func _build_overlay() -> void:
 	var layer := CanvasLayer.new()
@@ -293,9 +351,13 @@ func _animate_actor_presence(seg: Dictionary) -> void:
 
 	if action == "realization" or action == "calm":
 		_create_reaction_motion()
+	if action == "confrontation" or action == "response":
+		_create_reaction_motion()
 
 	if action == "friendship":
 		_play_friendship_formation()
+		if segment_index >= segments.size() - 3:
+			_play_friendship_end_shot()
 
 	previous_speaker = String(seg.get("speaker", ""))
 	previous_action = action
@@ -350,9 +412,23 @@ func _play_character_animation(seg: Dictionary) -> void:
 	var speaker := String(seg.get("speaker", "")).to_lower()
 	var scene_data: Dictionary = seg.get("scene", {})
 	var requested := String(scene_data.get("animation", "")).to_lower()
+	var action := String(seg.get("action", "")).to_lower()
 	var preferred: Array[String] = []
 	if requested != "":
 		preferred.append(requested)
+	var action_words: Array[String] = []
+	match action:
+		"approach": action_words = ["walk", "walking", "run", "running"]
+		"confrontation": action_words = ["alert", "angry", "roar", "talk"]
+		"response": action_words = ["talk", "talking", "alert", "idle"]
+		"realization": action_words = ["surprise", "surprised", "happy", "nod", "idle"]
+		"calm": action_words = ["calm", "relaxed", "idle"]
+		"friendship": action_words = ["happy", "smile", "relaxed", "idle", "talk"]
+		_: action_words = []
+	for word in action_words:
+		preferred.append(word)
+		if speaker != "":
+			preferred.append("%s_%s" % [speaker, word])
 	if speaker == "lion":
 		preferred.append_array(["lion_talk", "lion_talking", "lion_idle", "idle_lion"])
 	elif speaker == "bull":
@@ -420,6 +496,7 @@ func _play_next_segment() -> void:
 				loaded_voice = true
 				break
 	# Set the camera motion only after the current audio stream is known.
+	_set_story_background(seg)
 	_apply_cinematic_shot(seg)
 	_animate_actor_presence(seg)
 	_play_character_animation(seg)
