@@ -3,6 +3,7 @@ extends Control
 
 const MENU := "res://scenes/main_menu.tscn"
 const PLAYER := "res://scenes/story_player.tscn"
+const SCENE01_3D := "res://scenes/scene01_3d.tscn"
 
 const STORY_ICONS := {
 	"lion_bull": "res://assets/images/new/lion_medallion_new.svg",
@@ -146,7 +147,10 @@ func _add_node(stage: Control, i: int) -> void:
 
 func _on_story_pressed(story: Dictionary) -> void:
 	GameState.current_story = story
-	UI.transition_to(self, PLAYER)
+	if String(story.get("id", "")) == "lion_bull":
+		UI.transition_to(self, SCENE01_3D)
+	else:
+		UI.transition_to(self, PLAYER)
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
