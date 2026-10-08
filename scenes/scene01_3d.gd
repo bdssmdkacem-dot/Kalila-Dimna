@@ -40,7 +40,9 @@ func _ready() -> void:
 		_show_startup_error("تعذّر تحميل مشهد الحكاية. اضغط للعودة إلى الخريطة.")
 		return
 
-	await _setup_camera()
+	var camera_ready := await _setup_camera()
+	if not camera_ready:
+		return
 	_build_overlay()
 	if segments.is_empty():
 		dialogue_label.text = "تعذّر العثور على مقاطع هذه الحكاية."
@@ -94,7 +96,7 @@ func _show_startup_error(message: String) -> void:
 	if startup_button:
 		startup_button.visible = true
 
-func _setup_camera() -> void:
+func _setup_camera() -> bool:
 	await get_tree().process_frame
 	camera.current = true
 	camera.near = 0.05
@@ -118,6 +120,11 @@ func _setup_camera() -> void:
 		camera.position = Vector3(0.0, 5.0, 10.0)
 		camera.look_at(camera_center, Vector3.UP)
 		camera.fov = 48.0
+		# A scene with no visible geometry would otherwise look like a black/empty screen.
+		# Stop here and keep the visible recovery UI instead.
+		_show_startup_error("تعذّر العثور على عناصر مرئية في مشهد الحكاية.")
+		return false
+	return true
 
 func _collect_bounds(root: Node) -> AABB:
 	var result := AABB()
