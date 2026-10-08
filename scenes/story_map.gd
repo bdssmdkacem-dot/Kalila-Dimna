@@ -119,8 +119,13 @@ func _add_node(stage: Control, i: int) -> void:
 	stage.add_child(node)
 
 	var card := PanelContainer.new()
-	card.anchor_left = pos.x + 0.08
-	card.anchor_right = 0.93
+	# Keep each story label in the free space beside its map node.
+	if pos.x < 0.5:
+		card.anchor_left = pos.x + 0.08
+		card.anchor_right = 0.97
+	else:
+		card.anchor_left = 0.03
+		card.anchor_right = pos.x - 0.08
 	card.anchor_top = pos.y - 0.065
 	card.anchor_bottom = pos.y + 0.065
 	card.offset_top = -4
