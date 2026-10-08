@@ -27,7 +27,6 @@ var startup_guard: CanvasLayer
 var startup_message: Label
 var startup_button: Button
 var animation_players: Array[AnimationPlayer] = []
-var active_character_tween: Tween
 
 func _ready() -> void:
 	_create_startup_guard()
@@ -351,10 +350,6 @@ func _apply_cinematic_shot(seg: Dictionary) -> void:
 	camera_tween.tween_property(camera, "position", target_position, 0.7)
 	camera_tween.tween_property(camera, "rotation", target_rotation, 0.7)
 
-	# Add a restrained cinematic body sway when the imported asset has no usable animation.
-	# This is deliberately tiny so the camera remains the main storytelling motion.
-	if active_character_tween and active_character_tween.is_running():
-		active_character_tween.kill()
 	if scene_tween and scene_tween.is_running():
 		scene_tween.kill()
 	var duration := 2.5
@@ -363,9 +358,6 @@ func _apply_cinematic_shot(seg: Dictionary) -> void:
 	else:
 		duration = maxf(2.0, String(seg.get("text", "")).length() * FALLBACK_SECONDS_PER_CHAR)
 	var base_rotation := glb_root.rotation.y
-	active_character_tween = create_tween()
-	active_character_tween.tween_property(glb_root, "rotation:y", base_rotation + (0.006 if speaker == "lion" else -0.006), duration * 0.5).set_trans(Tween.TRANS_SINE)
-	active_character_tween.tween_property(glb_root, "rotation:y", base_rotation, duration * 0.5).set_trans(Tween.TRANS_SINE)
 	scene_tween = create_tween()
 	scene_tween.tween_property(glb_root, "rotation:y", base_rotation + 0.012, duration * 0.5).set_trans(Tween.TRANS_SINE)
 	scene_tween.tween_property(glb_root, "rotation:y", base_rotation, duration * 0.5).set_trans(Tween.TRANS_SINE)
