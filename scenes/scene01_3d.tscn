@@ -28,4 +28,6 @@ shadow_enabled = true
 transform = Transform3D(1, 0, 0, 0, 0.94, 0.342, 0, -0.342, 0.94, 0, -18, 9)
 current = true
 fov = 52.0
+near = 0.05
+far = 1000.0
 
