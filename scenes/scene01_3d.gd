@@ -26,6 +26,8 @@ var scene_tween: Tween
 var startup_guard: CanvasLayer
 var startup_message: Label
 var startup_button: Button
+var animation_players: Array[AnimationPlayer] = []
+var active_character_tween: Tween
 
 func _ready() -> void:
 	_create_startup_guard()
@@ -44,6 +46,7 @@ func _ready() -> void:
 	if not camera_ready:
 		return
 	_build_overlay()
+	_cache_animation_players(glb_root)
 	if segments.is_empty():
 		dialogue_label.text = "تعذّر العثور على مقاطع هذه الحكاية."
 		next_button.text = "العودة إلى الخريطة"
@@ -221,6 +224,58 @@ func _speaker_name(value: String) -> String:
 		"bull": return "الثور · سانجيفاكا"
 		_: return "الراوي"
 
+func _cache_animation_players(root: Node) -> void:
+	animation_players.clear()
+	for node in root.find_children("*", "AnimationPlayer", true, false):
+		var player := node as AnimationPlayer
+		if player:
+			animation_players.append(player)
+
+func _play_character_animation(seg: Dictionary) -> void:
+	if animation_players.is_empty():
+		return
+	var speaker := String(seg.get("speaker", "")).to_lower()
+	var scene_data: Dictionary = seg.get("scene", {})
+	var requested := String(scene_data.get("animation", "")).to_lower()
+	var preferred: Array[String] = []
+	if requested != "":
+		preferred.append(requested)
+	if speaker == "lion":
+		preferred.append_array(["lion_talk", "lion_talking", "lion_idle", "idle_lion"])
+	elif speaker == "bull":
+		preferred.append_array(["bull_talk", "bull_talking", "bull_idle", "idle_bull"])
+	preferred.append_array(["talk", "talking", "idle"])
+	for player in animation_players:
+		var library := player.get_animation_library("")
+		if library == null:
+			continue
+		var names := library.get_animation_list()
+		var selected := ""
+		for wanted in preferred:
+			for animation_name in names:
+				if String(animation_name).to_lower() == wanted:
+					selected = animation_name
+					break
+			if selected != "":
+				break
+		if selected == "":
+			for animation_name in names:
+				var lower := String(animation_name).to_lower()
+				if speaker != "" and lower.contains(speaker) and (lower.contains("talk") or lower.contains("idle")):
+					selected = animation_name
+					break
+		if selected == "":
+			for animation_name in names:
+				var lower := String(animation_name).to_lower()
+				if lower.contains("idle") or lower.contains("talk"):
+					selected = animation_name
+					break
+		if selected != "":
+			if player.current_animation != selected:
+				player.play(selected, -1.0, 1.0, false)
+			else:
+				player.play(selected)
+	
 func _voice_path(index: int) -> String:
 	return "%s%s_%02d.ogg" % [VOICE_DIR, String(story.get("id", "lion_bull")), index + 1]
 
@@ -253,6 +308,7 @@ func _play_next_segment() -> void:
 				break
 	# Set the camera motion only after the current audio stream is known.
 	_apply_cinematic_shot(seg)
+	_play_character_animation(seg)
 	if loaded_voice:
 		audio.play()
 		return
@@ -295,7 +351,10 @@ func _apply_cinematic_shot(seg: Dictionary) -> void:
 	camera_tween.tween_property(camera, "position", target_position, 0.7)
 	camera_tween.tween_property(camera, "rotation", target_rotation, 0.7)
 
-	# Keep a subtle scene movement for the duration of the narration line.
+	# Add a restrained cinematic body sway when the imported asset has no usable animation.
+	# This is deliberately tiny so the camera remains the main storytelling motion.
+	if active_character_tween and active_character_tween.is_running():
+		active_character_tween.kill()
 	if scene_tween and scene_tween.is_running():
 		scene_tween.kill()
 	var duration := 2.5
@@ -304,6 +363,9 @@ func _apply_cinematic_shot(seg: Dictionary) -> void:
 	else:
 		duration = maxf(2.0, String(seg.get("text", "")).length() * FALLBACK_SECONDS_PER_CHAR)
 	var base_rotation := glb_root.rotation.y
+	active_character_tween = create_tween()
+	active_character_tween.tween_property(glb_root, "rotation:y", base_rotation + (0.006 if speaker == "lion" else -0.006), duration * 0.5).set_trans(Tween.TRANS_SINE)
+	active_character_tween.tween_property(glb_root, "rotation:y", base_rotation, duration * 0.5).set_trans(Tween.TRANS_SINE)
 	scene_tween = create_tween()
 	scene_tween.tween_property(glb_root, "rotation:y", base_rotation + 0.012, duration * 0.5).set_trans(Tween.TRANS_SINE)
 	scene_tween.tween_property(glb_root, "rotation:y", base_rotation, duration * 0.5).set_trans(Tween.TRANS_SINE)
