@@ -1,9 +1,9 @@
 extends Node3D
-## PHASE 52 - Scene 01 3D integration test.
-## Automatically frames the imported Blender GLB so the first Godot test
-## does not depend on Blender's original camera coordinates.
+## PHASE 53 - Scene 01 gameplay camera.
+## The Blender GLB is now the actual 3D story environment.
 
 const GLB_PATH := "res://assets/3d/kalila_dimna_scene01_v2.glb"
+const STORY_MAP := "res://scenes/story_map.tscn"
 
 @onready var camera: Camera3D = $Camera3D
 @onready var glb_root: Node3D = $KalilaDimnaGLB
@@ -14,71 +14,28 @@ func _ready() -> void:
 		return
 
 	await get_tree().process_frame
-	_frame_imported_scene()
-
 	camera.current = true
+
+	# Gameplay composition: focus on the central clearing instead of
+	# framing the complete 60m forest as a miniature map.
+	camera.position = Vector3(13.5, 8.5, 15.5)
+	camera.look_at(Vector3(0.0, 3.0, 0.0), Vector3.UP)
+	camera.fov = 58.0
+
+	var mesh_count := _count_visuals(glb_root)
 	print("SCENE01 3D TEST: PASS")
 	print("GLB: ", GLB_PATH)
-	print("ROOT: ", glb_root.name)
+	print("VISIBLE NODES: ", mesh_count)
+	print("CAMERA: ", camera.position)
 
-func _frame_imported_scene() -> void:
-	var bounds := _collect_bounds(glb_root)
-
-	if bounds.size <= Vector3.ZERO:
-		push_error("SCENE01 3D: NO VISIBLE MESHES FOUND")
-		return
-
-	var center := bounds.position + bounds.size * 0.5
-	var radius := maxf(bounds.size.x, maxf(bounds.size.y, bounds.size.z)) * 0.5
-	radius = maxf(radius, 2.0)
-
-	# Move the camera in a predictable diagonal position relative to the
-	# actual imported GLB bounds, then point it at the scene center.
-	var distance := maxf(radius * 2.2, 12.0)
-	camera.position = center + Vector3(distance * 0.75, distance * 0.55, distance * 0.55)
-	camera.fov = 52.0
-	camera.look_at(center, Vector3.UP)
-
-	print("SCENE01 BOUNDS: center=", center, " size=", bounds.size)
-	print("SCENE01 CAMERA: position=", camera.position)
-
-func _collect_bounds(root: Node) -> AABB:
-	var result := AABB()
-	var has_bounds := false
-
+func _count_visuals(root: Node) -> int:
+	var count := 0
 	for node in root.get_children():
 		if node is VisualInstance3D:
-			var visual := node as VisualInstance3D
-			var local_box := visual.get_aabb()
-			var global_box := _transform_aabb(local_box, visual.global_transform)
-			if not has_bounds:
-				result = global_box
-				has_bounds = true
-			else:
-				result = result.merge(global_box)
+			count += 1
+		count += _count_visuals(node)
+	return count
 
-		var child_box := _collect_bounds(node)
-		if child_box.size != Vector3.ZERO:
-			if not has_bounds:
-				result = child_box
-				has_bounds = true
-			else:
-				result = result.merge(child_box)
-
-	return result
-
-func _transform_aabb(box: AABB, transform: Transform3D) -> AABB:
-	var result := AABB()
-	var first := true
-
-	for x in [box.position.x, box.end.x]:
-		for y in [box.position.y, box.end.y]:
-			for z in [box.position.z, box.end.z]:
-				var point := transform * Vector3(x, y, z)
-				if first:
-					result = AABB(point, Vector3.ZERO)
-					first = false
-				else:
-					result = result.expand(point)
-
-	return result
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		get_tree().change_scene_to_file(STORY_MAP)
