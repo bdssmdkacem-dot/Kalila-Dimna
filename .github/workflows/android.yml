@@ -51,6 +51,9 @@ jobs:
       - name: Validate lion bull 2D story stage
         run: godot --headless --path . -s tests/validate_story_2d.gd
 
+      - name: Validate Scene01 boot safety
+        run: godot --headless --path . -s tests/validate_scene01_boot.gd
+
   android-debug:
     name: Android Debug APK
     runs-on: ubuntu-24.04
