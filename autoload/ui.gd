@@ -72,7 +72,7 @@ func _build_theme() -> Theme:
 	t.set_color("font_hover_color", "Button", Color.WHITE)
 	t.set_color("font_pressed_color", "Button", C_GOLD_LIGHT)
 	t.set_color("font_focus_color", "Button", C_PAPER_LIGHT)
-	t.set_color("font_disabled_color", Color("#d0c9ad"))
+	t.set_color("font_disabled_color", "Button", Color("#d0c9ad"))
 	t.set_font_size("font_size", "Button", 34)
 
 	t.set_color("font_color", "Label", C_INK)
