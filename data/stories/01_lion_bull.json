@@ -132,6 +132,7 @@
     },
     {
       "text": "ذهب الأسد يبحث عن مصدر الصوت، حتى وصل إلى المكان الذي كان فيه سانجيفاكا.",
+      "action": "approach",
       "scene": {
         "place": "river_meadow",
         "actors": [
@@ -144,6 +145,7 @@
     },
     {
       "text": "من أنت؟ ولماذا تصدر هذا الصوت في غابتي؟",
+      "action": "confrontation",
       "speaker": "lion",
       "scene": {
         "place": "river_meadow",
@@ -157,6 +159,7 @@
     },
     {
       "text": "أنا سانجيفاكا. لا أريد إيذاء أحد. لقد جئت فقط لأجد مكانًا آمنًا أعيش فيه.",
+      "action": "response",
       "speaker": "bull",
       "scene": {
         "place": "river_meadow",
@@ -170,6 +173,7 @@
     },
     {
       "text": "إذن أنت لست وحشًا كما ظننت!",
+      "action": "realization",
       "speaker": "lion",
       "scene": {
         "place": "river_meadow",
@@ -183,6 +187,7 @@
     },
     {
       "text": "وأنا ظننت أنك ستهاجمني! لكنني أرى الآن أنك تريد أن تفهم من أنا.",
+      "action": "response",
       "speaker": "bull",
       "scene": {
         "place": "river_meadow",
@@ -196,6 +201,7 @@
     },
     {
       "text": "وتحدث الأسد والثور طويلًا، واكتشف كل واحدٍ منهما أن الآخر لا يريد الأذى.",
+      "action": "calm",
       "scene": {
         "place": "river_meadow",
         "actors": [
@@ -208,6 +214,7 @@
     },
     {
       "text": "يا سانجيفاكا، يبدو أنك صديقٌ طيب. هل تقبل أن نصبح صديقين؟",
+      "action": "friendship",
       "speaker": "lion",
       "scene": {
         "place": "forest",
@@ -221,6 +228,7 @@
     },
     {
       "text": "بكل سرور يا بينغالاكا! يسعدني أن يكون لي صديق مثلك.",
+      "action": "friendship",
       "speaker": "bull",
       "scene": {
         "place": "forest",
@@ -234,6 +242,7 @@
     },
     {
       "text": "وهكذا بدأت صداقةٌ جميلة بين الأسد والثور، وأصبحا يقضيان وقتًا سعيدًا معًا.",
+      "action": "friendship",
       "scene": {
         "place": "forest",
         "actors": [
@@ -246,6 +255,7 @@
     },
     {
       "text": "يا سانجيفاكا، ماذا تحب أن تفعل عندما تكون في الغابة؟",
+      "action": "friendship",
       "speaker": "lion",
       "scene": {
         "place": "forest",
@@ -259,6 +269,7 @@
     },
     {
       "text": "أحب الأماكن الهادئة، وأحب أن أساعد أصدقائي عندما يحتاجون إليّ.",
+      "action": "friendship",
       "speaker": "bull",
       "scene": {
         "place": "forest",
