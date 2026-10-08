@@ -33,8 +33,12 @@ var previous_speaker := ""
 var previous_action := ""
 var background_layer: CanvasLayer
 var background_rect: TextureRect
+var background_back_rect: TextureRect
 var background_tween: Tween
+var background_active_is_front := true
+var background_has_texture := false
 var ending_tween: Tween
+var glb_instance: Node3D
 
 func _ready() -> void:
 	_create_startup_guard()
@@ -44,9 +48,7 @@ func _ready() -> void:
 		get_tree().call_deferred("change_scene_to_file", STORY_MAP)
 		return
 	segments = story.get("segments", [])
-	if not ResourceLoader.exists(GLB_PATH):
-		push_error("SCENE01 3D: GLB NOT FOUND: " + GLB_PATH)
-		_show_startup_error("تعذّر تحميل مشهد الحكاية. اضغط للعودة إلى الخريطة.")
+	if not _load_glb_safely():
 		return
 
 	var camera_ready := await _setup_camera()
@@ -63,6 +65,32 @@ func _ready() -> void:
 		return
 	_hide_startup_guard()
 	_play_next_segment()
+
+func _load_glb_safely() -> bool:
+	# Keep the 3D asset out of the .tscn ext_resource table. A broken/missing
+	# imported GLB must show the recovery UI instead of preventing the scene itself
+	# from loading.
+	if glb_root == null:
+		push_error("SCENE01 3D: KalilaDimnaGLB placeholder is missing")
+		_show_startup_error("تعذّر تجهيز مشهد الحكاية. اضغط للعودة إلى الخريطة.")
+		return false
+	if not ResourceLoader.exists(GLB_PATH):
+		push_error("SCENE01 3D: GLB NOT FOUND: " + GLB_PATH)
+		_show_startup_error("تعذّر العثور على ملف مشهد الحكاية. اضغط للعودة إلى الخريطة.")
+		return false
+	var packed := load(GLB_PATH) as PackedScene
+	if packed == null:
+		push_error("SCENE01 3D: GLB LOAD FAILED: " + GLB_PATH)
+		_show_startup_error("تعذّر تحميل مشهد الحكاية. اضغط للعودة إلى الخريطة.")
+		return false
+	var instance := packed.instantiate()
+	if instance == null or not instance is Node3D:
+		push_error("SCENE01 3D: GLB INSTANTIATE FAILED: " + GLB_PATH)
+		_show_startup_error("تعذّر تشغيل مشهد الحكاية. اضغط للعودة إلى الخريطة.")
+		return false
+	glb_instance = instance as Node3D
+	glb_root.add_child(glb_instance)
+	return true
 
 func _create_startup_guard() -> void:
 	startup_guard = CanvasLayer.new()
@@ -168,35 +196,74 @@ func _transform_aabb(box: AABB, transform: Transform3D) -> AABB:
 					result = result.expand(point)
 	return result
 
+func _new_background_rect() -> TextureRect:
+	var rect := TextureRect.new()
+	rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	rect.modulate = Color(1, 1, 1, 0)
+	return rect
+
 func _build_background_layer() -> void:
 	background_layer = CanvasLayer.new()
 	background_layer.layer = -1
 	add_child(background_layer)
-	background_rect = TextureRect.new()
-	background_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	background_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	background_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	background_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	background_rect.modulate = Color(1, 1, 1, 0)
+	background_rect = _new_background_rect()
+	background_back_rect = _new_background_rect()
 	background_layer.add_child(background_rect)
+	background_layer.add_child(background_back_rect)
+	background_active_is_front = true
+	background_has_texture = false
+
+func _active_background_rect() -> TextureRect:
+	return background_rect if background_active_is_front else background_back_rect
+
+func _inactive_background_rect() -> TextureRect:
+	return background_back_rect if background_active_is_front else background_rect
 
 func _set_story_background(seg: Dictionary) -> void:
-	if background_rect == null:
+	if background_rect == null or background_back_rect == null:
 		return
 	var scene_data: Dictionary = seg.get("scene", {})
 	var path := String(scene_data.get("background", ""))
 	if path == "" or not ResourceLoader.exists(path):
+		push_warning("SCENE01 3D: background not found: " + path)
 		return
 	var texture := load(path) as Texture2D
 	if texture == null:
+		push_warning("SCENE01 3D: background load failed: " + path)
 		return
+
 	if background_tween and background_tween.is_running():
 		background_tween.kill()
-	background_rect.texture = texture
-	background_rect.modulate = Color(1, 1, 1, 0)
+
+	var active := _active_background_rect()
+	var incoming := _inactive_background_rect()
+	if not background_has_texture:
+		active.texture = texture
+		active.modulate = Color(1, 1, 1, 0)
+		background_has_texture = true
+		background_tween = create_tween()
+		background_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		background_tween.tween_property(active, "modulate", Color(1, 1, 1, 0.22), 0.55)
+		return
+
+	if active.texture == texture:
+		active.modulate = Color(1, 1, 1, 0.22)
+		return
+
+	incoming.texture = texture
+	incoming.modulate = Color(1, 1, 1, 0)
 	background_tween = create_tween()
 	background_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	background_tween.tween_property(background_rect, "modulate", Color(1, 1, 1, 0.22), 0.55)
+	background_tween.set_parallel(true)
+	background_tween.tween_property(active, "modulate", Color(1, 1, 1, 0), 0.60)
+	background_tween.tween_property(incoming, "modulate", Color(1, 1, 1, 0.22), 0.60)
+	background_tween.set_parallel(false)
+	background_tween.tween_callback(func():
+		background_active_is_front = not background_active_is_front
+	)
 
 func _play_friendship_end_shot() -> void:
 	if not actor_nodes.has("lion") or not actor_nodes.has("bull"):
@@ -216,10 +283,11 @@ func _play_friendship_end_shot() -> void:
 	var hold := create_tween()
 	hold.tween_interval(1.6)
 	hold.tween_property(camera, "fov", 54.0, 2.2).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	if background_rect:
+	var active_background := _active_background_rect()
+	if active_background:
 		var glow_tween := create_tween()
-		glow_tween.tween_property(background_rect, "modulate", Color(1, 0.92, 0.72, 0.30), 1.4)
-		glow_tween.tween_property(background_rect, "modulate", Color(1, 1, 1, 0.24), 2.0)
+		glow_tween.tween_property(active_background, "modulate", Color(1, 0.92, 0.72, 0.30), 1.4)
+		glow_tween.tween_property(active_background, "modulate", Color(1, 1, 1, 0.24), 2.0)
 
 func _build_overlay() -> void:
 	var layer := CanvasLayer.new()
@@ -356,8 +424,11 @@ func _animate_actor_presence(seg: Dictionary) -> void:
 
 	if action == "friendship":
 		_play_friendship_formation()
-		if segment_index >= segments.size() - 3:
+		if segment_index == segments.size() - 1:
 			_play_friendship_end_shot()
+
+	if action == "doubt" or action == "sadness" or action == "reconciliation":
+		_create_emotion_motion(action, String(seg.get("speaker", "")).to_lower())
 
 	previous_speaker = String(seg.get("speaker", ""))
 	previous_action = action
@@ -371,6 +442,36 @@ func _face_each_other(first_key: String, second_key: String, duration: float) ->
 	var tw := create_tween()
 	tw.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tw.tween_property(first, "rotation:y", rotation, duration)
+
+func _create_emotion_motion(action: String, speaker: String) -> void:
+	var targets := ["lion", "bull"] if speaker == "" else [speaker]
+	for key in targets:
+		if not actor_nodes.has(key):
+			continue
+		var node: Node3D = actor_nodes[key]
+		var base_position := node.position
+		var base_rotation := node.rotation
+		var target_position := base_position
+		var target_rotation := base_rotation
+		var duration := 0.55
+		match action:
+			"doubt":
+				target_rotation.y += -0.10 if key == "lion" else 0.06
+				duration = 0.70
+			"sadness":
+				target_position.y -= 0.07
+				target_rotation.z += 0.055 if key == "bull" else 0.0
+				duration = 0.80
+			"reconciliation":
+				target_position.y += 0.035
+				target_rotation.z += -0.035 if key == "lion" else 0.035
+				duration = 0.65
+		var tw := create_tween()
+		tw.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		tw.tween_property(node, "position", target_position, duration * 0.5)
+		tw.tween_property(node, "rotation", target_rotation, duration * 0.5)
+		tw.tween_property(node, "position", base_position, duration * 0.5)
+		tw.tween_property(node, "rotation", base_rotation, duration * 0.5)
 
 func _create_reaction_motion() -> void:
 	for key in ["lion", "bull"]:
@@ -423,6 +524,9 @@ func _play_character_animation(seg: Dictionary) -> void:
 		"response": action_words = ["talk", "talking", "alert", "idle"]
 		"realization": action_words = ["surprise", "surprised", "happy", "nod", "idle"]
 		"calm": action_words = ["calm", "relaxed", "idle"]
+		"doubt": action_words = ["worried", "fear", "alert", "look_around", "idle"]
+		"sadness": action_words = ["sad", "sad_idle", "disappointed", "head_down", "idle"]
+		"reconciliation": action_words = ["relieved", "happy", "nod", "relaxed", "idle"]
 		"friendship": action_words = ["happy", "smile", "relaxed", "idle", "talk"]
 		_: action_words = []
 	for word in action_words:
@@ -478,9 +582,10 @@ func _play_next_segment() -> void:
 	busy = true
 	var seg: Dictionary = segments[segment_index]
 	dialogue_label.text = String(seg.get("text", ""))
-	speaker_label.text = _speaker_name(String(seg.get("speaker", "")))
+	var is_final := segment_index == segments.size() - 1
+	speaker_label.text = "الحكمة · كليلة ودمنة" if is_final else _speaker_name(String(seg.get("speaker", "")))
 	progress_label.text = "%d/%d" % [segment_index + 1, segments.size()]
-	next_button.text = "التالي  →"
+	next_button.text = "إنهاء الحكاية  →" if is_final else "التالي  →"
 	audio.stop()
 	audio.stream = null
 	if auto_advance_tween and auto_advance_tween.is_running():
@@ -573,7 +678,10 @@ func _finish_segment() -> void:
 	if not busy:
 		return
 	busy = false
-	next_button.text = "متابعة الحكاية  →"
+	if segment_index == segments.size() - 1:
+		next_button.text = "إنهاء الحكاية  →"
+	else:
+		next_button.text = "متابعة الحكاية  →"
 
 func _on_next_pressed() -> void:
 	if segment_index >= segments.size() or segments.is_empty():
