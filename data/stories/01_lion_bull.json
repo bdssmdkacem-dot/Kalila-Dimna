@@ -283,7 +283,7 @@
     },
     {
       "text": "كانت صداقتهما قوية، لكن الصداقة قد تتعرض للاختبار عندما تنتشر الشائعات وسوء الفهم.",
-      "action": "friendship",
+      "action": "calm",
       "scene": {
         "place": "forest",
         "actors": [
@@ -296,6 +296,8 @@
     },
     {
       "text": "بدأت كلماتٌ غير صحيحة تنتشر في الغابة، وسمع الأسد كلامًا جعله يشك في صديقه.",
+      "action": "doubt",
+      "speaker": "lion",
       "scene": {
         "place": "forest",
         "actors": [
@@ -308,6 +310,7 @@
     },
     {
       "text": "هل يمكن أن يكون سانجيفاكا قد خدعني؟ ربما يجب أن أحذر منه.",
+      "action": "doubt",
       "speaker": "lion",
       "scene": {
         "place": "forest",
@@ -321,6 +324,8 @@
     },
     {
       "text": "حزن سانجيفاكا عندما شعر أن صديقه لم يعد يثق به.",
+      "action": "sadness",
+      "speaker": "bull",
       "scene": {
         "place": "forest",
         "actors": [
@@ -355,6 +360,7 @@
     },
     {
       "text": "يا سانجيفاكا، أنا آسف لأنني شككت فيك. كان يجب أن أسألك قبل أن أصدق ما سمعته.",
+      "action": "reconciliation",
       "speaker": "lion",
       "scene": {
         "place": "forest",
@@ -368,6 +374,7 @@
     },
     {
       "text": "الصديق الحقيقي لا يحكم على صديقه من كلام الآخرين. بل يسأل، ويستمع، ويتأكد من الحقيقة.",
+      "action": "reconciliation",
       "scene": {
         "place": "forest",
         "actors": [
