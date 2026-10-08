@@ -23,17 +23,21 @@ var camera_center := Vector3.ZERO
 var camera_distance := 10.0
 var camera_tween: Tween
 var scene_tween: Tween
+var startup_guard: CanvasLayer
+var startup_message: Label
+var startup_button: Button
 
 func _ready() -> void:
+	_create_startup_guard()
 	story = GameState.current_story
 	if story.is_empty():
-		push_warning("SCENE01: no selected story; returning to map")
+		_show_startup_error("لا توجد حكاية محددة. سنعيدك إلى الخريطة.")
 		get_tree().call_deferred("change_scene_to_file", STORY_MAP)
 		return
 	segments = story.get("segments", [])
 	if not ResourceLoader.exists(GLB_PATH):
 		push_error("SCENE01 3D: GLB NOT FOUND: " + GLB_PATH)
-		get_tree().call_deferred("change_scene_to_file", STORY_MAP)
+		_show_startup_error("تعذّر تحميل مشهد الحكاية. اضغط للعودة إلى الخريطة.")
 		return
 
 	await _setup_camera()
@@ -41,8 +45,54 @@ func _ready() -> void:
 	if segments.is_empty():
 		dialogue_label.text = "تعذّر العثور على مقاطع هذه الحكاية."
 		next_button.text = "العودة إلى الخريطة"
+		_hide_startup_guard()
 		return
+	_hide_startup_guard()
 	_play_next_segment()
+
+func _create_startup_guard() -> void:
+	startup_guard = CanvasLayer.new()
+	startup_guard.layer = 100
+	add_child(startup_guard)
+	var panel := ColorRect.new()
+	panel.color = Color("#143e33")
+	panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	startup_guard.add_child(panel)
+	var box := VBoxContainer.new()
+	box.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	box.offset_left = -300
+	box.offset_right = 300
+	box.offset_top = -120
+	box.offset_bottom = 120
+	box.add_theme_constant_override("separation", 18)
+	panel.add_child(box)
+	startup_message = Label.new()
+	startup_message.text = "جاري فتح الحكاية…"
+	startup_message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	startup_message.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	startup_message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	startup_message.add_theme_font_size_override("font_size", 30)
+	startup_message.add_theme_color_override("font_color", Color("#f4e3ba"))
+	startup_message.custom_minimum_size.y = 90
+	box.add_child(startup_message)
+	startup_button = Button.new()
+	startup_button.text = "العودة إلى الخريطة"
+	startup_button.visible = false
+	startup_button.custom_minimum_size.y = 64
+	startup_button.pressed.connect(_go_map)
+	box.add_child(startup_button)
+
+func _hide_startup_guard() -> void:
+	if startup_guard:
+		startup_guard.queue_free()
+		startup_guard = null
+
+func _show_startup_error(message: String) -> void:
+	if startup_message:
+		startup_message.text = message
+	if startup_button:
+		startup_button.visible = true
 
 func _setup_camera() -> void:
 	await get_tree().process_frame
@@ -176,23 +226,29 @@ func _play_next_segment() -> void:
 		return
 	busy = true
 	var seg: Dictionary = segments[segment_index]
-	_apply_cinematic_shot(seg)
 	dialogue_label.text = String(seg.get("text", ""))
 	speaker_label.text = _speaker_name(String(seg.get("speaker", "")))
 	progress_label.text = "%d/%d" % [segment_index + 1, segments.size()]
 	next_button.text = "التالي  →"
 	audio.stop()
+	audio.stream = null
 	if auto_advance_tween and auto_advance_tween.is_running():
 		auto_advance_tween.kill()
 	var voice := _voice_path(segment_index)
 	var mp3_voice := "%s%s_%02d.mp3" % [VOICE_DIR, String(story.get("id", "lion_bull")), segment_index + 1]
+	var loaded_voice := false
 	for path in [voice, mp3_voice]:
 		if ResourceLoader.exists(path):
 			var stream := load(path) as AudioStream
 			if stream:
 				audio.stream = stream
-				audio.play()
-				return
+				loaded_voice = true
+				break
+	# Set the camera motion only after the current audio stream is known.
+	_apply_cinematic_shot(seg)
+	if loaded_voice:
+		audio.play()
+		return
 	# Keep the spoken-text pacing when a particular clip is not available.
 	var duration := maxf(2.0, dialogue_label.text.length() * FALLBACK_SECONDS_PER_CHAR)
 	auto_advance_tween = create_tween()
@@ -270,8 +326,15 @@ func _on_next_pressed() -> void:
 		_play_next_segment()
 
 func _go_map() -> void:
-	audio.stop()
-	get_tree().change_scene_to_file(STORY_MAP)
+	if audio:
+		audio.stop()
+	if not ResourceLoader.exists(STORY_MAP):
+		_show_startup_error("تعذّر العثور على خريطة الحكايات.")
+		return
+	var err := get_tree().change_scene_to_file(STORY_MAP)
+	if err != OK:
+		push_error("SCENE01: failed to return to map: %s" % err)
+		_show_startup_error("تعذّر فتح الخريطة. يمكنك إعادة تشغيل التطبيق.")
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
