@@ -30,6 +30,7 @@ var animation_players: Array[AnimationPlayer] = []
 var actor_nodes: Dictionary = {}
 var actor_home_positions: Dictionary = {}
 var previous_speaker := ""
+var previous_action := ""
 
 func _ready() -> void:
 	_create_startup_guard()
@@ -250,6 +251,7 @@ func _animate_actor_presence(seg: Dictionary) -> void:
 	var scene_data: Dictionary = seg.get("scene", {})
 	var actors_value = scene_data.get("actors", [])
 	var actors: Array = actors_value if actors_value is Array else []
+	var action := String(seg.get("action", "")).to_lower()
 	for key in ["lion", "bull"]:
 		if not actor_nodes.has(key):
 			continue
@@ -270,7 +272,77 @@ func _animate_actor_presence(seg: Dictionary) -> void:
 			node.position = start
 			tw.tween_property(node, "position", home, 0.32)
 
+	if action == "approach" and actor_nodes.has("lion") and actor_nodes.has("bull"):
+		var lion: Node3D = actor_nodes["lion"]
+		var bull: Node3D = actor_nodes["bull"]
+		var lion_home: Vector3 = actor_home_positions["lion"]
+		var bull_home: Vector3 = actor_home_positions["bull"]
+		var direction := (bull_home - lion_home)
+		if direction.length() > 0.01:
+			direction = direction.normalized()
+			var approach_target := bull_home - direction * maxf(camera_distance * 0.12, 0.8)
+			var approach_tween := create_tween()
+			approach_tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+			approach_tween.tween_property(lion, "position", approach_target, 1.35)
+
+	if action == "confrontation" and actor_nodes.has("lion") and actor_nodes.has("bull"):
+		_face_each_other("lion", "bull", 0.45)
+
+	if action == "response" and actor_nodes.has("lion") and actor_nodes.has("bull"):
+		_face_each_other("bull", "lion", 0.38)
+
+	if action == "realization" or action == "calm":
+		_create_reaction_motion()
+
+	if action == "friendship":
+		_play_friendship_formation()
+
 	previous_speaker = String(seg.get("speaker", ""))
+	previous_action = action
+
+func _face_each_other(first_key: String, second_key: String, duration: float) -> void:
+	var first: Node3D = actor_nodes[first_key]
+	var second: Node3D = actor_nodes[second_key]
+	var target := second.global_position
+	target.y = first.global_position.y
+	var rotation := first.global_transform.looking_at(target, Vector3.UP).basis.get_euler().y
+	var tw := create_tween()
+	tw.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(first, "rotation:y", rotation, duration)
+
+func _create_reaction_motion() -> void:
+	for key in ["lion", "bull"]:
+		if not actor_nodes.has(key):
+			continue
+		var node: Node3D = actor_nodes[key]
+		var base := node.position
+		var tw := create_tween()
+		tw.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		tw.tween_property(node, "position", base + Vector3(0.0, 0.045, 0.0), 0.28)
+		tw.tween_property(node, "position", base, 0.28)
+
+func _play_friendship_formation() -> void:
+	if not actor_nodes.has("lion") or not actor_nodes.has("bull"):
+		return
+	var lion: Node3D = actor_nodes["lion"]
+	var bull: Node3D = actor_nodes["bull"]
+	var lion_home: Vector3 = actor_home_positions["lion"]
+	var bull_home: Vector3 = actor_home_positions["bull"]
+	var midpoint := (lion_home + bull_home) * 0.5
+	var separation := maxf(camera_distance * 0.10, 0.7)
+	var direction := bull_home - lion_home
+	if direction.length() < 0.01:
+		direction = Vector3.RIGHT
+	else:
+		direction = direction.normalized()
+	var lion_target := midpoint - direction * separation
+	var bull_target := midpoint + direction * separation
+	var tw := create_tween().set_parallel(true)
+	tw.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(lion, "position", lion_target, 0.9)
+	tw.tween_property(bull, "position", bull_target, 0.9)
+	_face_each_other("lion", "bull", 0.7)
+	_face_each_other("bull", "lion", 0.7)
 
 func _play_character_animation(seg: Dictionary) -> void:
 	if animation_players.is_empty():
