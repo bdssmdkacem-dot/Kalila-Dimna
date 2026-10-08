@@ -32,7 +32,7 @@ func _ready() -> void:
 		get_tree().call_deferred("change_scene_to_file", STORY_MAP)
 		return
 
-	_setup_camera()
+	await _setup_camera()
 	_build_overlay()
 	if segments.is_empty():
 		dialogue_label.text = "تعذّر العثور على مقاطع هذه الحكاية."
@@ -176,12 +176,14 @@ func _play_next_segment() -> void:
 	if auto_advance_tween and auto_advance_tween.is_running():
 		auto_advance_tween.kill()
 	var voice := _voice_path(segment_index)
-	if ResourceLoader.exists(voice):
-		var stream := load(voice) as AudioStream
-		if stream:
-			audio.stream = stream
-			audio.play()
-			return
+	var mp3_voice := "%s%s_%02d.mp3" % [VOICE_DIR, String(story.get("id", "lion_bull")), segment_index + 1]
+	for path in [voice, mp3_voice]:
+		if ResourceLoader.exists(path):
+			var stream := load(path) as AudioStream
+			if stream:
+				audio.stream = stream
+				audio.play()
+				return
 	# Keep the spoken-text pacing when a particular clip is not available.
 	var duration := maxf(2.0, dialogue_label.text.length() * FALLBACK_SECONDS_PER_CHAR)
 	auto_advance_tween = create_tween()
