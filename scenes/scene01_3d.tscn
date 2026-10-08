@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/3d/kalila_dimna_scene01_v2.glb" id="1_glb"]
+[ext_resource type="Script" path="res://scenes/scene01_3d.gd" id="2_script"]
+
+[sub_resource type="Environment" id="Environment_scene01"]
+background_mode = 1
+background_color = Color(0.055, 0.09, 0.07, 1)
+ambient_light_source = 3
+ambient_light_color = Color(1, 0.86, 0.68, 1)
+ambient_light_energy = 0.7
+tonemap_mode = 2
+
+[node name="Scene01_3D" type="Node3D"]
+script = ExtResource("2_script")
+
+[node name="KalilaDimnaGLB" parent="." instance=ExtResource("1_glb")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_scene01")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-48, -28, 0)
+light_energy = 1.25
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.94, 0.342, 0, -0.342, 0.94, 0, -18, 9)
+current = true
+fov = 52.0
+
