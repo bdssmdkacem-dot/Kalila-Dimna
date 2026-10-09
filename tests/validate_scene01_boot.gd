@@ -6,6 +6,9 @@ const STORY_PATH := "res://data/stories/01_lion_bull.json"
 const GLB_PATH := "res://assets/3d/kalila_dimna_scene01_v2.glb"
 
 func _init() -> void:
+	# SceneTree script initialization happens before autoload nodes are guaranteed
+	# to be attached. Let project startup settle before reading GameState.
+	await process_frame
 	var errors: Array[String] = []
 	var tscn_source := FileAccess.get_file_as_string(SCENE_PATH)
 	var script_source := FileAccess.get_file_as_string(SCRIPT_PATH)
